@@ -61,10 +61,7 @@ Espo.define('views/email-account/fields/test-send', 'views/outbound-email/fields
                 'id': this.model.id
             };
             return data;
-        },
-
-
+        }
     });
 
 });
-
