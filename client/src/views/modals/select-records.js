@@ -130,6 +130,7 @@ Espo.define('views/modals/select-records', ['views/modal', 'search-manager'], fu
 
             this.header = '';
             var iconHtml = this.getHelper().getScopeColorIconHtml(this.scope);
+            this.header += this.translate('Select') + ': ';
             this.header += this.getLanguage().translate(this.scope, 'scopeNamesPlural');
             this.header = iconHtml + this.header;
 
