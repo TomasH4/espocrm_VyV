@@ -32,6 +32,8 @@ Espo.define('views/user/record/list', 'views/record/list', function (Dep) {
 
         quickEditDisabled: true,
 
+        rowActionsView: 'views/user/record/row-actions/default',
+
         massActionList: ['remove', 'massUpdate', 'export'],
 
         checkAllResultMassActionList: ['massUpdate', 'export'],
