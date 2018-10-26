@@ -41,7 +41,8 @@ class Hmac extends Base
         $user = $this->getEntityManager()->getRepository('User')->findOne([
             'whereClause' => [
                 'type' => 'api',
-                'apiKey' => $apiKey
+                'apiKey' => $apiKey,
+                'authMethod' => 'Hmac'
             ]
         ]);
 
