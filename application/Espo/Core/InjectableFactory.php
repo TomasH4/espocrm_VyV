@@ -55,4 +55,14 @@ class InjectableFactory
         }
         throw new Error("Class '$className' does not exist");
     }
+
+    protected function getMetadata()
+    {
+        return $this->getContainer()->get('metadata');
+    }
+
+    protected function getContainer()
+    {
+        return $this->container;
+    }
 }
