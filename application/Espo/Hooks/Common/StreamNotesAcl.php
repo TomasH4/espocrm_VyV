@@ -33,7 +33,7 @@ use Espo\ORM\Entity;
 
 class StreamNotesAcl extends \Espo\Core\Hooks\Base
 {
-    protected $streamService = null;
+    protected $noteService = null;
 
     public static $order = 10;
 
@@ -58,69 +58,16 @@ class StreamNotesAcl extends \Espo\Core\Hooks\Base
     {
         if (!empty($options['noStream'])) return;
         if (!empty($options['silent'])) return;
-
         if (!empty($options['skipStreamNotesAcl'])) return;
 
         if ($entity->isNew()) return;
 
-        $entityType = $entity->getEntityType();
-
-        if (in_array($entityType, ['Note', 'User', 'Team', 'Role', 'Portal', 'PortalRole'])) return;
-
-        if (!$this->getMetadata()->get(['scopes', $entityType, 'acl'])) return;
-        if (!$this->getMetadata()->get(['scopes', $entityType, 'object'])) return;
-
-        $ownerUserIdAttribute = $this->getAclManager()->getImplementation($entityType)->getOwnerUserIdAttribute($entity);
-
-        $usersAttributeIsChanged = false;
-        $teamsAttributeIsChanged = false;
-
-        if ($ownerUserIdAttribute) {
-            if ($entity->isAttributeChanged($ownerUserIdAttribute)) {
-                $usersAttributeIsChanged = true;
-                if ($entity->getAttributeParam($ownerUserIdAttribute, 'isLinkMultipleIdList')) {
-                    $userIdList = $entity->get($ownerUserIdAttribute);
-                } else {
-                    $userId = $entity->get($ownerUserIdAttribute);
-                    if ($userId) {
-                        $userIdList = [$userId];
-                    } else {
-                        $userIdList = [];
-                    }
-                }
-            }
+        if (!$this->noteService) {
+            $this->noteService = $this->getServiceFactory()->create('Note');
         }
 
-        if ($entity->hasLinkMultipleField('teams') && $entity->isAttributeChanged('teamsIds')) {
-            $teamsAttributeIsChanged = true;
-            $teamIdList = $entity->get('teamsIds');
-        }
+        $forceProcessNoteNotifications = !empty($options['forceProcessNoteNotifications']);
 
-        if ($usersAttributeIsChanged || $teamsAttributeIsChanged) {
-            $noteList = $this->getEntityManager()->getRepository('Note')->where([
-                'OR' => [
-                    [
-                        'relatedId' => $entity->id,
-                        'relatedType' => $entityType
-                    ],
-                    [
-                        'parentId' => $entity->id,
-                        'parentType' => $entityType,
-                        'superParentId!=' => null,
-                        'relatedId' => null
-                    ]
-                ]
-            ])->select(['id'])->find();
-
-            foreach ($noteList as $note) {
-                if ($teamsAttributeIsChanged) {
-                    $note->set('teamsIds', $teamIdList);
-                }
-                if ($usersAttributeIsChanged) {
-                    $note->set('usersIds', $userIdList);
-                }
-                $this->getEntityManager()->saveEntity($note);
-            }
-        }
+        $this->noteService->processNoteAcl($entity, $forceProcessNoteNotifications);
     }
 }
