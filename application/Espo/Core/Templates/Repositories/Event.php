@@ -31,5 +31,8 @@ namespace Espo\Core\Templates\Repositories;
 
 class Event extends \Espo\Core\Repositories\Event
 {
-    
+    protected function beforeSave(Entity $entity, array $options = [])
+    {
+        parent::beforeSave($entity, $options);
+    }
 }
