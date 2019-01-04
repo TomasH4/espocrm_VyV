@@ -31,7 +31,7 @@ Espo.define('views/record/row-actions/relationship-unlink-only', 'views/record/r
     return Dep.extend({
 
         getActionList: function () {
-            if (this.options.acl.edit) {
+            if (this.options.acl.edit && !this.options.unlinkDisabled) {
                 return [
                     {
                         action: 'unlinkRelated',
@@ -44,5 +44,4 @@ Espo.define('views/record/row-actions/relationship-unlink-only', 'views/record/r
             }
         }
     });
-
 });
