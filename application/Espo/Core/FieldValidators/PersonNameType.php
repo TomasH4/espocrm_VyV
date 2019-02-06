@@ -29,8 +29,6 @@
 
 namespace Espo\Core\FieldValidators;
 
-use \Espo\ORM\Entity;
-
 class PersonNameType extends BaseType
 {
     public function checkRequired(\Espo\ORM\Entity $entity, string $field, $validationValue, $data) : bool
