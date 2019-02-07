@@ -33,7 +33,7 @@ class EmailType extends BaseType
 {
     public function checkRequired(\Espo\ORM\Entity $entity, string $field, $validationValue, $data) : bool
     {
-        if ($entity->has($field) && $entity->get($field) !== '' && $entity->get($field) !== null) return true;
+        if ($this->isNotEmpty($entity, $field)) return true;
 
         $dataList = $entity->get($field . 'Data');
         if (!is_array($dataList)) return false;
@@ -47,7 +47,7 @@ class EmailType extends BaseType
 
     public function checkEmailAddress(\Espo\ORM\Entity $entity, string $field, $validationValue, $data) : bool
     {
-        if ($entity->has($field) && $entity->get($field) !== '' && $entity->get($field) !== null) {
+        if ($this->isNotEmpty($entity, $field)) {
             $address = $entity->get($field);
             if (!filter_var($address, FILTER_VALIDATE_EMAIL)) {
                 return false;
@@ -66,5 +66,10 @@ class EmailType extends BaseType
         }
 
         return true;
+    }
+
+    protected function isNotEmpty(\Espo\ORM\Entity $entity, $field)
+    {
+        return $entity->has($field) && $entity->get($field) !== '' && $entity->get($field) !== null;
     }
 }
