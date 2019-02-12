@@ -36,9 +36,10 @@ $app = new \Espo\Core\Application();
 $categoriesData = $app->getContainer()->get('metadata')->get(['app', 'webSocket', 'categories'], []);
 
 $phpExecutablePath = $app->getContainer()->get('config')->get('phpExecutablePath');
+$isDebugMode = (bool) $app->getContainer()->get('config')->get('webSocketDebugMode');
 
 $loop = \React\EventLoop\Factory::create();
-$pusher = new \Espo\Core\WebSocket\Pusher($categoriesData, $phpExecutablePath);
+$pusher = new \Espo\Core\WebSocket\Pusher($categoriesData, $phpExecutablePath, $isDebugMode);
 
 $context = new \React\ZMQ\Context($loop);
 $pull = $context->getSocket(\ZMQ::SOCKET_PULL);
