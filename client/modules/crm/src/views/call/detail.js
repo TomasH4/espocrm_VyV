@@ -33,43 +33,33 @@
         setup: function () {
             Dep.prototype.setup.call(this);
 
-            MeetingDetail.prototype.controlSendInvitationsButton.call(this);
-            this.listenTo(this.model, 'change', function () {
-                if (
-                    this.model.hasChanged('status')
-                    ||
-                    this.model.hasChanged('teamsIds')
-                ) {
-                    MeetingDetail.prototype.controlSendInvitationsButton.call(this);
-                }
-            }.bind(this));
+            this.controlSendInvitationsButton();
+            this.controlAcceptanceStatusButton();
+
+            this.listenTo(this.model, 'sync', function () {
+                this.controlSendInvitationsButton();
+            }, this);
+
+            this.listenTo(this.model, 'sync', function () {
+                this.controlAcceptanceStatusButton();
+            }, this);
         },
 
         actionSendInvitations: function () {
-            this.confirm(this.translate('confirmation', 'messages'), function () {
-                this.disableMenuItem('sendInvitations');
-                this.notify('Sending...');
-                $.ajax({
-                    url: 'Call/action/sendInvitations',
-                    type: 'POST',
-                    data: JSON.stringify({
-                        id: this.model.id
-                    }),
-                    success: function (result) {
-                        if (result) {
-                            this.notify('Sent', 'success');
-                        } else {
-                            Espo.Ui.warning(this.translate('nothingHasBeenSent', 'messages', 'Meeting'));
-                        }
-                        this.enableMenuItem('sendInvitations');
-                    }.bind(this),
-                    error: function () {
-                        this.enableMenuItem('sendInvitations');
-                    }.bind(this),
-                });
-            }, this);
-        }
+            MeetingDetail.prototype.actionSendInvitations.call(this);
+        },
+
+        actionSetAcceptanceStatus: function () {
+            MeetingDetail.prototype.actionSetAcceptanceStatus.call(this);
+        },
+
+        controlSendInvitationsButton: function () {
+            MeetingDetail.prototype.controlSendInvitationsButton.call(this);
+        },
+
+        controlAcceptanceStatusButton: function () {
+            MeetingDetail.prototype.controlAcceptanceStatusButton.call(this);
+        },
 
     });
 });
-
