@@ -38,15 +38,15 @@ class CaseObj extends \Espo\Core\SelectManagers\Base
 
     protected function filterOpen(&$result)
     {
-        $result['whereClause'][] = array(
-            'status!=' => array('Duplicate', 'Rejected', 'Closed')
-        );
+        $result['whereClause'][] = [
+            'status!=' => $this->getMetadata()->get(['entityDefs', $this->entityType, 'fields', 'status', 'notActualOptions']) ?? []
+        ];
     }
 
     protected function filterClosed(&$result)
     {
-        $result['whereClause'][] = array(
-            'status' => array('Closed')
-        );
+        $result['whereClause'][] = [
+            'status' => 'Closed'
+        ];
     }
 }
