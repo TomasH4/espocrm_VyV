@@ -33,20 +33,27 @@ class Contact extends \Espo\Core\SelectManagers\Base
 {
     protected function filterPortalUsers(&$result)
     {
-        $result['customJoin'] .= " JOIN user AS portalUser ON portalUser.contact_id = contact.id AND portalUser.deleted = 0 ";
+        $this->addJoin([
+            'portalUser',
+            'portalUserFilter',
+        ], $result);
     }
 
     protected function filterNotPortalUsers(&$result)
     {
-        $result['customJoin'] .= " LEFT JOIN user AS portalUser ON portalUser.contact_id = contact.id AND portalUser.deleted = 0 ";
+        $this->addLeftJoin([
+            'portalUser',
+            'portalUserFilter',
+        ], $result);
+
         $this->addAndWhere(array(
-            'portalUser.id' => null
+            'portalUserFilter.id' => null
         ), $result);
     }
 
     protected function accessPortalOnlyContact(&$result)
     {
-        $d = array();
+        $d = [];
 
         $contactId = $this->getUser()->get('contactId');
 
@@ -68,5 +75,4 @@ class Contact extends \Espo\Core\SelectManagers\Base
         }
         $result['additionalColumnsConditions']['isInactive'] = false;
     }
-
  }
