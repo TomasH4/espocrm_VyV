@@ -33,7 +33,7 @@ use \Espo\Core\Exceptions\Error;
 
 class Hmac extends Base
 {
-    public function login($username, $password, $authToken = null, $params = [], $request)
+    public function login(string $username, $password, $authToken = null, array $params = [], $request)
     {
         $apiKey = $username;
         $hash = $password;
