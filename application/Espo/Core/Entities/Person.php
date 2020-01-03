@@ -35,23 +35,17 @@ class Person extends \Espo\Core\ORM\Entity
     {
         $this->setValue('lastName', $value);
 
-        $firstName = $this->get('firstName');
-        if (empty($firstName)) {
-            $this->setValue('name', $value);
-        } else {
-            $this->setValue('name', $firstName . ' ' . $value);
-        }
+        $name = $this->getEntityManager()->getHelper()->formatPersonName($this, 'name');
+
+        $this->setValue('name', $name);
     }
 
     public function _setFirstName($value)
     {
         $this->setValue('firstName', $value);
 
-        $lastName = $this->get('lastName');
-        if (empty($lastName)) {
-            $this->setValue('name', $value);
-        } else {
-            $this->setValue('name', $value . ' ' . $lastName);
-        }
+        $name = $this->getEntityManager()->getHelper()->formatPersonName($this, 'name');
+
+        $this->setValue('name', $name);
     }
 }
