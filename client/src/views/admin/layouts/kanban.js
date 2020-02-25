@@ -26,7 +26,7 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-Espo.define('views/admin/layouts/kanban', 'views/admin/layouts/list', function (Dep) {
+define('views/admin/layouts/kanban', 'views/admin/layouts/list', function (Dep) {
 
     return Dep.extend({
 
@@ -54,7 +54,7 @@ Espo.define('views/admin/layouts/kanban', 'views/admin/layouts/list', function (
 
         ignoreList: [],
 
-        ignoreTypeList: []
+        ignoreTypeList: [],
 
     });
 });
