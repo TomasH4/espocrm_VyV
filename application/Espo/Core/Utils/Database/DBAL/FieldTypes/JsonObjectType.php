@@ -29,7 +29,7 @@
 
 namespace Espo\Core\Utils\Database\DBAL\FieldTypes;
 
-class JsonObjectType extends \Doctrine\DBAL\Types\TextType
+class JsonObjectType extends TextType
 {
     const JSON_OBJECT = 'jsonObject';
 
@@ -37,10 +37,4 @@ class JsonObjectType extends \Doctrine\DBAL\Types\TextType
     {
         return self::JSON_OBJECT;
     }
-
-    public static function getDbTypeName()
-    {
-        return 'TEXT';
-    }
-
 }
