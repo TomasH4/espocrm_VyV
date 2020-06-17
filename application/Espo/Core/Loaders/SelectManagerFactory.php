@@ -41,7 +41,8 @@ class SelectManagerFactory extends Base
             $this->getContainer()->get('metadata'),
             $this->getContainer()->get('config'),
             $this->getContainer()->get('fieldManagerUtil'),
-            $this->getContainer()->get('injectableFactory')
+            $this->getContainer()->get('injectableFactory'),
+            $this->getContainer()->get('classFinder')
         );
     }
 }
