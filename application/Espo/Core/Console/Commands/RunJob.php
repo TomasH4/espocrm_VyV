@@ -31,17 +31,16 @@ namespace Espo\Core\Console\Commands;
 
 use Espo\Core\CronManager;
 use Espo\Core\Utils\Util;
-use Espo\Core\Container;
 use Espo\Core\ORM\EntityManager;
 
 class RunJob implements Command
 {
-    protected $container;
+    protected $cronManager;
     protected $entityManager;
 
-    public function __construct(Container $container, EntityManager $entityManager)
+    public function __construct(CronManager $cronManager, EntityManager $entityManager)
     {
-        $this->container = $container;
+        $this->cronManager = $cronManager;
         $this->entityManager = $entityManager;
     }
 
@@ -59,7 +58,7 @@ class RunJob implements Command
 
         $jobName = ucfirst(Util::hyphenToCamelCase($jobName));
 
-        $container = $this->container;
+
         $entityManager = $this->entityManager;
 
         $job = $entityManager->createEntity('Job', [
@@ -69,9 +68,7 @@ class RunJob implements Command
             'targetId' => $targetId,
         ]);
 
-        $cronManager = new CronManager($container);
-
-        $result = $cronManager->runJob($job);
+        $result = $this->cronManager->runJob($job);
 
         if ($result) {
             echo "Job '{$jobName}' has been executed.\n";
