@@ -29,15 +29,31 @@
 
 namespace Espo\EntryPoints;
 
-use \Espo\Core\Exceptions\NotFound;
-use \Espo\Core\Exceptions\Forbidden;
-use \Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Exceptions\NotFound;
 
-class Portal extends \Espo\Core\EntryPoints\Base
+use Espo\Core\EntryPoints\{
+    EntryPoint,
+    NoAuth,
+};
+
+use Espo\Core\{
+    Utils\ClientManager,
+    Utils\Config,
+    Portal\Application as PortalApplication,
+};
+
+class Portal implements EntryPoint, NoAuth
 {
-    public static $authRequired = false;
+    protected $clientManager;
+    protected $config;
 
-    public function run($data = array())
+    public function __construct(ClientManager $clientManager, Config $config)
+    {
+        $this->clientManager = $clientManager;
+        $this->config = $config;
+    }
+
+    public function run($data = [])
     {
         if (!empty($_GET['id'])) {
             $id = $_GET['id'];
@@ -53,15 +69,15 @@ class Portal extends \Espo\Core\EntryPoints\Base
             }
 
             if (!$id) {
-                $id = $this->getConfig()->get('defaultPortalId');
+                $id = $this->config->get('defaultPortalId');
             }
             if (!$id) {
                 throw new NotFound();
             }
         }
 
-        $application = new \Espo\Core\Portal\Application($id);
-        $application->setBasePath($this->getContainer()->get('clientManager')->getBasePath());
+        $application = new PortalApplication($id);
+        $application->setBasePath($this->clientManager->getBasePath());
         $application->runClient();
     }
 }
