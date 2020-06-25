@@ -47,8 +47,6 @@ class EntityManager extends BaseEntityManager
 
     protected $user = null;
 
-    private $entityClassNameHash = [];
-
     public function __construct(
         array $params,
         RepositoryFactory $repositoryFactory,
