@@ -36,6 +36,11 @@ use Espo\Core\Utils\Metadata;
 
 use Espo\Core\ORM\Entity;
 
+use StdClass;
+
+/**
+ * The entry point for formula execution.
+ */
 class Manager
 {
     protected $injectableFactory;
@@ -48,7 +53,10 @@ class Manager
         $this->evaluator = new Evaluator($injectableFactory, $functionClassNameMap);
     }
 
-    public function run(string $script, ?Entity $entity = null, ?object $variables = null)
+    /**
+     * Executes a script and returns its result.
+     */
+    public function run(string $script, ?Entity $entity = null, ?StdClass $variables = null)
     {
         return $this->evaluator->process($script, $entity, $variables);
     }
