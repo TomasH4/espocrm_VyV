@@ -34,7 +34,7 @@ use Espo\ORM\{
 };
 
 /**
- * Wrapper for ORM Collections. Contains a total number of records.
+ * Contains an ORM collection and total number of records.
  */
 class Collection
 {
