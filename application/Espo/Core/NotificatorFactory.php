@@ -31,11 +31,12 @@ namespace Espo\Core;
 
 use Espo\Core\InjectableFactory;
 use Espo\Core\Utils\ClassFinder;
-use Espo\Core\Notificators\Base as BaseNotificator;
+use Espo\Core\Notificators\Notificator;
+use Espo\Core\Notificators\DefaultNotificator;
 
 class NotificatorFactory
 {
-    protected $baseClassName = '\\Espo\\Core\\Notificators\\Base';
+    protected $baseClassName = DefaultNotificator::class;
 
     protected $injectableFactory;
     protected $classFinder;
@@ -46,7 +47,7 @@ class NotificatorFactory
         $this->classFinder = $classFinder;
     }
 
-    public function create(string $entityType) : BaseNotificator
+    public function create(string $entityType) : Notificator
     {
         $className = $this->classFinder->find('Notificators', $entityType);
 
@@ -55,8 +56,6 @@ class NotificatorFactory
         }
 
         $obj = $this->injectableFactory->create($className);
-
-        $obj->setEntityType($entityType);
 
         return $obj;
     }
