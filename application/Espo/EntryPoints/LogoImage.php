@@ -38,6 +38,8 @@ use Espo\Core\EntryPoints\{
     NoAuth,
 };
 
+use Espo\Core\Api\Request;
+
 use Espo\Core\Di;
 
 class LogoImage extends Image implements Di\ConfigAware
@@ -49,7 +51,7 @@ class LogoImage extends Image implements Di\ConfigAware
 
     protected $allowedFieldList = ['companyLogo'];
 
-    public function run($request)
+    public function run(Request $request)
     {
         $id = $request->get('id');
         $size = $request->get('size') ?? null;
