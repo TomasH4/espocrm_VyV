@@ -35,5 +35,4 @@ if (!empty($_GET['portalId'])) {
     $portalId = explode('/', $_SERVER['REQUEST_URI'])[count(explode('/', $_SERVER['SCRIPT_NAME'])) - 1];
 }
 
-$app = new \Espo\Core\Portal\Application($portalId);
-$app->runApi();
+(new \Espo\Core\Portal\Application($portalId))->run('api');
