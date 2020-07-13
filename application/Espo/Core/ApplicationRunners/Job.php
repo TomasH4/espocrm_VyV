@@ -33,6 +33,8 @@ use Espo\Core\{
     CronManager,
 };
 
+use StdClass;
+
 /**
  * Runs a job by ID. A job record should exist in database.
  */
@@ -48,7 +50,7 @@ class Job implements ApplicationRunner
         $this->cronManager = $cronManager;
     }
 
-    public function run(object $params)
+    public function run(StdClass $params)
     {
         $this->cronManager->runJobById($params->id);
     }
