@@ -29,18 +29,31 @@
 
 namespace Espo\Core\Formula\Functions;
 
+use Espo\Core\Exceptions\Error;
+
 use Espo\Core\Interfaces\Injectable;
 
 use Espo\ORM\Entity;
 
-use Espo\Core\Formula\FunctionFactory;
 use Espo\Core\Formula\Processor;
+use Espo\Core\Formula\ArgumentList;
+use Espo\Core\Formula\Argument;
 
 use StdClass;
 
-/** @deprecated */
-abstract class Base extends FunctionBase implements Injectable
+/**
+ * @deprecated Use BaseFormula instead.
+ */
+abstract class Base implements Injectable
 {
+    protected $name;
+
+    protected $processor;
+
+    private $entity;
+
+    private $variables;
+
     protected $dependencyList = [];
 
     protected $injections = [];
@@ -72,13 +85,55 @@ abstract class Base extends FunctionBase implements Injectable
         return $this->dependencyList;
     }
 
-    public function __construct(Processor $processor, ?Entity $entity = null, ?StdClass $variables = null)
+    public function __construct(string $name, Processor $processor, ?Entity $entity = null, ?StdClass $variables = null)
     {
-        parent::__construct($processor, $entity, $variables);
+        $this->name = $name;
+        $this->processor = $processor;
+        $this->entity = $entity;
+        $this->variables = $variables;
+
         $this->init();
     }
 
     protected function init()
     {
+    }
+
+    protected function getVariables() : StdClass
+    {
+        return $this->variables;
+    }
+
+    protected function getEntity()
+    {
+        if (!$this->entity) {
+            throw new Error('Formula: Entity required but not passed.');
+        }
+        return $this->entity;
+    }
+
+    public abstract function process(StdClass $item);
+
+    protected function evaluate($item)
+    {
+        $item = new Argument($item);
+        return $this->processor->process($item);
+    }
+
+    protected function fetchArguments(StdClass $item) : array
+    {
+        $args = $item->value ?? [];
+
+        $eArgs = [];
+        foreach ($args as $item) {
+            $eArgs[] = $this->evaluate($item);
+        }
+
+        return $eArgs;
+    }
+
+    protected function fetchRawArguments(StdClass $item) : array
+    {
+        return $item->value ?? [];
     }
 }

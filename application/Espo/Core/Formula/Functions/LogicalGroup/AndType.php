@@ -29,7 +29,7 @@
 
 namespace Espo\Core\Formula\Functions\LogicalGroup;
 
-class AndType extends \Espo\Core\Formula\Functions\FunctionBase
+class AndType extends \Espo\Core\Formula\Functions\Base
 {
     public function process(\StdClass $item)
     {
