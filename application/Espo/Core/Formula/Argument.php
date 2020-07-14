@@ -41,11 +41,17 @@ class Argument implements Evaluatable
         $this->data = $data;
     }
 
+    /**
+     * Get an argument type (function name).
+     */
     public function getType() : ?string
     {
-        return $this->data->type ?? [];
+        return $this->data->type ?? null;
     }
 
+    /**
+     * Get an argument list.
+     */
     public function getArgumentList() : ArgumentList
     {
         if (!isset($this->data->value)) {
@@ -59,6 +65,9 @@ class Argument implements Evaluatable
         return $argumentList;
     }
 
+    /**
+     * Get RAW data.
+     */
     public function getData()
     {
         return $this->data;
