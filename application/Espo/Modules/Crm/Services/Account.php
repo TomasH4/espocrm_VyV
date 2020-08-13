@@ -33,18 +33,9 @@ use Espo\ORM\Entity;
 
 class Account extends \Espo\Services\Record
 {
-    protected $linkSelectParams = [
-        'contacts' => [
-            'additionalColumns' => [
-                'role' => 'accountRole',
-                'isInactive' => 'accountIsInactive'
-            ]
-        ],
-        'targetLists' => [
-            'additionalColumns' => [
-                'optedOut' => 'isOptedOut'
-            ]
-        ]
+    protected $linkMandatorySelectAttributeList = [
+        'contacts' => ['accountIsInactive'],
+        'targetLists' => ['isOptedOut'],
     ];
 
     protected function getDuplicateWhereClause(Entity $entity, $data)
