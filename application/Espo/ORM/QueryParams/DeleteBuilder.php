@@ -52,6 +52,21 @@ class DeleteBuilder implements Builder
     }
 
     /**
+     * Set FROM parameter. For what entity type to build a query.
+     */
+    public function from(string $entityType, ?string $alias = null) : self
+    {
+        if (isset($this->params['from'])) {
+            throw new LogicException("Method 'from' can be called only once.");
+        }
+
+        $this->params['from'] = $entityType;
+        $this->params['alias'] = $alias;
+
+        return $this;
+    }
+
+    /**
      * Apply LIMIT.
      */
     public function limit(?int $limit = null) : self
