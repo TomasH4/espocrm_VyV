@@ -31,6 +31,7 @@ namespace Espo\ORM;
 
 use Espo\ORM\{
     QueryParams\Query,
+    QueryComposer\QueryComposer,
 };
 
 use PDOStatement;
@@ -40,11 +41,13 @@ use PDOStatement;
  */
 class QueryExecutor
 {
-    protected $entityManager;
+    protected $sqlExecutor;
+    protected $queryComposer;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(SqlExecutor $sqlExecutor, QueryComposer $queryComposer)
     {
-        $this->entityManager = $entityManager;
+        $this->sqlExecutor = $sqlExecutor;
+        $this->queryComposer = $queryComposer;
     }
 
     /**
@@ -52,8 +55,8 @@ class QueryExecutor
      */
     public function execute(Query $query) : PDOStatement
     {
-        $sql = $this->entityManager->getQueryComposer()->compose($query);
+        $sql = $this->queryComposer->compose($query);
 
-        return $this->entityManager->executeSql($sql, true);
+        return $this->sqlExecutor->execute($sql, true);
     }
 }
