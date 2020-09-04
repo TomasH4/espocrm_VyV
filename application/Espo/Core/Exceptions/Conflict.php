@@ -29,7 +29,11 @@
 
 namespace Espo\Core\Exceptions;
 
-class Conflict extends \Exception
+use Exception;
+
+class Conflict extends Exception
 {
+    use BodyTrait;
+
     protected $code = 409;
 }
