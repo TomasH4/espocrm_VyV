@@ -38,7 +38,7 @@ use Espo\Entities\{
 };
 
 use Espo\Core\{
-    ORM\EntityManager,
+    ORM\EntityManagerProxy,
 };
 
 /**
@@ -47,12 +47,12 @@ use Espo\Core\{
 class ApplicationUser
 {
     protected $container;
-    protected $entityManager;
+    protected $entityManagerProxy;
 
-    public function __construct(Container $container, EntityManager $entityManager)
+    public function __construct(Container $container, EntityManagerProxy $entityManagerProxy)
     {
         $this->container = $container;
-        $this->entityManager = $entityManager;
+        $this->entityManagerProxy = $entityManagerProxy;
     }
 
     /**
@@ -60,7 +60,7 @@ class ApplicationUser
      */
     public function setupSystemUser()
     {
-        $user = $this->entityManager->getEntity('User', 'system');
+        $user = $this->entityManagerProxy->getEntity('User', 'system');
         if (!$user) {
             throw new Error("System user is not found");
         }
