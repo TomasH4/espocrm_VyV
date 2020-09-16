@@ -31,23 +31,15 @@ namespace Espo\Core\Portal\ApplicationRunners;
 
 use Espo\Core\{
     ApplicationRunners\Api as ApiBase,
+    InjectableFactory,
+    ApplicationUser,
+    Portal\Utils\Route,
 };
 
 class Api extends ApiBase
 {
-    protected function getRouteList() : array
+    public function __construct(InjectableFactory $injectableFactory, ApplicationUser $applicationUser, Route $routeUtil)
     {
-        $routeList = parent::getRouteList();
-
-        foreach ($routeList as $i => $route) {
-            if (isset($route['route'])) {
-                if ($route['route'][0] !== '/') {
-                    $route['route'] = '/' . $route['route'];
-                }
-                $route['route'] = '/{portalId}' . $route['route'];
-            }
-            $routeList[$i] = $route;
-        }
-        return $routeList;
+        parent::__construct($injectableFactory, $applicationUser, $routeUtil);
     }
 }
