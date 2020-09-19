@@ -29,17 +29,26 @@
 
 namespace Espo\Core\Utils\Database\Schema\rebuildActions;
 
-class AddSystemUser extends \Espo\Core\Utils\Database\Schema\BaseRebuildActions
+use Espo\Core\Utils\Database\Schema\BaseRebuildActions as Base;
+
+class AddSystemUser extends Base
 {
     public function afterRebuild()
     {
         $userId = $this->getConfig()->get('systemUserAttributes.id');
-        $entity = $this->getEntityManager()->getEntity('User', $userId);
-        if (!$entity) {
-            $systemUserAttributes = $this->getConfig()->get('systemUserAttributes');
-            $entity = $this->getEntityManager()->getEntity('User');
-            $entity->set($systemUserAttributes);
-            return $this->getEntityManager()->saveEntity($entity);
+
+        $user = $this->getEntityManager()->getEntity('User', $userId);
+
+        if ($user) {
+            return;
         }
+
+        $systemUserAttributes = $this->getConfig()->get('systemUserAttributes');
+
+        $user = $this->getEntityManager()->getEntity('User');
+
+        $user->set($systemUserAttributes);
+
+        $this->getEntityManager()->saveEntity($user);
     }
 }
