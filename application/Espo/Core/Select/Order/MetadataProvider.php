@@ -71,15 +71,20 @@ class MetadataProvider
 
     public function hasAttribute(string $entityType, string $attribute) : bool
     {
-        return (bool) $this->entityManager
+        return $this->entityManager
             ->getMetadata()
-            ->get($entityType, ['fields', $attribute]);
+            ->getDefs()
+            ->getEntity($entityType)
+            ->hasAttribute($attribute);
     }
 
     public function isAttributeParamUniqueTrue(string $entityType, string $attribute) : bool
     {
         return (bool) $this->entityManager
             ->getMetadata()
-            ->get($entityType, ['fields', $attribute, 'unique']);
+            ->getDefs()
+            ->getEntity($entityType)
+            ->getAttribute($attribute)
+            ->getParam('unique');
     }
 }
