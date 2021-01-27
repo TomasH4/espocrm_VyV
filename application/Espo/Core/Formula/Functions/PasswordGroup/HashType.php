@@ -32,16 +32,21 @@ namespace Espo\Core\Formula\Functions\PasswordGroup;
 use Espo\Core\Formula\{
     Functions\BaseFunction,
     ArgumentList,
+    Processor,
 };
 
 use Espo\Core\Utils\PasswordHash;
 
-use Espo\Core\Di;
-
-class HashType extends BaseFunction implements
-    Di\ConfigAware
+class HashType extends BaseFunction
 {
-    use Di\ConfigSetter;
+    protected $processor;
+    protected $passwordHash;
+
+    public function __construct(Processor $processor, PasswordHash $passwordHash)
+    {
+        $this->processor = $processor;
+        $this->passwordHash = $passwordHash;
+    }
 
     public function process(ArgumentList $args)
     {
@@ -55,8 +60,7 @@ class HashType extends BaseFunction implements
             $this->throwBadArgumentType(1, 'string');
         }
 
-        $passwordHash = new PasswordHash($this->config);
-        $hash = $passwordHash->hash($password);
+        $hash = $this->passwordHash->hash($password);
 
         return $hash;
     }
