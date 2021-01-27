@@ -34,8 +34,8 @@ use Espo\Core\{
     Api\Request,
     Utils\Config,
     Utils\ApiKey,
+    Authentication\LoginData,
     Authentication\Result,
-    Authentication\AuthToken\AuthToken,
 };
 
 class Hmac implements Login
@@ -49,14 +49,14 @@ class Hmac implements Login
         $this->config = $config;
     }
 
-    public function login(
-        ?string $username, ?string $password, ?AuthToken $authToken = null, ?Request $request = null
-    ) : Result {
+    public function login(LoginData $loginData, Request $request) : Result
+    {
         $authString = base64_decode($request->getHeader('X-Hmac-Authorization'));
 
         list($apiKey, $hash) = explode(':', $authString, 2);
 
-        $user = $this->entityManager->getRepository('User')
+        $user = $this->entityManager
+            ->getRepository('User')
             ->where([
                 'type' => 'api',
                 'apiKey' => $apiKey,
