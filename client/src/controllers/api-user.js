@@ -35,7 +35,8 @@ define('controllers/api-user', 'controllers/record', function (Dep) {
         getCollection: function (callback, context, usePreviouslyFetched) {
             context = context || this;
             Dep.prototype.getCollection.call(this, function (collection) {
-                collection.data.filterList = ['api'];
+                collection.data.userType = 'api';
+
                 callback.call(context, collection);
             }, context, usePreviouslyFetched);
         },
@@ -57,7 +58,7 @@ define('controllers/api-user', 'controllers/record', function (Dep) {
             options.attributes = options.attributes  || {};
             options.attributes.type = 'api';
             Dep.prototype.actionCreate.call(this, options);
-        }
+        },
 
     });
 });
