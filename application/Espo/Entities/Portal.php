@@ -43,12 +43,11 @@ class Portal extends \Espo\Core\ORM\Entity
         'dateFormat',
         'timeFormat',
         'weekStart',
-        'defaultCurrency'
+        'defaultCurrency',
     ];
 
     public function getSettingsAttributeList()
     {
         return $this->settingsAttributeList;
     }
-
 }

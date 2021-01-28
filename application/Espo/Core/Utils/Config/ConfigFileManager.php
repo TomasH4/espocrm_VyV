@@ -34,6 +34,8 @@ use Espo\Core\{
     Utils\Config,
 };
 
+use RuntimeException;
+
 class ConfigFileManager
 {
     protected $fileManager;
@@ -55,9 +57,23 @@ class ConfigFileManager
         return $this->fileManager->isFile($filePath);
     }
 
-    public function putPhpContents(string $path, $data, bool $useRenaming = false)
+    protected function putPhpContentsInternal(string $path, array $data, bool $useRenaming = false)
     {
-        return $this->fileManager->putPhpContents($path, $data, true, $useRenaming);
+        $result = $this->fileManager->putPhpContents($path, $data, true, $useRenaming);
+
+        if ($result === false) {
+            throw new RuntimeException();
+        }
+    }
+
+    public function putPhpContents(string $path, array $data)
+    {
+        $this->putPhpContentsInternal($path, $data, true);
+    }
+
+    public function putPhpContentsNoRenaming(string $path, array $data)
+    {
+        $this->putPhpContentsInternal($path, $data, false);
     }
 
     public function getPhpContents(string $path)
