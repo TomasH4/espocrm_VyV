@@ -46,22 +46,21 @@ define('views/modals/convert-currency', ['views/modals/mass-convert-currency'], 
             var currency = this.model.get('currency');
             var currencyRates = this.model.get('currencyRates');
 
-            var hasWhere = !this.options.ids || this.options.ids.length == 0;
-
             this.ajaxPostRequest(this.options.entityType + '/action/convertCurrency', {
-                field: this.options.field,
-                fieldList: this.options.fieldList,
+                fieldList: this.options.fieldList || null,
                 currency: currency,
                 id: this.options.model.id,
                 targetCurrency: currency,
-                currencyRates: currencyRates,
-                baseCurrency: this.getConfig().get('baseCurrency'),
-            }).then(function (attributes) {
-                this.trigger('after:update', attributes);
-                this.close();
-            }.bind(this)).fail(function () {
-                this.enableButton('convert');
-            }.bind(this));
+                rates: currencyRates,
+            })
+                .then(function (attributes) {
+                    this.trigger('after:update', attributes);
+
+                    this.close();
+                }.bind(this))
+                .fail(function () {
+                    this.enableButton('convert');
+                }.bind(this));
         },
     });
 });
