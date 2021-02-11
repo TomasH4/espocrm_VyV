@@ -51,8 +51,6 @@ use Espo\{
     ORM\Entity,
 };
 
-use StdClass;
-
 class MassConvertCurrency implements MassAction
 {
     protected $queryBuilder;
@@ -102,14 +100,14 @@ class MassConvertCurrency implements MassAction
         $data = $dataWrapped->getRaw();
 
         if (empty($data->targetCurrency)) {
-            throw new BadRequest();
+            throw new BadRequest("No target currency.");
         }
 
         if (isset($data->rates) && !is_object($data->rates)) {
             throw new BadRequest();
         }
 
-        $fieldList = $this->getFieldList($entityType, $data);
+        $fieldList = $this->getFieldList($entityType, $dataWrapped);
 
         if (empty($fieldList)) {
             throw new Forbidden("No fields to convert.");
@@ -119,19 +117,12 @@ class MassConvertCurrency implements MassAction
 
         $targetCurrency = $data->targetCurrency;
 
-        if (isset($data->rates)) {
-            $ratesArray = get_object_vars($data->rates);
-
-            $ratesArray[$baseCurrency] = 1.0;
-
-            $rates = CurrencyRates::fromArray($ratesArray);
-        }
-        else {
-            $rates =  $this->configDataProvider->getCurrencyRates();
-        }
+        $rates =
+            $this->getRatesFromData($dataWrapped) ??
+            $this->configDataProvider->getCurrencyRates();
 
         if ($targetCurrency !== $baseCurrency && !$rates->hasRate($targetCurrency)) {
-            throw new Error("Target currency rate is not specified.");
+            throw new BadRequest("Target currency rate is not specified.");
         }
 
         $query = $this->queryBuilder->build($params);
@@ -166,8 +157,9 @@ class MassConvertCurrency implements MassAction
         return Result::fromArray($result);
     }
 
-    protected function convertEntity(Entity $entity, array $fieldList, string $targetCurrency, CurrencyRates $rates)
-    {
+    protected function convertEntity(
+        Entity $entity, array $fieldList, string $targetCurrency, CurrencyRates $rates
+    ) {
         foreach ($fieldList as $field) {
             $amount = $entity->get($field);
             $code = $entity->get($field . 'Currency');
@@ -191,13 +183,28 @@ class MassConvertCurrency implements MassAction
         $this->entityManager->saveEntity($entity);
     }
 
-    protected function getFieldList(string $entityType, StdClass $data) : array
+    protected function getRatesFromData(Data $data) : ?CurrencyRates
+    {
+        if ($data->get('rates') === null) {
+            return null;
+        }
+
+        $baseCurrency = $this->configDataProvider->getBaseCurrency();
+
+        $ratesArray = get_object_vars($data->get('rates'));
+
+        $ratesArray[$baseCurrency] = 1.0;
+
+        return CurrencyRates::fromArray($ratesArray);
+    }
+
+    protected function getFieldList(string $entityType, Data $data) : array
     {
         $forbiddenFieldList = $this->acl->getScopeForbiddenFieldList($entityType, 'edit');
 
         $resultList = [];
 
-        $fieldList = $data->fieldList ?? $this->fieldUtil->getEntityTypeFieldList($entityType);
+        $fieldList = $data->get('fieldList') ?? $this->fieldUtil->getEntityTypeFieldList($entityType);
 
         foreach ($fieldList as $field) {
             $type = $this->metadata->get(['entityDefs', $entityType, 'fields', $field, 'type']);
