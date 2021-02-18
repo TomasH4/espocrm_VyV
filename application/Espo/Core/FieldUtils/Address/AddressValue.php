@@ -29,10 +29,6 @@
 
 namespace Espo\Core\FieldUtils\Address;
 
-use Espo\{
-    ORM\Entity,
-};
-
 /**
  * An address value.
  */
@@ -148,24 +144,6 @@ class AddressValue
         return $newAddress;
     }
 
-    public static function isSetInEntity(Entity $entity, string $field) : bool
-    {
-        return true;
-    }
-
-    public static function fromEntity(Entity $entity, string $field) : self
-    {
-        $obj = new self();
-
-        $obj->street = $entity->get($field . 'Street');
-        $obj->city = $entity->get($field . 'City');
-        $obj->country = $entity->get($field . 'Country');
-        $obj->state = $entity->get($field . 'State');
-        $obj->postalCode = $entity->get($field . 'PostalCode');
-
-        return $obj;
-    }
-
     public static function fromRaw(array $raw) : self
     {
         $obj = new self();
@@ -179,8 +157,8 @@ class AddressValue
         return $obj;
     }
 
-    public static function createBuilder() : AddressBuilder
+    public static function createBuilder() : AddressValueBuilder
     {
-        return new AddressBuilder();
+        return new AddressValueBuilder();
     }
 }
