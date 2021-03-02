@@ -64,12 +64,23 @@ class EspoUploadDir implements Storage, Local
         return $this->fileManager->isFile($filePath);
     }
 
+    public function getSize(Attachment $attachment) : int
+    {
+        $filePath = $this->getFilePath($attachment);
+
+        if (!$this->exists($attachment)) {
+            throw new Error("Could not get size for non-existing file '{$filePath}'.");
+        }
+
+        return filesize($filePath);
+    }
+
     public function getStream(Attachment $attachment) : StreamInterface
     {
         $filePath = $this->getFilePath($attachment);
 
         if (!$this->exists($attachment)) {
-            throw new Error("Could not get stream for the file '{$filePath}'.");
+            throw new Error("Could not get stream for non-existing '{$filePath}'.");
         }
 
         $resouce = fopen($filePath, 'r');
