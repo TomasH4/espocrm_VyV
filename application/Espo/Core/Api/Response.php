@@ -42,12 +42,12 @@ interface Response
     /**
      * Set a status code.
      */
-    public function setStatus(int $code, ?string $reason = null);
+    public function setStatus(int $code, ?string $reason = null) : self;
 
     /**
      * Set a specific header.
      */
-    public function setHeader(string $name, string $value);
+    public function setHeader(string $name, string $value) : self;
 
     /**
      * Get a header value.
@@ -62,12 +62,12 @@ interface Response
     /**
      * Write a body.
      */
-    public function writeBody(string $string);
+    public function writeBody(string $string) : self;
 
     /**
      * Set a body.
      */
-    public function setBody(StreamInterface $body);
+    public function setBody(StreamInterface $body) : self;
 
     /**
      * Get a result PSR-7 response.
