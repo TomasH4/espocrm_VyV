@@ -33,6 +33,8 @@ use Espo\Core\{
     InjectableFactory,
     Utils\Metadata,
     Utils\Util,
+    Console\Exceptions\CommandNotSpecified,
+    Console\Exceptions\CommandNotFound,
 };
 
 /**
@@ -40,9 +42,9 @@ use Espo\Core\{
  */
 class CommandManager
 {
-    protected $injectableFactory;
+    private $injectableFactory;
 
-    protected $metadata;
+    private $metadata;
 
     public function __construct(InjectableFactory $injectableFactory, Metadata $metadata)
     {
@@ -50,67 +52,62 @@ class CommandManager
         $this->metadata = $metadata;
     }
 
-    public function run(array $argv)
+    public function run(array $argv) : void
+    {
+        $command = $this->getCommandNameFromArgv($argv);
+
+        $params = $this->createParams($argv);
+
+        $io = new IO();
+
+        $this->createCommand($command)->run($params, $io);
+    }
+
+    private function getCommandNameFromArgv(array $argv) : string
     {
         $command = isset($argv[1]) ? trim($argv[1]) : null;
 
         if (!$command) {
-            $msg = "Command name is not specifed.";
-
-            echo $msg . "\n";
-
-            exit;
+            throw new CommandNotSpecified("Command name is not specifed.");
         }
 
-        $command = ucfirst(Util::hyphenToCamelCase($command));
-
-        $params = $this->getParams($argv);
-
-        $options = $params['options'];
-        $flagList = $params['flagList'];
-        $argumentList = $params['argumentList'];
-
-        $className = $this->getClassName($command);
-
-        $obj = $this->injectableFactory->create($className);
-
-        return $obj->run($options, $flagList, $argumentList);
+        return ucfirst(Util::hyphenToCamelCase($command));
     }
 
-    protected function getClassName(string $command) : string
+    private function createCommand(string $command) : Command
+    {
+        $className = $this->getClassName($command);
+
+        return $this->injectableFactory->create($className);
+    }
+
+    private function getClassName(string $command) : string
     {
         $className =
-            $this->metadata->get(['app', 'consoleCommands', lcfirst($command), 'className']) ??
-            'Espo\\Core\\Console\\Commands\\' . $command;
+            $this->metadata->get(['app', 'consoleCommands', lcfirst($command), 'className']);
+
+        if ($className) {
+            return $className;
+        }
+
+        $className = 'Espo\\Core\\Console\\Commands\\' . $command;
 
         if (!class_exists($className)) {
-            $msg = "Command '{$command}' does not exist.";
-
-            echo $msg . "\n";
-
-            exit;
+            throw new CommandNotFound("Command '{$command}' does not exist.");
         }
 
         return $className;
     }
 
-    protected function getParams(array $argv) : array
+    private function createParams(array $argv) : Params
     {
         $argumentList = [];
         $options = [];
         $flagList = [];
 
-        $skipIndex = 1;
+        $itemList = array_slice($argv, 2);
 
-        if (isset($argv[0]) && preg_match('/command\.php$/', $argv[0])) {
-            $skipIndex = 2;
-        }
-
-        foreach ($argv as $i => $item) {
-            if ($i < $skipIndex) {
-                continue;
-            }
-
+        foreach ($itemList as $item) {
             if (strpos($item, '--') === 0 && strpos($item, '=') > 2) {
                 list($name, $value) = explode('=', substr($item, 2));
 
@@ -129,10 +126,10 @@ class CommandManager
             }
         }
 
-        return [
+        return new Params([
             'argumentList' => $argumentList,
             'options' => $options,
             'flagList' => $flagList,
-        ];
+        ]);
     }
 }
