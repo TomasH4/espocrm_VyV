@@ -30,13 +30,14 @@
 namespace Espo\Core\ApplicationRunners;
 
 use Espo\Core\{
+    Application\Runner,
     DataManager,
 };
 
 /**
  * Clears an application cache.
  */
-class ClearCache implements ApplicationRunner
+class ClearCache implements Runner
 {
     use Cli;
 
