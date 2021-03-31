@@ -35,17 +35,28 @@ class AfterUpgrade
     {
         $this->container = $container;
 
-        $config = $container->get('config');
-
-        $config->set('pdfEngine', 'Tcpdf');
-
-        $config->save();
+        $this->updateConfig();
 
         $this->removeUnnecessaryFiles();
         $this->removeUnnecessaryDirectories();
     }
 
-    public function removeUnnecessaryFiles()
+    protected function updateConfig()
+    {
+        $config = $this->container->get('config');
+
+        $actualTimeFormat = $config->get('timeFormat');
+
+        if ($actualTimeFormat === 'hh:mm') {
+            $config->set('timeFormat', 'HH:mm');
+        }
+
+        $config->set('pdfEngine', 'Tcpdf');
+
+        $config->save();
+    }
+
+    protected function removeUnnecessaryFiles()
     {
         $fileList = [
             'vendor/spatie/async/.git/objects/pack/pack-14ab89d3ff365322e20cfd44252880928aaa4ed6.idx',
@@ -72,7 +83,7 @@ class AfterUpgrade
         }
     }
 
-    public function removeUnnecessaryDirectories()
+    protected function removeUnnecessaryDirectories()
     {
         $directoryList = [
             'vendor/spatie/async/.git',
