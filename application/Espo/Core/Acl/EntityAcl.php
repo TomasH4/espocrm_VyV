@@ -33,15 +33,10 @@ use Espo\ORM\Entity;
 
 use Espo\Entities\User;
 
-interface EntityAcl extends ScopeAcl
+interface EntityAcl
 {
     /**
      * Check access to an entity.
      */
     public function checkEntity(User $user, Entity $entity, ScopeData $data, string $action): bool;
-
-    /**
-     * Get an access level for a specific action.
-     */
-    public function getLevel(User $user, ScopeData $data, string $action) : string;
 }
