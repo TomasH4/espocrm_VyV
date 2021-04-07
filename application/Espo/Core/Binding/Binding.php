@@ -51,7 +51,7 @@ class Binding
         $this->value = $value;
     }
 
-    public function getType() : int
+    public function getType(): int
     {
         return $this->type;
     }
@@ -61,7 +61,7 @@ class Binding
         return $this->value;
     }
 
-    public static function createFromImplementationClassName(string $implementationClassName) : self
+    public static function createFromImplementationClassName(string $implementationClassName): self
     {
         if (!$implementationClassName) {
             throw new LogicException("Bad binding.");
@@ -70,7 +70,7 @@ class Binding
         return new self(self::IMPLEMENTATION_CLASS_NAME, $implementationClassName);
     }
 
-    public static function createFromServiceName(string $serviceName) : self
+    public static function createFromServiceName(string $serviceName): self
     {
         if (!$serviceName) {
             throw new LogicException("Bad binding.");
@@ -79,12 +79,12 @@ class Binding
         return new self(self::CONTAINER_SERVICE, $serviceName);
     }
 
-    public static function createFromValue($value) : self
+    public static function createFromValue($value): self
     {
         return new self(self::VALUE, $value);
     }
 
-    public static function createFromCallback(callable $callback) : self
+    public static function createFromCallback(callable $callback): self
     {
         return new self(self::CALLBACK, $callback);
     }
