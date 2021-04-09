@@ -31,7 +31,6 @@ namespace Espo\Core\Select\AccessControl;
 
 use Espo\Core\{
     Exceptions\Error,
-    Select\Filters\AccessControlFilter,
     Select\Helpers\FieldHelper,
     InjectableFactory,
     Utils\Metadata,
@@ -53,7 +52,7 @@ class FilterFactory
         $this->metadata = $metadata;
     }
 
-    public function create(string $entityType, User $user, string $name) : AccessControlFilter
+    public function create(string $entityType, User $user, string $name): Filter
     {
         $className = $this->getClassName($entityType, $name);
 
@@ -72,12 +71,12 @@ class FilterFactory
         ]);
     }
 
-    public function has(string $entityType, string $name) : bool
+    public function has(string $entityType, string $name): bool
     {
         return (bool) $this->getClassName($entityType, $name);
     }
 
-    private function getClassName(string $entityType, string $name) : ?string
+    private function getClassName(string $entityType, string $name): ?string
     {
         if (!$name) {
             throw new Error("Empty access control filter name.");
@@ -96,18 +95,16 @@ class FilterFactory
             return $className;
         }
 
-        $className = $this->getDefaultClassName($name);
+        return $this->getDefaultClassName($name);
+    }
+
+    private function getDefaultClassName(string $name): ?string
+    {
+        $className = 'Espo\\Core\\Select\\AccessControl\\Filters\\' . ucfirst($name);
 
         if (!class_exists($className)) {
             return null;
         }
-
-        return $className;
-    }
-
-    private function getDefaultClassName(string $name) : string
-    {
-        $className = 'Espo\\Core\\Select\\AccessControlFilters\\' . ucfirst($name);
 
         return $className;
     }

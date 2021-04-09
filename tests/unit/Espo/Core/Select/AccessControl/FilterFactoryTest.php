@@ -31,7 +31,7 @@ namespace tests\unit\Espo\Core\Select\AccessControl;
 
 use Espo\Core\{
     Select\AccessControl\FilterFactory,
-    Select\AccessControlFilters\OnlyOwn,
+    Select\AccessControl\Filters\OnlyOwn,
     Select\Helpers\FieldHelper,
     Utils\Metadata,
     InjectableFactory,

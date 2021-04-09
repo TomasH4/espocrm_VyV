@@ -30,7 +30,7 @@
 namespace Espo\Classes\Select\Email\AccessControlFilters;
 
 use Espo\Core\{
-    Select\Filters\AccessControlFilter,
+    Select\Filters\AccessControl\Filter,
 };
 
 use Espo\{
@@ -39,11 +39,11 @@ use Espo\{
     Entities\User,
 };
 
-class OnlyOwn implements AccessControlFilter
+class OnlyOwn implements Filter
 {
-    protected $user;
+    private $user;
 
-    protected $joinHelper;
+    private $joinHelper;
 
     public function __construct(User $user, JoinHelper $joinHelper)
     {
@@ -51,7 +51,7 @@ class OnlyOwn implements AccessControlFilter
         $this->joinHelper = $joinHelper;
     }
 
-    public function apply(QueryBuilder $queryBuilder) : void
+    public function apply(QueryBuilder $queryBuilder): void
     {
         $this->joinHelper->joinEmailUser($queryBuilder, $this->user->id);
 
