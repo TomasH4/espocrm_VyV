@@ -58,6 +58,8 @@ class Role extends Record implements
     protected function clearRolesCache()
     {
         $this->fileManager->removeInDir('data/cache/application/acl');
+        $this->fileManager->removeInDir('data/cache/application/aclMap');
+
         $this->dataManager->updateCacheTimestamp();
     }
 }

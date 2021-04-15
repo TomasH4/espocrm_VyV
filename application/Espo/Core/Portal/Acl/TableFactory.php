@@ -36,6 +36,13 @@ use Espo\Entities\{
 
 use Espo\Core\{
     InjectableFactory,
+    Acl\Table\CacheKeyProvider,
+    Portal\Acl\Table\CacheKeyProvider as PortalCacheKeyProvider,
+    Acl\Table\RoleListProvider,
+    Portal\Acl\Table\RoleListProvider as PortalRoleListProvider,
+    Binding\BindingContainer,
+    Binding\Binder,
+    Binding\BindingData,
 };
 
 class TableFactory
@@ -52,9 +59,33 @@ class TableFactory
      */
     public function create(User $user, Portal $portal): Table
     {
-        return $this->injectableFactory->createWith(Table::class, [
-            'user' => $user,
-            'portal' => $portal,
-        ]);
+        $bindingContainer = $this->createBindingContainer($user, $portal);
+
+        return $this->injectableFactory->createWithBinding(Table::class, $bindingContainer);
+    }
+
+    private function createBindingContainer(User $user, Portal $portal): BindingContainer
+    {
+        $bindingData = new BindingData();
+
+        $binder = new Binder($bindingData);
+
+        $binder
+            ->bindCallback(
+                User::class,
+                function () use ($user): User {
+                    return $user;
+                }
+            )
+            ->bindCallback(
+                Portal::class,
+                function () use ($portal): Portal {
+                    return $portal;
+                }
+            )
+            ->bindImplementation(RoleListProvider::class, PortalRoleListProvider::class)
+            ->bindImplementation(CacheKeyProvider::class, PortalCacheKeyProvider::class);
+
+        return new BindingContainer($bindingData);
     }
 }
