@@ -30,9 +30,9 @@
 namespace Espo\Core\Select\AccessControl;
 
 /**
- * Resolves an access filter. An entity type and user to be passed to the constructor.
+ * Resolves an access filter. An entity type, acl and user to be passed to the constructor.
  */
 interface FilterResolver
 {
-    public function resolve() : ?string;
+    public function resolve(): ?string;
 }
