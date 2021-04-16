@@ -38,7 +38,7 @@ class SomeClass
         $this->someImplementation = $someImplementation;
     }
 
-    public function get() : SomeInterface
+    public function get(): SomeInterface
     {
         return $this->someImplementation;
     }
