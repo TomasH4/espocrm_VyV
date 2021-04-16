@@ -51,6 +51,10 @@ class DefaultPortalFilterResolver implements FilterResolver
 
     public function resolve(): ?string
     {
+        if ($this->acl->checkReadNo($this->entityType)) {
+            return 'no';
+        }
+
         if ($this->acl->checkReadOnlyOwn($this->entityType)) {
             return 'portalOnlyOwn';
         }
@@ -63,12 +67,8 @@ class DefaultPortalFilterResolver implements FilterResolver
             return 'portalOnlyContact';
         }
 
-        if ($this->acl->checkReadNo($this->entityType)) {
-            return 'no';
-        }
-
         if ($this->acl->checkReadAll($this->entityType)) {
-            return null;
+            return 'portalAll';
         }
 
         return 'no';
