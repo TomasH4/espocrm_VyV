@@ -41,6 +41,7 @@ class OwnershipChecker implements OwnershipOwnChecker
 {
     public function checkOwn(User $user, Entity $entity): bool
     {
+
         if ($entity->get('type') === 'Post' && $user->getId() === $entity->get('createdById')) {
             return true;
         }
