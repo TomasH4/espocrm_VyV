@@ -32,33 +32,23 @@ namespace Espo\Core\FieldProcessing\File;
 use Espo\Core\{
     ORM\Entity,
     ORM\EntityManager,
-    Utils\Metadata,
 };
 
 class SaveProcessor
 {
     private $entityManager;
 
-    private $metadata;
-
     private $fieldListMapCache = [];
 
-    public function __construct(
-        EntityManager $entityManager,
-        Metadata $metadata
-    ) {
+    public function __construct(EntityManager $entityManager)
+    {
         $this->entityManager = $entityManager;
-        $this->metadata = $metadata;
     }
 
     public function process(Entity $entity, array $options): void
     {
         foreach ($this->getFieldList($entity->getEntityType()) as $name) {
             $this->processItem($entity, $name);
-        }
-
-        if ($entity->isNew()) {
-            return;
         }
     }
 
