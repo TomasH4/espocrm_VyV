@@ -40,62 +40,12 @@ class AuthToken extends \Espo\Core\Controllers\Record
         }
     }
 
-    public function actionUpdate($params, $data, $request)
-    {
-        $dataAr = get_object_vars($data);
-
-        if (
-            is_object($data)
-            &&
-            isset($data->isActive)
-            &&
-            $data->isActive === false
-            &&
-            count(array_keys($dataAr)) === 1
-        ) {
-            return parent::actionUpdate($params, $data, $request);
-        }
-        throw new Forbidden();
-    }
-
-    public function actionMassUpdate($params, $data, $request)
-    {
-        if (empty($data->attributes)) {
-            throw new BadRequest();
-        }
-
-        $attributes = $data->attributes;
-
-        if (
-            is_object($attributes)
-            &&
-            isset($attributes->isActive)
-            &&
-            $attributes->isActive === false
-            &&
-            count(array_keys(get_object_vars($attributes))) === 1
-        ) {
-            return parent::actionMassUpdate($params, $data, $request);
-        }
-        throw new Forbidden();
-    }
-
-    public function beforeCreate()
-    {
-        throw new Forbidden();
-    }
-
     public function beforeCreateLink()
     {
         throw new Forbidden();
     }
 
     public function beforeRemoveLink()
-    {
-        throw new Forbidden();
-    }
-
-    public function beforeMassConvertCurrency()
     {
         throw new Forbidden();
     }
