@@ -1,10 +1,7 @@
 {
     "massActions": {
-        "update": {
-            "disabled": true
-        },
-        "recalculateFormula": {
-            "disabled": true
+        "delete": {
+            "allowed": true
         }
     }
 }
