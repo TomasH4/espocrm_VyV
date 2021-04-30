@@ -37,6 +37,9 @@ class Params
 
     private $id;
 
+    /**
+     * @throws RuntimeException
+     */
     public function __construct(string $entityType, string $id)
     {
         $this->entityType = $entityType;
