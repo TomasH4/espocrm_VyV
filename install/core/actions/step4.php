@@ -28,33 +28,38 @@
  ************************************************************************/
 
 $config = $installer->getConfig();
+$metadata = $installer->getMetadata();
 
-$fields = array(
-    'dateFormat' =>array (
+$fields = [
+    'dateFormat' => [
         'default' => $config->get('dateFormat', ''),
-    ),
-    'timeFormat' => array(
+        'options' => $metadata->get(['app', 'dateTime', 'dateFormatList']) ?? [],
+    ],
+    'timeFormat' => [
         'default'=> $config->get('timeFormat', ''),
-    ),
-    'timeZone' => array(
+        'options' => $metadata->get(['app', 'dateTime', 'timeFormatList']) ?? [],
+    ],
+    'timeZone' => [
         'default'=> $config->get('timeZone', 'UTC'),
-    ),
-    'weekStart' => array(
+    ],
+    'weekStart' => [
         'default'=> $config->get('weekStart', 0),
-    ),
-    'defaultCurrency' => array(
+    ],
+    'defaultCurrency' => [
         'default' => $config->get('defaultCurrency', 'USD'),
-    ),
-    'thousandSeparator' => array(
+    ],
+    'thousandSeparator' => [
         'default' => $config->get('thousandSeparator', ','),
-    ),
-    'decimalMark' =>array(
+    ],
+    'decimalMark' => [
         'default' => $config->get('decimalMark', '.'),
-    ),
-    'language' => array(
-        'default'=> (!empty($_SESSION['install']['user-lang'])) ? $_SESSION['install']['user-lang'] : $config->get('language', 'en_US'),
-    ),
-);
+    ],
+    'language' => [
+        'default' => (!empty($_SESSION['install']['user-lang'])) ?
+            $_SESSION['install']['user-lang'] :
+            $config->get('language', 'en_US'),
+    ],
+];
 
 foreach ($fields as $fieldName => $field) {
     if (isset($_SESSION['install'][$fieldName])) {

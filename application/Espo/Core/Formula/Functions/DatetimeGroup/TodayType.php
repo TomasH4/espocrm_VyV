@@ -29,19 +29,17 @@
 
 namespace Espo\Core\Formula\Functions\DatetimeGroup;
 
-use Espo\Core\Di;
+use Espo\Core\Utils\DateTime;
 
 use Espo\Core\Formula\{
     Functions\BaseFunction,
     ArgumentList,
 };
 
-class TodayType extends BaseFunction implements Di\DateTimeAware
+class TodayType extends BaseFunction
 {
-    use Di\DateTimeSetter;
-
     public function process(ArgumentList $args)
     {
-        return $this->dateTime->getInternalTodayString();
+        return DateTime::getSystemTodayString();
     }
 }
