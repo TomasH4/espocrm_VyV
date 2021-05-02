@@ -31,7 +31,9 @@ namespace Espo\Entities;
 
 use Espo\Core\Exceptions\Error;
 
-class EmailAddress extends \Espo\Core\ORM\Entity
+use Espo\Core\ORM\Entity;
+
+class EmailAddress extends Entity
 {
     protected function _setName($value)
     {
@@ -42,5 +44,20 @@ class EmailAddress extends \Espo\Core\ORM\Entity
         $this->setInContainer('name', $value);
 
         $this->set('lower', strtolower($value));
+    }
+
+    public function getAddress(): string
+    {
+        return $this->get('name');
+    }
+
+    public function isOptedOut(): bool
+    {
+        return $this->get('optOut');
+    }
+
+    public function isInvalid(): bool
+    {
+        return $this->get('invalid');
     }
 }
