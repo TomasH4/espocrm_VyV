@@ -85,9 +85,4 @@ class Notification extends RecordBase
 
         return true;
     }
-
-    public function beforeExport(): void
-    {
-        throw new Error();
-    }
 }
