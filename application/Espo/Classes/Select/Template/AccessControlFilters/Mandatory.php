@@ -31,7 +31,7 @@ namespace Espo\Classes\Select\Template\AccessControlFilters;
 
 use Espo\ORM\{
     QueryParams\SelectBuilder,
-    Defs\Defs,
+    Defs,
 };
 
 use Espo\Core\{
