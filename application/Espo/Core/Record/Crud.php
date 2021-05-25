@@ -38,7 +38,7 @@ interface Crud
     /**
      * Create a record.
      */
-    public function create(StdClass $data): Entity;
+    public function create(StdClass $data, CreateParams $params): Entity;
 
     /**
      * Read a record.
@@ -48,7 +48,7 @@ interface Crud
     /**
      * Update a record.
      */
-    public function update(string $id, StdClass $data): Entity;
+    public function update(string $id, StdClass $data, UpdateParams $params): Entity;
 
     /**
      * Delete a record.
