@@ -48,7 +48,14 @@ class UpdateParamsFetcher
             $data->forceDuplicate ?? // legacy
             false;
 
+        $versionNumber = $request->getHeader('X-Version-Number');
+
+        if ($versionNumber !== null) {
+            $versionNumber = intval($versionNumber);
+        }
+
         return UpdateParams::create()
-            ->withSkipDuplicateCheck($skipDuplicateCheck);
+            ->withSkipDuplicateCheck($skipDuplicateCheck)
+            ->withVersionNumber($versionNumber);
     }
 }
