@@ -31,27 +31,27 @@ namespace Espo\Core\Record;
 
 use Espo\ORM\Entity;
 
-use StdClass;
+use stdClass;
 
 interface Crud
 {
     /**
      * Create a record.
      */
-    public function create(StdClass $data, CreateParams $params): Entity;
+    public function create(stdClass $data, CreateParams $params): Entity;
 
     /**
      * Read a record.
      */
-    public function read(string $id): Entity;
+    public function read(string $id, ReadParams $params): Entity;
 
     /**
      * Update a record.
      */
-    public function update(string $id, StdClass $data, UpdateParams $params): Entity;
+    public function update(string $id, stdClass $data, UpdateParams $params): Entity;
 
     /**
      * Delete a record.
      */
-    public function delete(string $id): void;
+    public function delete(string $id, DeleteParams $params): void;
 }
