@@ -27,7 +27,7 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace tests\unit\Espo\Core\Console;
+namespace tests\unit\Espo\Core\Job;
 
 use Espo\Core\{
     Job\QueueProcessorParams,
