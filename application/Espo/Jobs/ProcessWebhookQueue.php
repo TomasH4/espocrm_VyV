@@ -30,11 +30,11 @@
 namespace Espo\Jobs;
 
 use Espo\Core\{
-    Job\Job,
+    Job\JobDataLess,
     Webhook\Queue,
 };
 
-class ProcessWebhookQueue implements Job
+class ProcessWebhookQueue implements JobDataLess
 {
     private $queue;
 
