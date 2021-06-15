@@ -60,11 +60,14 @@ class QueueProcessorParamsTest extends \PHPUnit\Framework\TestCase
             ->withLimit(10)
             ->withUseProcessPool(true)
             ->withNoLock(true)
+            ->withGroup('group-0')
             ->withQueue('q0');
 
         $this->assertTrue($params->useProcessPool());
         $this->assertTrue($params->noLock());
 
         $this->assertEquals('q0', $params->getQueue());
+
+        $this->assertEquals('group-0', $params->getGroup());
     }
 }

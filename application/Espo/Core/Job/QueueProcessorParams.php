@@ -37,6 +37,8 @@ class QueueProcessorParams
 
     private $queue = null;
 
+    private $group = null;
+
     private $limit = 0;
 
     public function withUseProcessPool(bool $useProcessPool): self
@@ -66,6 +68,15 @@ class QueueProcessorParams
         return $obj;
     }
 
+    public function withGroup(?string $group): self
+    {
+        $obj = clone $this;
+
+        $obj->group = $group;
+
+        return $obj;
+    }
+
     public function withLimit(int $limit): self
     {
         $obj = clone $this;
@@ -88,6 +99,11 @@ class QueueProcessorParams
     public function getQueue(): ?string
     {
         return $this->queue;
+    }
+
+    public function getGroup(): ?string
+    {
+        return $this->group;
     }
 
     public function getLimit(): int
