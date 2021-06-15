@@ -30,28 +30,11 @@
 namespace Espo\Jobs;
 
 use Espo\Core\{
-    Job\JobManager,
-    Utils\Config,
-    Job\JobDataLess,
     Job\QueueName,
+    Job\AbstractQueueJob,
 };
 
-class ProcessJobQueueQ1 implements JobDataLess
+class ProcessJobQueueQ1 extends AbstractQueueJob
 {
-    private $jobManager;
-
-    private $config;
-
-    public function __construct(JobManager $jobManager, Config $config)
-    {
-        $this->jobManager = $jobManager;
-        $this->config = $config;
-    }
-
-    public function run(): void
-    {
-        $limit = $this->config->get('jobQ1MaxPortion', 500);
-
-        $this->jobManager->processQueue(QueueName::Q1, $limit);
-    }
+    protected $queue = QueueName::Q1;
 }
