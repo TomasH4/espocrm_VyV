@@ -30,19 +30,15 @@
 namespace Espo\Core\Portal\Utils;
 
 use Espo\Core\{
-    Utils\Util,
-    Utils\Json,
     Utils\Layout as LayoutBase,
     Exceptions\Error,
+    Utils\Resource\FileReaderParams,
 };
 
 class Layout extends LayoutBase
 {
     public function get(string $scope, string $name): ?string
     {
-        $originalScope = $scope;
-        $originalName = $name;
-
         if (
             $this->sanitizeInput($scope) !== $scope ||
             $this->sanitizeInput($name) !== $name
@@ -50,20 +46,15 @@ class Layout extends LayoutBase
             throw new Error("Bad parameters.");
         }
 
-        if (isset($this->changedData[$scope][$name])) {
-            return Json::encode($this->changedData[$scope][$name]);
+        $path = 'layouts/' . $scope . '/portal/' . $name . '.json';
+
+        $params = FileReaderParams::create()
+            ->withScope($scope);
+
+        if ($this->fileReader->exists($path, $params)) {
+            return $this->fileReader->read($path, $params);
         }
 
-        $filePath = Util::concatPath($this->getDirPath($scope, true), 'portal/' . $name . '.json');
-
-        if (!file_exists($filePath)) {
-            $filePath = Util::concatPath($this->getDirPath($scope), 'portal/' . $name . '.json');
-        }
-
-        if (file_exists($filePath)) {
-            return $this->fileManager->getContents($filePath);
-        }
-
-        return parent::get($originalScope, $originalName);
+        return parent::get($scope, $name);
     }
 }
