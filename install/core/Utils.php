@@ -31,7 +31,7 @@ class Utils
 {
     static public $actionPath = 'install/core/actions';
 
-    static public function checkActionExists($actionName)
+    static public function checkActionExists(string $actionName): bool
     {
         return in_array($actionName, [
             'saveSettings',
@@ -49,9 +49,7 @@ class Utils
             'step2',
             'step3',
             'step4',
-            'step5'
+            'step5',
         ]);
-
-        return false;
     }
 }
