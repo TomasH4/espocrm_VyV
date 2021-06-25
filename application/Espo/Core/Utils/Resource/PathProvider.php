@@ -29,32 +29,29 @@
 
 namespace Espo\Core\Utils\Resource;
 
+use Espo\Core\Utils\Module\PathProvider as ModulePathProvider;
+
 class PathProvider
 {
-    private $core = 'application/Espo/Resources/';
+    private $provider;
 
-    private $module = 'application/Espo/Modules/{*}/Resources/';
-
-    private $custom = 'custom/Espo/Custom/Resources/';
-
-    public function __construct() {}
+    public function __construct(ModulePathProvider $provider)
+    {
+        $this->provider = $provider;
+    }
 
     public function getCore(): string
     {
-        return $this->core;
+        return $this->provider->getCore() . 'Resources/';
     }
 
     public function getCustom(): string
     {
-        return $this->custom;
+        return $this->provider->getCustom() . 'Resources/';
     }
 
     public function getModule(?string $moduleName): string
     {
-        if ($moduleName === null) {
-            return $this->module;
-        }
-
-        return str_replace('{*}', $moduleName, $this->module);
+        return $this->provider->getModule($moduleName) . 'Resources/';
     }
 }
