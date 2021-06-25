@@ -35,16 +35,10 @@ use Espo\Core\Utils\File\UnifierObj;
 use stdClass;
 
 /**
- * Reads resource data.
+ * Reads resource data. Reading is expensive. Read data is supposed to be cached after.
  */
 class Reader
 {
-    private $paths = [
-        'corePath' => 'application/Espo/Resources/',
-        'modulePath' => 'application/Espo/Modules/{*}/Resources/',
-        'customPath' => 'custom/Espo/Custom/Resources/',
-    ];
-
     private $unifier;
 
     private $unifierObj;
@@ -62,27 +56,10 @@ class Reader
      */
     public function read(string $path, ReaderParams $params)
     {
-        $paths = $this->buildPaths($path, $params);
-
         if ($params->asArray()) {
-            return $this->unifier->unify($paths);
+            return $this->unifier->unify($path, $params->noCustom());
         }
 
-        return $this->unifierObj->unify($paths);
-    }
-
-    private function buildPaths(string $path, ReaderParams $params): array
-    {
-        $paths = [];
-
-        foreach ($this->paths as $key => $dir) {
-            $paths[$key] = $dir . $path;
-        }
-
-        if ($params->noCustom()) {
-            unset($paths['customPath']);
-        }
-
-        return $paths;
+        return $this->unifierObj->unify($path, $params->noCustom());
     }
 }
