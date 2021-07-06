@@ -27,20 +27,58 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-include "bootstrap.php";
+$path = getcwd();
 
-use Espo\Core\{
-    Application,
-    ApplicationRunners\Client,
-    ApplicationRunners\EntryPoint,
-};
+echo <<<EOL
+<h2>For apache webserver</h2>
 
-$app = new Application();
+<h4>Non-production environment</h4>
 
-if (filter_has_var(INPUT_GET, 'entryPoint')) {
-    $app->run(EntryPoint::class);
+<p>
+You need to enable `.htaccess` usage in the apache configuration. Add the code:
+</p>
 
-    exit;
-}
+<pre>
+<code>
+&ltDirectory $path>
+  AllowOverride All
+&lt/Directory>
+</code>
+</pre>
 
-$app->run(Client::class);
+<h4>Poduction environment</h4>
+
+<p>
+It's recommended to configure the document root to look at the `public`
+directory and create an alias for the `client` directory. The code to add to the apache configuration:
+</p>
+
+<pre>
+<code>
+DocumentRoot $path/public/
+Alias /client/ $path/client/
+</code>
+</pre>
+
+<p>
+And allow override for the `public` directory:
+</p>
+
+<pre>
+<code>
+&ltDirectory $path/public/>
+  AllowOverride All
+&lt/Directory>
+</code>
+</pre>
+
+<p>
+More detals in the <a href="https://docs.espocrm.com/administration/apache-server-configuration/">documentation</a>.
+</p>
+
+<h2>For nginx webserver</h2>
+
+<p>
+You need to configure the document root to look at the `public` directory and create an alias for the `client` directory. More detals in the <a href="https://docs.espocrm.com/administration/nginx-server-configuration/">documentation</a>.
+</p>
+EOL;
