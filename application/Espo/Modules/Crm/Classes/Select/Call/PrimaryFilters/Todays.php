@@ -30,12 +30,15 @@
 namespace Espo\Modules\Crm\Classes\Select\Call\PrimaryFilters;
 
 use Espo\Entities\User;
+
 use Espo\Core\Select\Primary\Filter;
-use Espo\ORM\Query\SelectBuilder;
 use Espo\Core\Select\Helpers\UserTimeZoneProvider;
-use Espo\Core\Select\Where\DateTimeItemTransformer;
-use Espo\Core\Select\Where\ItemGeneralConverterFactory;
+use Espo\Core\Select\Where\ConverterFactory;
 use Espo\Core\Select\Where\Item;
+
+use Espo\ORM\Query\SelectBuilder;
+
+use Espo\Modules\Crm\Entities\Call;
 
 class Todays implements Filter
 {
@@ -43,35 +46,29 @@ class Todays implements Filter
 
     private $userTimeZoneProvider;
 
-    private $transformer;
-
-    private $itemGeneralConverterFactory;
+    private $converterFactory;
 
     public function __construct(
         User $user,
         UserTimeZoneProvider $userTimeZoneProvider,
-        DateTimeItemTransformer $transformer,
-        ItemGeneralConverterFactory $itemGeneralConverterFactory
+        ConverterFactory $converterFactory
     ) {
         $this->user = $user;
         $this->userTimeZoneProvider = $userTimeZoneProvider;
-        $this->transformer = $transformer;
-        $this->itemGeneralConverterFactory = $itemGeneralConverterFactory;
+        $this->converterFactory = $converterFactory;
     }
 
     public function apply(SelectBuilder $queryBuilder): void
     {
-        $item = $this->transformer->transform(
-            Item::fromRaw([
-                'type' => 'today',
-                'attribute' => 'dateStart',
-                'timeZone' => $this->userTimeZoneProvider->get(),
-                'dateTime' => true,
-            ])
-        );
+        $item = Item::fromRaw([
+            'type' => 'today',
+            'attribute' => 'dateStart',
+            'timeZone' => $this->userTimeZoneProvider->get(),
+            'dateTime' => true,
+        ]);
 
-        $whereItem = $this->itemGeneralConverterFactory
-            ->create('Call', $this->user)
+        $whereItem = $this->converterFactory
+            ->create(Call::ENTITY_TYPE, $this->user)
             ->convert($queryBuilder, $item);
 
         $queryBuilder->where($whereItem);
