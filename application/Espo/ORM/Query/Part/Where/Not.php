@@ -33,6 +33,9 @@ use Espo\ORM\Query\Part\{
     WhereItem,
 };
 
+/**
+ * A NOT-operator. Immutable.
+ */
 class Not implements WhereItem
 {
     private $rawValue = [];
