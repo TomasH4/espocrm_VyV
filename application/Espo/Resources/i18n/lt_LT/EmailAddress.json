@@ -3,5 +3,12 @@
     "Primary": "Pirminis",
     "Opted Out": "Pasirinkta",
     "Invalid": "Neteisingas"
+  },
+  "fields": {
+    "optOut": "Atsisakyta",
+    "invalid": "Negaliojantis"
+  },
+  "presetFilters": {
+    "orphan": "Našlaitis"
   }
 }
