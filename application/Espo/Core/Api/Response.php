@@ -63,6 +63,13 @@ interface Response
     public function hasHeader(string $name): bool;
 
     /**
+     * Get a header values as an array.
+     *
+     * @return string[]
+     */
+    public function getHeaderAsArray(string $name): array;
+
+    /**
      * Write a body.
      */
     public function writeBody(string $string): self;
@@ -71,9 +78,4 @@ interface Response
      * Set a body.
      */
     public function setBody(StreamInterface $body): self;
-
-    /**
-     * Get a result PSR-7 response.
-     */
-    public function getResponse(): Psr7Response;
 }
