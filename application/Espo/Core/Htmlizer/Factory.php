@@ -30,21 +30,30 @@
 namespace Espo\Core\Htmlizer;
 
 use Espo\Core\InjectableFactory;
-use Espo\Core\Utils\DateTime;
+use Espo\Core\Utils\DateTime\DateTimeFactory;
+use Espo\Core\AclManager;
+
+use Espo\Entities\User;
 
 class Factory
 {
     private $injectableFactory;
 
-    private $dateTime;
+    private $dateTimeFactory;
 
-    public function __construct(InjectableFactory $injectableFactory, DateTime $dateTime)
-    {
+    private $aclManager;
+
+    public function __construct(
+        InjectableFactory $injectableFactory,
+        DateTimeFactory $dateTimeFactory,
+        AclManager $aclManager
+    ) {
         $this->injectableFactory = $injectableFactory;
-        $this->dateTime = $dateTime;
+        $this->dateTimeFactory = $dateTimeFactory;
+        $this->aclManager = $aclManager;
     }
 
-    public function create(bool $skipAcl = false, ?string $timezone = null): Htmlizer
+    public function create(bool $skipAcl = false, ?string $timeZone = null): Htmlizer
     {
         $with = [];
 
@@ -52,11 +61,8 @@ class Factory
             $with['acl'] = null;
         }
 
-        if ($timezone) {
-            $dateTime = clone($this->dateTime);
-            $dateTime->setTimezone($timezone);
-
-            $with['dateTime'] = $dateTime;
+        if ($timeZone) {
+            $with['dateTime'] = $this->dateTimeFactory->createWithTimeZone($timeZone);
         }
 
         return $this->injectableFactory->createWith(Htmlizer::class, $with);
@@ -65,5 +71,16 @@ class Factory
     public function createNoAcl(): Htmlizer
     {
         return $this->create(true);
+    }
+
+    public function createForUser(User $user): Htmlizer
+    {
+        $dateTime = $this->dateTimeFactory->createWithUserTimeZone($user);
+        $acl = $this->aclManager->createUserAcl($user);
+
+        return $this->injectableFactory->createWith(Htmlizer::class, [
+            'dateTime' => $dateTime,
+            'acl' => $acl,
+        ]);
     }
 }
