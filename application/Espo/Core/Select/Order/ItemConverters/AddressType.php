@@ -29,6 +29,9 @@
 
 namespace Espo\Core\Select\Order\ItemConverters;
 
+use Espo\ORM\Query\Part\OrderList;
+use Espo\ORM\Query\Part\Order;
+
 use Espo\Core\{
     Select\Order\ItemConverter,
     Select\Order\Item,
@@ -36,15 +39,15 @@ use Espo\Core\{
 
 class AddressType implements ItemConverter
 {
-    public function convert(Item $item): array
+    public function convert(Item $item): OrderList
     {
         $orderBy = $item->getOrderBy();
-        $order = $item->getOrder();
+        $order = $item->getOrder() ?? Order::ASC;
 
-        return [
-            [$orderBy . 'Country', $order],
-            [$orderBy . 'City', $order],
-            [$orderBy . 'Street', $order],
-        ];
+        return OrderList::create([
+            Order::fromString($orderBy . 'Country')->withDirection($order),
+            Order::fromString($orderBy . 'City')->withDirection($order),
+            Order::fromString($orderBy . 'Street')->withDirection($order),
+        ]);
     }
 }
