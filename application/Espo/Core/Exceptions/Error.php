@@ -31,7 +31,7 @@ namespace Espo\Core\Exceptions;
 
 use Throwable;
 
-class Error extends InternalServerError
+class Error extends InternalServerError implements HasBody
 {
     private $body = null;
 
