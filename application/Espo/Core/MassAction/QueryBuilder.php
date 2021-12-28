@@ -29,21 +29,20 @@
 
 namespace Espo\Core\MassAction;
 
-use Espo\{
-    ORM\Query\Select,
-};
-
-use Espo\Core\{
-    Select\SelectBuilderFactory,
-};
+use Espo\ORM\Query\Select;
+use Espo\Core\Select\SelectBuilderFactory;
+use Espo\Entities\User;
 
 class QueryBuilder
 {
-    protected $selectBuilderFactory;
+    private $selectBuilderFactory;
 
-    public function __construct(SelectBuilderFactory $selectBuilderFactory)
+    private $user;
+
+    public function __construct(SelectBuilderFactory $selectBuilderFactory, User $user)
     {
         $this->selectBuilderFactory = $selectBuilderFactory;
+        $this->user = $user;
     }
 
     public function build(Params $params): Select
@@ -51,6 +50,7 @@ class QueryBuilder
         $builder = $this->selectBuilderFactory
             ->create()
             ->from($params->getEntityType())
+            ->forUser($this->user)
             ->withStrictAccessControl();
 
         if ($params->hasIds()) {
