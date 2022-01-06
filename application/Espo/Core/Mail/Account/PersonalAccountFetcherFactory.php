@@ -33,6 +33,9 @@ use Espo\Core\Binding\Factory;
 use Espo\Core\Binding\BindingContainerBuilder;
 use Espo\Core\InjectableFactory;
 
+use Espo\Core\Mail\Account\Hook\AfterFetch;
+use Espo\Core\Mail\Account\Hook\Hooks\PersonalAccountAfterFetch;
+
 class PersonalAccountFetcherFactory implements Factory
 {
     private InjectableFactory $injectableFactory;
@@ -46,6 +49,7 @@ class PersonalAccountFetcherFactory implements Factory
     {
         $binding = BindingContainerBuilder::create()
             ->bindImplementation(StorageFactory::class, PersonalAccountStorageFactory::class)
+            ->bindImplementation(AfterFetch::class, PersonalAccountAfterFetch::class)
             ->build();
 
         return $this->injectableFactory->createWithBinding(Fetcher::class, $binding);
