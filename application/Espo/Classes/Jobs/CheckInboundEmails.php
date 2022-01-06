@@ -30,14 +30,9 @@
 namespace Espo\Classes\Jobs;
 
 use Espo\Core\Exceptions\Error;
-
-use Espo\Services\InboundEmail as Service;
-
-use Espo\Core\{
-    Job\Job,
-    Job\Job\Data,
-    ORM\EntityManager,
-};
+use Espo\Core\Mail\Account\GroupAccountService as Service;
+use Espo\Core\Job\Job;
+use Espo\Core\Job\Job\Data;
 
 use Throwable;
 
@@ -45,12 +40,9 @@ class CheckInboundEmails implements Job
 {
     private $service;
 
-    private $entityManager;
-
-    public function __construct(Service $service, EntityManager $entityManager)
+    public function __construct(Service $service)
     {
         $this->service = $service;
-        $this->entityManager = $entityManager;
     }
 
     public function run(Data $data): void
@@ -61,22 +53,12 @@ class CheckInboundEmails implements Job
             throw new Error("No target.");
         }
 
-        $entity = $this->entityManager->getEntity('InboundEmail', $targetId);
-
-        if (!$entity) {
-            throw new Error("Job CheckInboundEmails '{$targetId}': InboundEmail does not exist.", -1);
-        }
-
-        if ($entity->get('status') !== 'Active') {
-            throw new Error("Job CheckInboundEmails '{$targetId}': InboundEmail is not active.", -1);
-        }
-
         try {
-            $this->service->fetchFromMailServer($entity);
+            $this->service->fetch($targetId);
         }
         catch (Throwable $e) {
             throw new Error(
-                'Job CheckInboundEmails ' . $entity->getId() . ': [' . $e->getCode() . '] ' .$e->getMessage()
+                'Job CheckInboundEmails ' . $targetId . ': [' . $e->getCode() . '] ' .$e->getMessage()
             );
         }
     }
