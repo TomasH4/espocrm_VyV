@@ -29,10 +29,8 @@
 
 namespace Espo\Core\Mail;
 
-use Espo\Core\{
-    InjectableFactory,
-    Mail\Parsers\MailMimeParser,
-};
+use Espo\Core\InjectableFactory;
+use Espo\Core\Mail\Parsers\MailMimeParser;
 
 class ParserFactory
 {
