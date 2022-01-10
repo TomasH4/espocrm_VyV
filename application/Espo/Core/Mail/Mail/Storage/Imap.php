@@ -31,31 +31,43 @@ namespace Espo\Core\Mail\Mail\Storage;
 
 class Imap extends \Laminas\Mail\Storage\Imap
 {
-    public function getIdsFromUID($uid)
+    /**
+     * @return int[]
+     */
+    public function getIdsFromUniqueId(string $uid): array
     {
-        $uid = intval($uid) + 1;
-        return $this->protocol->search(['UID ' . $uid . ':*']);
+        $nextUid = strval(intval($uid) + 1);
+
+        return $this->protocol->search(['UID ' . $nextUid . ':*']);
     }
 
-    public function getIdsFromDate($date)
+    /**
+     * @return int[]
+     */
+    public function getIdsSinceDate(string $date): array
     {
         return $this->protocol->search(['SINCE "' . $date . '"']);
     }
 
-    public function getHeaderAndFlags($id, $part = null)
+    /**
+     * @param int $id
+     * @return array{header: string, flags: string[]}
+     */
+    public function getHeaderAndFlags(int $id): array
     {
         $data = $this->protocol->fetch(['FLAGS', 'RFC822.HEADER'], $id);
 
         $header = $data['RFC822.HEADER'];
 
         $flags = [];
+
         foreach ($data['FLAGS'] as $flag) {
             $flags[] = isset(static::$knownFlags[$flag]) ? static::$knownFlags[$flag] : $flag;
         }
 
         return [
             'flags' => $flags,
-            'header' => $header
+            'header' => $header,
         ];
     }
 }
