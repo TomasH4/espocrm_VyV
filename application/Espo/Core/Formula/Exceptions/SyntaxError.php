@@ -31,4 +31,18 @@ namespace Espo\Core\Formula\Exceptions;
 
 class SyntaxError extends Error
 {
+    private $shortMessage = null;
+
+    public static function create(string $message, ?string $shortMessage = null): self
+    {
+        $obj = new static($message);
+        $obj->shortMessage = $shortMessage;
+
+        return $obj;
+    }
+
+    public function getShortMessage(): ?string
+    {
+        return $this->shortMessage ?? $this->getMessage();
+    }
 }
