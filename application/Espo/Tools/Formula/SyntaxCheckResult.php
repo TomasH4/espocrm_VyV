@@ -30,6 +30,7 @@
 namespace Espo\Tools\Formula;
 
 use Espo\Core\Formula\Exceptions\SyntaxError;
+use Espo\Core\Formula\Exceptions\Error;
 
 use stdClass;
 
@@ -38,6 +39,8 @@ class SyntaxCheckResult
     private bool $isSuccess = false;
 
     private ?string $message = null;
+
+    private ?Error $exception = null;
 
     private function __construct(bool $isSuccess)
     {
@@ -54,6 +57,7 @@ class SyntaxCheckResult
         $obj = new self(false);
 
         $obj->message = $exception->getShortMessage();
+        $obj->exception = $exception;
 
         return $obj;
     }
@@ -66,6 +70,11 @@ class SyntaxCheckResult
     public function getMessage(): ?string
     {
         return $this->message;
+    }
+
+    public function getException(): ?Error
+    {
+        return $this->exception;
     }
 
     public function toStdClass(): stdClass

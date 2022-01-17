@@ -38,6 +38,8 @@ use Espo\Core\Exceptions\ForbiddenSilent;
 
 use Espo\Entities\User;
 
+use Espo\Core\Field\LinkParent;
+
 use stdClass;
 
 class Formula
@@ -61,8 +63,25 @@ class Formula
             throw new BadRequest("No or non-string expression.");
         }
 
-        return $this->service
-            ->checkSyntax($expression)
-            ->toStdClass();
+        return $this->service->checkSyntax($expression)->toStdClass();
+    }
+
+    public function postActionRun(Request $request): stdClass
+    {
+        $expression = $request->getParsedBody()->expression ?? null;
+        $targetType = $request->getParsedBody()->targetType ?? null;
+        $targetId = $request->getParsedBody()->targetId ?? null;
+
+        if (!$expression || !is_string($expression)) {
+            throw new BadRequest("No or non-string expression.");
+        }
+
+        $targetLink = null;
+
+        if ($targetType && $targetId) {
+            $targetLink = LinkParent::create($targetType, $targetId);
+        }
+
+        return $this->service->run($expression, $targetLink)->toStdClass();
     }
 }
