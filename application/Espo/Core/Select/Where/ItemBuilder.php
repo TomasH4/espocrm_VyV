@@ -29,6 +29,8 @@
 
 namespace Espo\Core\Select\Where;
 
+use Espo\Core\Select\Where\Item\Data;
+
 class ItemBuilder
 {
     private ?string $type = null;
@@ -40,9 +42,7 @@ class ItemBuilder
      */
     private $value = null;
 
-    private bool $dateTime = false;
-
-    private ?string $timeZone = null;
+    private ?Data $data = null;
 
     public static function create(): self
     {
@@ -73,16 +73,9 @@ class ItemBuilder
         return $this;
     }
 
-    public function setIsDateTime(bool $isDateTime): self
+    public function setData(?Data $data): self
     {
-        $this->dateTime = $isDateTime;
-
-        return $this;
-    }
-
-    public function setTimeZone(?string $timeZone): self
-    {
-        $this->timeZone = $timeZone;
+        $this->data = $data;
 
         return $this;
     }
@@ -107,12 +100,12 @@ class ItemBuilder
 
     public function build(): Item
     {
-        return Item::fromRaw([
-            'type' => $this->type,
-            'attribute' => $this->attribute,
-            'value' => $this->value,
-            'dateTime' => $this->dateTime,
-            'timeZone' => $this->timeZone,
-        ]);
+        return Item
+            ::fromRaw([
+                'type' => $this->type,
+                'attribute' => $this->attribute,
+                'value' => $this->value,
+            ])
+            ->withData($this->data);
     }
 }
