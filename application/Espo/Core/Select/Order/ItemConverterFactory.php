@@ -29,11 +29,14 @@
 
 namespace Espo\Core\Select\Order;
 
-use Espo\Core\{
-    Exceptions\Error,
-    InjectableFactory,
-    Utils\Metadata,
-};
+use Espo\Entities\User;
+
+use Espo\Core\Exceptions\Error;
+use Espo\Core\InjectableFactory;
+use Espo\Core\Utils\Metadata;
+
+use Espo\Core\Binding\BindingContainerBuilder;
+use Espo\Core\Binding\ContextualBinder;
 
 class ItemConverterFactory
 {
@@ -41,10 +44,13 @@ class ItemConverterFactory
 
     private Metadata $metadata;
 
-    public function __construct(InjectableFactory $injectableFactory, Metadata $metadata)
+    private User $user;
+
+    public function __construct(InjectableFactory $injectableFactory, Metadata $metadata, User $user)
     {
         $this->injectableFactory = $injectableFactory;
         $this->metadata = $metadata;
+        $this->user = $user;
     }
 
     public function has(string $entityType, string $field): bool
@@ -60,9 +66,14 @@ class ItemConverterFactory
             throw new Error("Order item converter class name is not defined.");
         }
 
-        return $this->injectableFactory->createWith($className, [
-            'entityType' => $entityType,
-        ]);
+        $container = BindingContainerBuilder::create()
+            ->bindInstance(User::class, $this->user)
+            ->inContext($className, function (ContextualBinder $binder) use ($entityType) {
+                $binder->bindValue('$entityType', $entityType);
+            })
+            ->build();
+
+        return $this->injectableFactory->createWithBinding($className, $container);
     }
 
     /**
@@ -71,12 +82,12 @@ class ItemConverterFactory
     private function getClassName(string $entityType, string $field): ?string
     {
         /** @var ?class-string<ItemConverter> */
-        $className = $this->metadata->get([
+        $className1 = $this->metadata->get([
             'selectDefs', $entityType, 'orderItemConverterClassNameMap', $field
         ]);
 
-        if ($className) {
-            return $className;
+        if ($className1) {
+            return $className1;
         }
 
         $type = $this->metadata->get([
@@ -88,19 +99,19 @@ class ItemConverterFactory
         }
 
         /** @var ?class-string<ItemConverter> */
-        $className = $this->metadata->get([
+        $className2 = $this->metadata->get([
             'app', 'select', 'orderItemConverterClassNameMap', $type
         ]);
 
-        if ($className) {
-            return $className;
+        if ($className2) {
+            return $className2;
         }
 
-        $className = 'Espo\\Core\\Select\\Order\\ItemConverters\\' . ucfirst($type) . 'Type';
+        $className3 = 'Espo\\Core\\Select\\Order\\ItemConverters\\' . ucfirst($type) . 'Type';
 
-        if (class_exists($className)) {
+        if (class_exists($className3)) {
             /** @var class-string<ItemConverter> */
-            return $className;
+            return $className3;
         }
 
         return null;
