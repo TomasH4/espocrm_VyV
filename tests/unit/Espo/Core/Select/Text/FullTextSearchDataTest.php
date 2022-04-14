@@ -30,14 +30,14 @@
 namespace tests\unit\Espo\Core\Select\Text;
 
 use Espo\ORM\Query\Part\Expression as Expr;
-use Espo\Core\Select\Text\FullTextSearchData;
+use Espo\Core\Select\Text\FullTextSearch\Data;
 use Espo\Core\Select\Text\FullTextSearch\Mode;
 
 class FullTextSearchDataTest extends \PHPUnit\Framework\TestCase
 {
     public function testGet1(): void
     {
-        $item = new FullTextSearchData(Expr::create('TEST:()'), ['test'], ['column'], Mode::BOOLEAN);
+        $item = new Data(Expr::create('TEST:()'), ['test'], ['column'], Mode::BOOLEAN);
 
         $this->assertEquals('TEST:()', $item->getExpression()->getValue());
         $this->assertEquals(['test'], $item->getFieldList());
