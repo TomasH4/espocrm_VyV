@@ -42,7 +42,7 @@ class Command implements Runner
     use Cli;
     use SetupSystemUser;
 
-    private $commandManager;
+    private ConsoleCommandManager $commandManager;
 
     public function __construct(ConsoleCommandManager $commandManager)
     {
@@ -52,10 +52,14 @@ class Command implements Runner
     public function run(): void
     {
         try {
-            $this->commandManager->run($_SERVER['argv']);
+            $exitStatus = $this->commandManager->run($_SERVER['argv']);
         }
         catch (Exception $e) {
             echo "Error: " . $e->getMessage() . "\n";
+
+            exit(1);
         }
+
+        exit($exitStatus);
     }
 }
