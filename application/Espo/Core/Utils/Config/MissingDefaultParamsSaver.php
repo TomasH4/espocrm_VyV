@@ -30,10 +30,9 @@
 namespace Espo\Core\Utils\Config;
 
 use Espo\Core\Utils\Config;
-use Espo\Core\Utils\Config\ConfigWriter;
 use Espo\Core\Utils\File\Manager as FileManager;
 
-use Espo\Core\Exceptions\Error;
+use RuntimeException;
 
 class MissingDefaultParamsSaver
 {
@@ -57,7 +56,7 @@ class MissingDefaultParamsSaver
         $data = $this->fileManager->getPhpSafeContents($this->defaultConfigPath);
 
         if (!is_array($data)) {
-            throw new Error();
+            throw new RuntimeException();
         }
 
         /** @var array<string,mixed> $data */
