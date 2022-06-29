@@ -38,6 +38,5 @@ class All implements Filter
 {
     public function apply(QueryBuilder $queryBuilder): void
     {
-
     }
 }
