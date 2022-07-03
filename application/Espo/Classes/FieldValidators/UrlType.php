@@ -49,7 +49,7 @@ class UrlType
         return $this->varcharType->checkRequired($entity, $field);
     }
 
-    public function checkMaxLength(Entity $entity, string $field, int $validationValue): bool
+    public function checkMaxLength(Entity $entity, string $field, ?int $validationValue): bool
     {
         return $this->varcharType->checkMaxLength($entity, $field, $validationValue);
     }
