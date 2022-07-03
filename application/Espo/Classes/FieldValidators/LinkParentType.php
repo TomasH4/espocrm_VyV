@@ -29,10 +29,18 @@
 
 namespace Espo\Classes\FieldValidators;
 
+use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
 
 class LinkParentType
 {
+    private Metadata $metadata;
+
+    public function __construct(Metadata $metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
     public function checkRequired(Entity $entity, string $field): bool
     {
         $idAttribute = $field . 'Id';
@@ -51,5 +59,37 @@ class LinkParentType
         }
 
         return true;
+    }
+
+    public function checkPattern(Entity $entity, string $field): bool
+    {
+        /** @var ?string */
+        $idValue = $entity->get($field . 'Id');
+
+        if ($idValue === null) {
+            return true;
+        }
+
+        $pattern = $this->metadata->get(['app', 'regExpPatterns', 'id', 'pattern']);
+
+        if (!$pattern) {
+            return true;
+        }
+
+        $preparedPattern = '/^' . $pattern . '$/';
+
+        return (bool) preg_match($preparedPattern, $idValue);
+    }
+
+    public function checkValid(Entity $entity, string $field): bool
+    {
+        /** @var ?string */
+        $typeValue = $entity->get($field . 'Type');
+
+        if ($typeValue === null) {
+            return true;
+        }
+
+        return (bool) $this->metadata->get(['entityDefs', $typeValue]);
     }
 }
