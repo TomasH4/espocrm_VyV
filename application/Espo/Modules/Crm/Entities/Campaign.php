@@ -29,7 +29,21 @@
 
 namespace Espo\Modules\Crm\Entities;
 
+use Espo\Core\Field\Date;
+
 class Campaign extends \Espo\Core\ORM\Entity
 {
     public const ENTITY_TYPE = 'Campaign';
+
+    public function getStartDate(): ?Date
+    {
+        /** @var ?Date */
+        return $this->getValueObject('startDate');
+    }
+
+    public function getEndDate(): ?Date
+    {
+        /** @var ?Date */
+        return $this->getValueObject('endDate');
+    }
 }
