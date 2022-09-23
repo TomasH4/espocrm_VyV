@@ -65,13 +65,14 @@ class ActionRenderer
     {
         $encodedData = Json::encode($data);
 
-        $script = "
-            app.doAction({
-                controllerClassName: '{$controller}',
-                action: '{$action}',
-                options: {$encodedData},
-            });
-        ";
+        $script =
+            "
+                app.doAction({
+                    controllerClassName: '{$controller}',
+                    action: '{$action}',
+                    options: {$encodedData},
+                });
+            ";
 
         return $this->clientManager->render($script);
     }
