@@ -56,7 +56,7 @@ class InternalConfigHelper
 
         $level = $this->metadata->get(['app', 'config', 'params', $name, 'level']);
 
-        if ($level === Access::LEVEL_SYSTEM) {
+        if ($level === Access::LEVEL_SYSTEM || $level === Access::LEVEL_INTERNAL) {
             return true;
         }
 
