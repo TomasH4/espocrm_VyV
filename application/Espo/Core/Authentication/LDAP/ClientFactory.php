@@ -27,12 +27,12 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Core\Authentication\LDAP;
+namespace Espo\Core\Authentication\Ldap;
 
 class ClientFactory
 {
     /**
-     * @param array<string,mixed> $options
+     * @param array<string, mixed> $options
      * @throws \Laminas\Ldap\Exception\LdapException
      */
     public function create(array $options): Client
