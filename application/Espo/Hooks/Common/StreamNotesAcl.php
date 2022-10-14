@@ -31,7 +31,7 @@ namespace Espo\Hooks\Common;
 
 use Espo\ORM\Entity;
 
-use Espo\Services\Stream as Service;
+use Espo\Tools\Stream\Service as Service;
 
 /**
  * Notes having `related` or `superParent` are subjects to access control
