@@ -40,7 +40,6 @@ use Espo\ORM\EntityManager;
 class AccountFactory
 {
     private InjectableFactory $injectableFactory;
-
     private EntityManager $entityManager;
 
     public function __construct(InjectableFactory $injectableFactory, EntityManager $entityManager)
@@ -49,6 +48,9 @@ class AccountFactory
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * @throws Error
+     */
     public function create(string $id): Account
     {
         $entity = $this->entityManager->getEntityById(InboundEmail::ENTITY_TYPE, $id);
