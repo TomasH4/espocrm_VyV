@@ -30,26 +30,33 @@
 namespace Espo\Controllers;
 
 use Espo\Core\Exceptions\BadRequest;
-
 use Espo\Core\Authentication\Authentication;
-use Espo\Core\Di;
 use Espo\Core\Api\Request;
 use Espo\Core\Api\Response;
+use Espo\Core\InjectableFactory;
 
-use Espo\Services\App as Service;
+use Espo\Tools\App\AppService as Service;
 
 use stdClass;
 
-class App implements
-    Di\InjectableFactoryAware
+class App
 {
-    use Di\InjectableFactorySetter;
+    private InjectableFactory $injectableFactory;
+
+    public function __construct(
+        InjectableFactory $injectableFactory
+    ) {
+        $this->injectableFactory = $injectableFactory;
+    }
 
     public function getActionUser(): stdClass
     {
         return (object) $this->getService()->getUserData();
     }
 
+    /**
+     * @throws BadRequest
+     */
     public function postActionDestroyAuthToken(Request $request, Response $response): bool
     {
         $data = $request->getParsedBody();
