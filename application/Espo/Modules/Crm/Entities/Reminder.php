@@ -33,6 +33,9 @@ class Reminder extends \Espo\Core\ORM\Entity
 {
     public const ENTITY_TYPE = 'Reminder';
 
+    public const TYPE_POPUP = 'Popup';
+    public const TYPE_EMAIL = 'Email';
+
     public function getUserId(): ?string
     {
         return $this->get('userId');
