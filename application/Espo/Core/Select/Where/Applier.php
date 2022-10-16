@@ -46,9 +46,7 @@ class Applier
     private string $entityType;
 
     private User $user;
-
     private ConverterFactory $converterFactory;
-
     private CheckerFactory $checkerFactory;
 
     public function __construct(
