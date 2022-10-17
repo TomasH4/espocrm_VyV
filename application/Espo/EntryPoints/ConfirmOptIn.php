@@ -29,16 +29,16 @@
 
 namespace Espo\EntryPoints;
 
-use Espo\Services\LeadCapture as Service;
+use Espo\Tools\LeadCapture\LeadCapture as Service;
 
-use Espo\Core\{
-    Exceptions\BadRequest,
-    Exceptions\Error,
-    EntryPoint\EntryPoint,
-    EntryPoint\Traits\NoAuth,
-    Utils\Client\ActionRenderer,
-    Api\Request,
-    Api\Response};
+use Espo\Core\Api\Request;
+use Espo\Core\Api\Response;
+use Espo\Core\EntryPoint\EntryPoint;
+use Espo\Core\EntryPoint\Traits\NoAuth;
+use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\NotFound;
+use Espo\Core\Utils\Client\ActionRenderer;
 
 class ConfirmOptIn implements EntryPoint
 {
@@ -56,7 +56,7 @@ class ConfirmOptIn implements EntryPoint
     /**
      * @throws BadRequest
      * @throws Error
-     * @throws \Espo\Core\Exceptions\NotFound
+     * @throws NotFound
      */
     public function run(Request $request, Response $response): void
     {
