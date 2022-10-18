@@ -31,17 +31,24 @@ namespace Espo\Controllers;
 
 use Espo\Core\Exceptions\BadRequest;
 
-use Espo\Services\EmailTemplate as Service;
+use Espo\Core\Exceptions\ForbiddenSilent;
+use Espo\Core\Exceptions\NotFound;
+use Espo\Tools\EmailTemplate\Data;
+use Espo\Tools\EmailTemplate\Service;
 
-use Espo\Core\{
-    Controllers\Record,
-    Api\Request,
-};
+use Espo\Core\Api\Request;
+use Espo\Core\Controllers\Record;
 
 use stdClass;
 
 class EmailTemplate extends Record
 {
+
+    /**
+     * @throws BadRequest
+     * @throws NotFound
+     * @throws ForbiddenSilent
+     */
     public function actionParse(Request $request): stdClass
     {
         $id = $request->getQueryParam('id');
@@ -50,22 +57,21 @@ class EmailTemplate extends Record
             throw new BadRequest("No `id`.");
         }
 
-        return (object) $this->getEmailTempalteService()->parse(
-            $id,
-            [
-                'emailAddress' => $request->getQueryParam('emailAddress'),
-                'parentType' => $request->getQueryParam('parentType'),
-                'parentId' => $request->getQueryParam('parentId'),
-                'relatedType' => $request->getQueryParam('relatedType'),
-                'relatedId' => $request->getQueryParam('relatedId'),
-            ],
-            true
-        );
+        $data = Data::create()
+            ->withRelatedType($request->getQueryParam('relatedType'))
+            ->withRelatedId($request->getQueryParam('relatedId'))
+            ->withParentType($request->getQueryParam('parentType'))
+            ->withParentId($request->getQueryParam('parentId'))
+            ->withEmailAddress($request->getQueryParam('emailAddress'));
+
+        $result = $this->getEmailTemplateService()->process($id, $data);
+
+        return $result->getValueMap();
+
     }
 
-    private function getEmailTempalteService(): Service
+    private function getEmailTemplateService(): Service
     {
-        /** @var Service */
-        return $this->getRecordService();
+        return $this->injectableFactory->create(Service::class);
     }
 }
