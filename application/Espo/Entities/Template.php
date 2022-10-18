@@ -29,7 +29,21 @@
 
 namespace Espo\Entities;
 
-class Template extends \Espo\Core\ORM\Entity
+use Espo\Core\ORM\Entity;
+use UnexpectedValueException;
+
+class Template extends Entity
 {
     public const ENTITY_TYPE = 'Template';
+
+    public function getTargetEntityType(): string
+    {
+        $entityType = $this->get('entityType');
+
+        if ($entityType === null) {
+            throw new UnexpectedValueException();
+        }
+
+        return $entityType;
+    }
 }
