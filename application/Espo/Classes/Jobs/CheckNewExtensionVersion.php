@@ -29,6 +29,8 @@
 
 namespace Espo\Classes\Jobs;
 
+use Espo\Entities\Job;
+
 class CheckNewExtensionVersion extends CheckNewVersion
 {
     public function run(): void
@@ -40,15 +42,12 @@ class CheckNewExtensionVersion extends CheckNewVersion
             return;
         }
 
-        $job = $this->entityManager->getNewEntity('Job');
+        $className = \Espo\Tools\AdminNotifications\Jobs\CheckNewExtensionVersion::class;
 
-        $job->set([
-            'name' => 'Check for new versions of installed extensions (job)',
-            'serviceName' => 'AdminNotifications',
-            'methodName' => 'jobCheckNewExtensionVersion',
+        $this->entityManager->createEntity(Job::ENTITY_TYPE, [
+            'name' => $className,
+            'className' => $className,
             'executeTime' => $this->getRunTime(),
         ]);
-
-        $this->entityManager->saveEntity($job);
     }
 }
