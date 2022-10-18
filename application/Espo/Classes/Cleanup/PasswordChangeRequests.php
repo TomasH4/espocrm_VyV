@@ -40,7 +40,6 @@ use Espo\Entities\PasswordChangeRequest;
 class PasswordChangeRequests implements Cleanup
 {
     private Config $config;
-
     private EntityManager $entityManager;
 
     private string $cleanupPeriod = '30 days';
