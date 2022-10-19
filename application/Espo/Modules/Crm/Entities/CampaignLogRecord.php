@@ -32,4 +32,6 @@ namespace Espo\Modules\Crm\Entities;
 class CampaignLogRecord extends \Espo\Core\ORM\Entity
 {
     public const ENTITY_TYPE = 'CampaignLogRecord';
+
+    public const ACTION_LEAD_CREATED = 'Lead Created';
 }
