@@ -101,8 +101,8 @@ class Service
 
         $copied->set('parentType', $data->getParentType());
         $copied->set('relatedType', $data->getRelatedType());
-        $copied->set('field', $data->getField());
-        $copied->set('role', Attachment::ROLE_ATTACHMENT);
+        $copied->setTargetField($data->getField());
+        $copied->setRole(Attachment::ROLE_ATTACHMENT);
 
         $this->getAttachmentRepository()->save($copied);
 
