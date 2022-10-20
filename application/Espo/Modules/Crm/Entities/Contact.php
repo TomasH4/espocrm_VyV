@@ -29,10 +29,11 @@
 
 namespace Espo\Modules\Crm\Entities;
 
+use Espo\Core\Entities\Person;
 use Espo\Core\Field\Link;
 use Espo\Core\Field\LinkMultiple;
 
-class Contact extends \Espo\Core\Entities\Person
+class Contact extends Person
 {
     public const ENTITY_TYPE = 'Contact';
 
@@ -40,6 +41,21 @@ class Contact extends \Espo\Core\Entities\Person
     {
         /** @var ?Link */
         return $this->getValueObject('assignedUser');
+    }
+
+    /**
+     * A primary account.
+     */
+    public function getAccount(): ?Link
+    {
+        /** @var ?Link */
+        return $this->getValueObject('account');
+    }
+
+    public function getAccounts(): LinkMultiple
+    {
+        /** @var LinkMultiple */
+        return $this->getValueObject('accounts');
     }
 
     public function getTeams(): LinkMultiple
