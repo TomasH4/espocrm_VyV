@@ -56,7 +56,7 @@ class Service
     }
 
     /**
-     * Copy article attachments for re-using (e.g. in an email).
+     * Copy email attachments for re-using (e.g. in an forward email).
      *
      * @return Attachment[]
      * @throws NotFound
