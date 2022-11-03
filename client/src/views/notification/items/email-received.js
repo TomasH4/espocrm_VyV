@@ -46,8 +46,7 @@ define('views/notification/items/email-received', ['views/notification/items/bas
 
             this.userId = data.userId;
 
-            this.messageData['entityType'] =
-                Espo.Utils.upperCaseFirst((this.translate(data.entityType, 'scopeNames') || '').toLowerCase());
+            this.messageData['entityType'] = this.translateEntityType(data.entityType);
 
             if (data.personEntityId) {
                 this.messageData['from'] =
