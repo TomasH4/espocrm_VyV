@@ -30,29 +30,11 @@
 namespace Espo\Core\Mail\Importer;
 
 use Espo\Entities\Email;
-use Espo\ORM\EntityManager;
 
-class DuplicateFinder
+/**
+ * Finds an existing duplicate of an email being imported.
+ */
+interface DuplicateFinder
 {
-    private EntityManager $entityManager;
-
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    public function find(Email $email): ?Email
-    {
-        if (!$email->getMessageId()) {
-            return null;
-        }
-
-        return $this->entityManager
-            ->getRDBRepositoryByClass(Email::class)
-            ->select(['id', 'status'])
-            ->where([
-                'messageId' => $email->getMessageId(),
-            ])
-            ->findOne();
-    }
+    public function find(Email $email): ?Email;
 }
