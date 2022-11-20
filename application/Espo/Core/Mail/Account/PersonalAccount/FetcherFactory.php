@@ -40,6 +40,9 @@ use Espo\Core\Mail\Account\Fetcher;
 use Espo\Core\Mail\Account\StorageFactory;
 use Espo\Core\Mail\Account\PersonalAccount\StorageFactory as PersonalAccountStorageFactory;
 
+/**
+ * @implements Factory<Fetcher>
+ */
 class FetcherFactory implements Factory
 {
     private InjectableFactory $injectableFactory;
