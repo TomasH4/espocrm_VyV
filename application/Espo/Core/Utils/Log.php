@@ -31,4 +31,10 @@ namespace Espo\Core\Utils;
 
 use Monolog\Logger as MonologLogger;
 
-class Log extends MonologLogger {}
+class Log extends MonologLogger
+{
+    public const LEVEL_DEBUG = 'debug';
+    public const LEVEL_NOTICE = 'notice';
+    public const LEVEL_WARNING = 'warning';
+    public const LEVEL_ERROR = 'error';
+}
