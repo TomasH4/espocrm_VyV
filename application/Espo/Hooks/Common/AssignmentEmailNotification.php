@@ -29,6 +29,7 @@
 
 namespace Espo\Hooks\Common;
 
+use Espo\Core\ORM\Repository\SaveOption;
 use Espo\ORM\Entity;
 use Espo\Tools\EmailNotification\HookProcessor;
 
@@ -46,7 +47,10 @@ class AssignmentEmailNotification
      */
     public function afterSave(Entity $entity, array $options): void
     {
-        if (!empty($options['silent']) || !empty($options['noNotifications'])) {
+        if (
+            !empty($options[SaveOption::SILENT]) ||
+            !empty($options['noNotifications'])
+        ) {
             return;
         }
 
