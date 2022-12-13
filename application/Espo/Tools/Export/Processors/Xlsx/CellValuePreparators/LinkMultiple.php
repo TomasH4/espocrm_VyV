@@ -37,8 +37,8 @@ class LinkMultiple implements CellValuePreparator
     public function prepare(string $entityType, string $name, array $data): ?string
     {
         if (
-            array_key_exists($name . 'Ids', $data) ||
-            array_key_exists($name . 'Names', $data)
+            !array_key_exists($name . 'Ids', $data) ||
+            !array_key_exists($name . 'Names', $data)
         ) {
             return null;
         }
