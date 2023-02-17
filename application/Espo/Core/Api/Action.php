@@ -43,11 +43,11 @@ interface Action
      * Process.
      *
      * @param Request $request A request.
-     * @param Response $response A response. Passed empty, to be written in the method.
+     * @return Response A response. Use ResponseComposer for building.
      * @throws BadRequest
      * @throws Forbidden
      * @throws NotFound
      * @throws Error
      */
-    public function process(Request $request, Response $response): void;
+    public function process(Request $request): Response;
 }
