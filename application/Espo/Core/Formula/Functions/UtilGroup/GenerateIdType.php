@@ -29,18 +29,13 @@
 
 namespace Espo\Core\Formula\Functions\UtilGroup;
 
-use Espo\Core\Formula\{
-    ArgumentList,
-};
-
+use Espo\Core\Formula\EvaluatedArgumentList;
+use Espo\Core\Formula\Func;
 use Espo\Core\Utils\Util;
 
-class GenerateIdType
+class GenerateIdType implements Func
 {
-    /**
-     * @return string
-     */
-    public function process(ArgumentList $args)
+    public function process(EvaluatedArgumentList $arguments): string
     {
         return Util::generateId();
     }
