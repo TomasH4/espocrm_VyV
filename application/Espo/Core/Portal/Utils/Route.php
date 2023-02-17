@@ -54,7 +54,8 @@ class Route extends BaseRoute
                 $route->getRoute(),
                 $path,
                 $route->getParams(),
-                $route->noAuth()
+                $route->noAuth(),
+                $route->getActionClassName()
             );
 
             $newRouteList[] = $newRoute;
