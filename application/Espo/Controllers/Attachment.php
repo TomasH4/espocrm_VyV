@@ -29,17 +29,11 @@
 
 namespace Espo\Controllers;
 
-use Espo\Core\Exceptions\Error;
-use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Api\Request;
 use Espo\Core\Api\Response;
 use Espo\Core\Controllers\RecordBase;
-use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Forbidden;
-use Espo\Tools\Attachment\FieldData;
-use Espo\Tools\Attachment\Service;
-use Espo\Tools\Attachment\UploadUrlService;
-use Espo\Tools\Attachment\UploadService;
+
 use stdClass;
 
 class Attachment extends RecordBase
@@ -51,101 +45,5 @@ class Attachment extends RecordBase
         }
 
         return parent::getActionList($request, $response);
-    }
-
-    /**
-     * @throws BadRequest
-     * @throws Forbidden
-     * @throws Error
-     */
-    public function postActionGetAttachmentFromImageUrl(Request $request): stdClass
-    {
-        $data = $request->getParsedBody();
-
-        $url = $data->url ?? null;
-        $field = $data->field ?? null;
-        $parentType = $data->parentType ?? null;
-        $relatedType = $data->relatedType ?? null;
-
-        if (!$url || !$field) {
-            throw new BadRequest("No `url` or `field`.");
-        }
-
-        try {
-            $fieldData = new FieldData(
-                $field,
-                $parentType,
-                $relatedType
-            );
-        }
-        catch (Error $e) {
-            throw new BadRequest($e->getMessage());
-        }
-
-        return $this->injectableFactory
-            ->create(UploadUrlService::class)
-            ->uploadImage($url, $fieldData)
-            ->getValueMap();
-    }
-
-    /**
-     * @throws BadRequest
-     * @throws Forbidden
-     * @throws NotFound
-     */
-    public function postActionGetCopiedAttachment(Request $request): stdClass
-    {
-        $data = $request->getParsedBody();
-
-        $id = $data->id ?? null;
-        $field = $data->field ?? null;
-        $parentType = $data->parentType ?? null;
-        $relatedType = $data->relatedType ?? null;
-
-        if (!$id || !$field) {
-            throw new BadRequest("No `id` or `field`.");
-        }
-
-        try {
-            $fieldData = new FieldData(
-                $field,
-                $parentType,
-                $relatedType
-            );
-        }
-        catch (Error $e) {
-            throw new BadRequest($e->getMessage());
-        }
-
-        return $this->getAttachmentService()
-            ->copy($id, $fieldData)
-            ->getValueMap();
-    }
-
-    /**
-     * @throws BadRequest
-     * @throws Forbidden
-     * @throws Error
-     * @throws NotFound
-     */
-    public function postActionChunk(Request $request, Response $response): void
-    {
-        $id = $request->getRouteParam('id');
-        $body = $request->getBodyContents();
-
-        if (!$id || !$body) {
-            throw new BadRequest();
-        }
-
-        $this->injectableFactory
-            ->create(UploadService::class)
-            ->uploadChunk($id, $body);
-
-        $response->writeBody('true');
-    }
-
-    private function getAttachmentService(): Service
-    {
-        return $this->injectableFactory->create(Service::class);
     }
 }
