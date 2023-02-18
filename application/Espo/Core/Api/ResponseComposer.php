@@ -42,12 +42,18 @@ class ResponseComposer
      */
     public static function json(mixed $data): Response
     {
+        return self::empty()
+            ->writeBody(Json::encode($data))
+            ->setHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Compose an empty response.
+     */
+    public static function empty(): Response
+    {
         $psr7Response = (new ResponseFactory())->createResponse();
 
-        $response = new ResponseWrapper($psr7Response);
-        $response->writeBody(Json::encode($data));
-        $response->setHeader('Content-Type', 'application/json');
-
-        return $response;
+        return new ResponseWrapper($psr7Response);
     }
 }
