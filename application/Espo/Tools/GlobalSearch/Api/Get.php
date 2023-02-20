@@ -46,10 +46,10 @@ class Get implements Action
 
     public function process(Request $request): Response
     {
-        $query = $request->getRouteParam('query');
+        $query = $request->getQueryParam('q');
 
         if ($query === null || $query === '') {
-            throw new BadRequest();
+            throw new BadRequest("No `q` parameter.");
         }
 
         $offset = intval($request->getQueryParam('offset'));
