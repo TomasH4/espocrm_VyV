@@ -30,16 +30,16 @@
 namespace Espo\Controllers;
 
 use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\Forbidden;
 
+use Espo\Core\Exceptions\NotFound;
 use Espo\Tools\Import\Params as ImportParams;
 use Espo\Tools\Import\Service as Service;
 
-use Espo\Core\{
-    Controllers\Record,
-    Api\Request,
-    Api\Response,
-};
+use Espo\Core\Api\Request;
+use Espo\Core\Api\Response;
+use Espo\Core\Controllers\Record;
 
 use Espo\Core\Di\InjectableFactoryAware;
 use Espo\Core\Di\InjectableFactorySetter;
@@ -55,112 +55,6 @@ class Import extends Record
     protected function checkAccess(): bool
     {
         return $this->acl->check('Import');
-    }
-
-    private function getImportService(): Service
-    {
-        return $this->injectableFactory->create(Service::class);
-    }
-
-    public function postActionUploadFile(Request $request): stdClass
-    {
-        $contents = $request->getBodyContents() ?? '';
-
-        $attachmentId = $this->getImportService()->uploadFile($contents);
-
-        return (object) [
-            'attachmentId' => $attachmentId
-        ];
-    }
-
-    public function postActionRevert(Request $request): bool
-    {
-        $data = $request->getParsedBody();
-
-        $this->getImportService()->revert($data->id);
-
-        return true;
-    }
-
-    public function postActionRemoveDuplicates(Request $request): bool
-    {
-        $data = $request->getParsedBody();
-
-        if (empty($data->id)) {
-            throw new BadRequest();
-        }
-
-        $this->getImportService()->removeDuplicates($data->id);
-
-        return true;
-    }
-
-    public function postActionCreate(Request $request, Response $response): stdClass
-    {
-        $data = $request->getParsedBody();
-
-        $entityType = $data->entityType ?? null;
-        $attributeList = $data->attributeList ?? null;
-        $attachmentId = $data->attachmentId ?? null;
-
-        if (!is_array($attributeList)) {
-            throw new BadRequest("No attributeList.");
-        }
-
-        if (!$attachmentId) {
-            throw new BadRequest("No attachmentId.");
-        }
-
-        if (!$entityType) {
-            throw new BadRequest("No entityType.");
-        }
-
-        $params = ImportParams::fromRaw($data);
-
-        $result = $this->getImportService()->import(
-            $entityType,
-            $attributeList,
-            $attachmentId,
-            $params
-        );
-
-        return $result->getValueMap();
-    }
-
-    public function postActionUnmarkAsDuplicate(Request $request): bool
-    {
-        $data = $request->getParsedBody();
-
-        if (
-            empty($data->id) ||
-            empty($data->entityType) ||
-            empty($data->entityId)
-        ) {
-            throw new BadRequest();
-        }
-
-        $this->getImportService()->unmarkAsDuplicate($data->id, $data->entityType, $data->entityId);
-
-        return true;
-    }
-
-    /**
-     * @throws BadRequest
-     * @throws \Espo\Core\Exceptions\NotFound
-     */
-    public function postActionExportErrors(Request $request): stdClass
-    {
-        $id = $request->getParsedBody()->id ?? null;
-
-        if (!$id) {
-            throw new BadRequest("No `id`.");
-        }
-
-        $attachmentId = $this->getImportService()->exportErrors($id);
-
-        return (object) [
-            'attachmentId' => $attachmentId,
-        ];
     }
 
     public function putActionUpdate(Request $request, Response $response): stdClass
