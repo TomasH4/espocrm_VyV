@@ -29,65 +29,15 @@
 
 namespace Espo\Modules\Crm\Controllers;
 
-use Espo\Core\Exceptions\Error;
-use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Exceptions\BadRequest;
-use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Api\Request;
-use Espo\Core\Acl;
-use Espo\Core\Record\SearchParamsFetcher;
-use Espo\Modules\Crm\Tools\Activities\FetchParams as ActivitiesFetchParams;
 use Espo\Modules\Crm\Tools\Activities\Service as Service;
-use Espo\Entities\User;
-
-use stdClass;
 
 class Activities
 {
     public function __construct(
-        private User $user,
-        private Acl $acl,
-        private SearchParamsFetcher $searchParamsFetcher,
         private Service $service
     ) {}
-
-    /**
-     * @throws Forbidden
-     * @throws NotFound
-     * @throws BadRequest
-     */
-    public function getActionListUpcoming(Request $request): stdClass
-    {
-        $userId = $request->getQueryParam('userId');
-
-        if (!$userId) {
-            $userId = $this->user->getId();
-        }
-
-        $searchParams = $this->searchParamsFetcher->fetch($request);
-
-        $offset = $searchParams->getOffset();
-        $maxSize = $searchParams->getMaxSize();
-
-        $entityTypeList = (array) ($request->getQueryParams()['entityTypeList'] ?? null);
-
-        $futureDays = intval($request->getQueryParam('futureDays'));
-
-        $recordCollection = $this->service->getUpcomingActivities(
-            $userId,
-            [
-                'offset' => $offset,
-                'maxSize' => $maxSize,
-            ],
-            $entityTypeList,
-            $futureDays
-        );
-
-        return (object) [
-            'total' => $recordCollection->getTotal(),
-            'list' => $recordCollection->getValueMapList(),
-        ];
-    }
 
     /**
      * @throws BadRequest
@@ -105,116 +55,5 @@ class Activities
         $this->service->removeReminder($id);
 
         return true;
-    }
-
-    /**
-     * @throws BadRequest
-     * @throws Error
-     * @throws Forbidden
-     * @throws NotFound
-     */
-    public function getActionList(Request $request): stdClass
-    {
-        $params = $request->getRouteParams();
-
-        if (!$this->acl->check('Activities')) {
-            throw new Forbidden();
-        }
-
-        $name = $params['name'] ?? null;
-
-        if (!in_array($name, ['activities', 'history'])) {
-            throw new BadRequest();
-        }
-
-        if (empty($params['scope'])) {
-            throw new BadRequest();
-        }
-
-        if (empty($params['id'])) {
-            throw new BadRequest();
-        }
-
-        $entityType = $params['scope'];
-        $id = $params['id'];
-
-        $searchParams = $this->searchParamsFetcher->fetch($request);
-
-        $offset = $searchParams->getOffset();
-        $maxSize = $searchParams->getMaxSize();
-
-        $targetEntityType = $request->getQueryParam('entityType');
-
-        $fetchParams = new ActivitiesFetchParams(
-            $maxSize,
-            $offset,
-            $targetEntityType
-        );
-
-        $recordCollection = $name === 'history' ?
-            $this->service->getHistory($entityType, $id, $fetchParams) :
-            $this->service->getActivities($entityType, $id, $fetchParams);
-
-        return (object) [
-            'total' => $recordCollection->getTotal(),
-            'list' => $recordCollection->getValueMapList(),
-        ];
-    }
-
-    /**
-     * @throws BadRequest
-     * @throws Error
-     * @throws Forbidden
-     * @throws NotFound
-     */
-    public function getActionEntityTypeList(Request $request): stdClass
-    {
-        $params = $request->getRouteParams();
-
-        if (empty($params['scope'])) {
-            throw new BadRequest();
-        }
-
-        if (empty($params['id'])) {
-            throw new BadRequest();
-        }
-
-        if (empty($params['name'])) {
-            throw new BadRequest();
-        }
-
-        if (empty($params['entityType'])) {
-            throw new BadRequest();
-        }
-
-        $scope = $params['scope'];
-        $id = $params['id'];
-        $name = $params['name'];
-        $entityType = $params['entityType'];
-
-        if ($name === 'activities') {
-            $isHistory = false;
-        }
-        else  if ($name === 'history') {
-            $isHistory = true;
-        }
-        else {
-            throw new BadRequest();
-        }
-
-        $searchParams = $this->searchParamsFetcher->fetch($request);
-
-        $result = $this->service->findActivitiesEntityType(
-            $scope,
-            $id,
-            $entityType,
-            $isHistory,
-            $searchParams
-        );
-
-        return (object) [
-            'total' => $result->getTotal(),
-            'list' => $result->getValueMapList(),
-        ];
     }
 }
