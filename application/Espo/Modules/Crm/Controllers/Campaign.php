@@ -29,45 +29,7 @@
 
 namespace Espo\Modules\Crm\Controllers;
 
-use Espo\Core\Acl\Table;
 use Espo\Core\Controllers\Record;
-use Espo\Core\Exceptions\Error;
-use Espo\Core\Exceptions\Forbidden;
-use Espo\Core\Exceptions\BadRequest;
-use Espo\Core\Api\Request;
-use Espo\Modules\Crm\Entities\Campaign as CampaignEntity;
-use Espo\Modules\Crm\Tools\Campaign\MailMergeService;
-use stdClass;
 
 class Campaign extends Record
-{
-    /**
-     * @throws BadRequest
-     * @throws Forbidden
-     * @throws Error
-     */
-    public function postActionGenerateMailMergePdf(Request $request): stdClass
-    {
-        $data = $request->getParsedBody();
-
-        if (empty($data->campaignId)) {
-            throw new BadRequest();
-        }
-
-        if (empty($data->link)) {
-            throw new BadRequest();
-        }
-
-        if (!$this->acl->checkScope(CampaignEntity::ENTITY_TYPE, Table::ACTION_READ)) {
-            throw new Forbidden();
-        }
-
-        $attachmentId = $this->injectableFactory
-            ->create(MailMergeService::class)
-            ->generate($data->campaignId, $data->link);
-
-        return (object) [
-            'id' => $attachmentId,
-        ];
-    }
-}
+{}
