@@ -29,48 +29,7 @@
 
 namespace Espo\Controllers;
 
-use Espo\Core\Exceptions\BadRequest;
-
-use Espo\Core\Exceptions\ForbiddenSilent;
-use Espo\Core\Exceptions\NotFound;
-use Espo\Tools\EmailTemplate\Data;
-use Espo\Tools\EmailTemplate\Service;
-
-use Espo\Core\Api\Request;
 use Espo\Core\Controllers\Record;
 
-use stdClass;
-
 class EmailTemplate extends Record
-{
-    /**
-     * @throws BadRequest
-     * @throws NotFound
-     * @throws ForbiddenSilent
-     */
-    public function actionParse(Request $request): stdClass
-    {
-        $id = $request->getQueryParam('id');
-
-        if ($id === null) {
-            throw new BadRequest("No `id`.");
-        }
-
-        $data = Data::create()
-            ->withRelatedType($request->getQueryParam('relatedType'))
-            ->withRelatedId($request->getQueryParam('relatedId'))
-            ->withParentType($request->getQueryParam('parentType'))
-            ->withParentId($request->getQueryParam('parentId'))
-            ->withEmailAddress($request->getQueryParam('emailAddress'));
-
-        $result = $this->getEmailTemplateService()->process($id, $data);
-
-        return $result->getValueMap();
-
-    }
-
-    private function getEmailTemplateService(): Service
-    {
-        return $this->injectableFactory->create(Service::class);
-    }
-}
+{}
