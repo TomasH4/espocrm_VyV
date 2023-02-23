@@ -29,79 +29,10 @@
 
 namespace Espo\Modules\Crm\Repositories;
 
-use Espo\ORM\Entity;
+use Espo\Core\Repositories\Database;
 
 /**
- * @extends \Espo\Core\Repositories\Database<\Espo\Modules\Crm\Entities\Lead>
+ * @extends Database<\Espo\Modules\Crm\Entities\Contact>
  */
-class Contact extends \Espo\Core\Repositories\Database
-{
-    public function afterSave(Entity $entity, array $options = [])
-    {
-        parent::afterSave($entity, $options);
-
-        $this->handleAfterSaveAccounts($entity);
-
-        if ($entity->has('targetListId')) {
-            $this->relate($entity, 'targetLists', $entity->get('targetListId'));
-        }
-    }
-
-    protected function handleAfterSaveAccounts(Entity $entity): void
-    {
-        $accountIdChanged = $entity->has('accountId') &&
-            $entity->get('accountId') != $entity->getFetched('accountId');
-
-        $accountId = null;
-
-        $titleChanged = $entity->has('title') && $entity->get('title') != $entity->getFetched('title');
-
-        if ($accountIdChanged) {
-            $accountId = $entity->get('accountId');
-
-            if (empty($accountId)) {
-                $this->unrelate($entity, 'accounts', $entity->getFetched('accountId'));
-
-                return;
-            }
-        }
-
-        if ($titleChanged) {
-            if (empty($accountId)) {
-                $accountId = $entity->getFetched('accountId');
-
-                if (empty($accountId)) {
-                    return;
-                }
-            }
-        }
-
-        if ($accountIdChanged || $titleChanged) {
-            $accountContact = $this->entityManager
-                ->getRDBRepository('AccountContact')
-                ->select(['role'])
-                ->where([
-                    'accountId' => $accountId,
-                    'contactId' => $entity->getId(),
-                    'deleted' => false,
-                ])
-                ->findOne();
-
-            if (!$accountContact) {
-                if ($accountIdChanged) {
-                    $this->relate($entity, 'accounts', $accountId, [
-                        'role' => $entity->get('title')
-                    ]);
-                }
-
-                return;
-            }
-
-            if ($titleChanged && $entity->get('title') != $accountContact->get('role')) {
-                $this->updateRelation($entity, 'accounts', $accountId, [
-                    'role' => $entity->get('title'),
-                ]);
-            }
-        }
-    }
-}
+class Contact extends Database
+{}
