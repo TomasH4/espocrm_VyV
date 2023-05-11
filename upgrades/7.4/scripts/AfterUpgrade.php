@@ -102,8 +102,6 @@ class AfterUpgrade
                     ]
                 ]
             ]);
-
-            $metadata->save();
         }
     }
 }
