@@ -36,7 +36,7 @@ class TaskMenuHandler extends ActionHandler {
         model
             .save({status: 'Completed'}, {patch: true})
             .then(() => {
-                Espo.Ui.success(this.view.translate('Saved'));
+                Espo.Ui.success(this.view.getLanguage().translateOption('Completed', 'status', 'Task'));
             });
     }
 
