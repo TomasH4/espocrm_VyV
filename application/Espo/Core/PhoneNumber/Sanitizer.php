@@ -39,7 +39,7 @@ class Sanitizer
         private Config $config
     ) {}
 
-    public function sanitize(string $value, ?string $countryCode): string
+    public function sanitize(string $value, ?string $countryCode = null): string
     {
         $value = trim($value);
 
