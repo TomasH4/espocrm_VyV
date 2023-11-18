@@ -29,7 +29,9 @@
 
 namespace Espo\Core\Authentication\TwoFactor\Sms;
 
+use Espo\Core\Authentication\TwoFactor\Exceptions\NotConfigured;
 use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Portal\Utils\Config;
 use Espo\Entities\User;
 use Espo\Core\Authentication\TwoFactor\UserSetup;
 
@@ -40,11 +42,17 @@ use stdClass;
  */
 class SmsUserSetup implements UserSetup
 {
-    public function __construct(private Util $util)
-    {}
+    public function __construct(
+        private Util $util,
+        private Config $config
+    ) {}
 
     public function getData(User $user): stdClass
     {
+        if (!$this->config->get('smsProvider')) {
+            throw new NotConfigured("No SMS provider. Need to configure an SMS provider.");
+        }
+
         return (object) [
             'phoneNumberList' => $user->getPhoneNumberGroup()->getNumberList(),
         ];
