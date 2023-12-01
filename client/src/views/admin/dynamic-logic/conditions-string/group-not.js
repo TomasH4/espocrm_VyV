@@ -36,7 +36,7 @@ define('views/admin/dynamic-logic/conditions-string/group-not',
         data: function () {
             return {
                 viewKey: this.viewKey,
-                operator: this.operator
+                operator: this.operator,
             };
         },
 
