@@ -35,7 +35,15 @@ class AboutView extends View {
     data() {
         return {
             version: this.getConfig().get('version'),
+            text: this.getHelper().transformMarkdownText(this.text)
         };
+    }
+
+    setup() {
+        this.wait(
+            Espo.Ajax.getRequest('App/aboutText')
+                .then(text => this.text = text)
+        );
     }
 }
 
