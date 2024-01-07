@@ -54,4 +54,13 @@ class ConfigDataProvider
     {
         return (bool) $this->config->get('jobNoTableLocking');
     }
+
+    public function getTimeZone(): string
+    {
+        if ($this->config->get('jobForceUtc')) {
+            return 'UTC';
+        }
+
+        return $this->config->get('timeZone') ?? 'UTC';
+    }
 }
