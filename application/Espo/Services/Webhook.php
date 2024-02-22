@@ -31,41 +31,17 @@ namespace Espo\Services;
 
 use Espo\Entities\Webhook as WebhookEntity;
 use Espo\ORM\Entity;
-use Espo\Core\Exceptions\Forbidden;
-use Espo\Core\Di;
-use Espo\Entities\User;
 
 use stdClass;
 
 /**
  * @extends Record<WebhookEntity>
  */
-class Webhook extends Record implements
-    Di\WebhookManagerAware
-
+class Webhook extends Record
 {
-    use Di\WebhookManagerSetter;
-
-    const WEBHOOK_MAX_COUNT_PER_USER = 50;
-
-    /**
-     * @var string[]
-     */
-    protected $eventTypeList = [
-        'create',
-        'update',
-        'delete',
-        'fieldUpdate',
-    ];
-
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $onlyAdminAttributeList = ['userId', 'userName'];
-
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $readOnlyAttributeList = ['secretKey'];
 
     public function populateDefaults(Entity $entity, stdClass $data): void
@@ -93,166 +69,5 @@ class Webhook extends Record implements
         }
 
         parent::filterUpdateInput($data);
-    }
-
-    /**
-     * @throws Forbidden
-     */
-    protected function beforeCreateEntity(Entity $entity, $data)
-    {
-        $this->checkEntityUserIsApi($entity);
-        $this->processEntityEventData($entity);
-
-        if (!$this->user->isAdmin()) {
-            $this->checkMaxCount();
-        }
-    }
-
-    /**
-     * @throws Forbidden
-     */
-    protected function checkMaxCount(): void
-    {
-        $maxCount = $this->config->get('webhookMaxCountPerUser', self::WEBHOOK_MAX_COUNT_PER_USER);
-
-        $count = $this->entityManager
-            ->getRDBRepository(WebhookEntity::ENTITY_TYPE)
-            ->where([
-                'userId' => $this->user->getId(),
-            ])
-            ->count();
-
-        if ($maxCount && $count >= $maxCount) {
-            throw new Forbidden("Webhook number per user exceeded the limit.");
-        }
-    }
-
-    /**
-     * @throws Forbidden
-     */
-    protected function beforeUpdateEntity(Entity $entity, $data)
-    {
-        $this->checkEntityUserIsApi($entity);
-        $this->processEntityEventData($entity);
-    }
-
-    /**
-     * @throws Forbidden
-     */
-    protected function checkEntityUserIsApi(Entity $entity): void
-    {
-        $userId = $entity->get('userId');
-
-        if (!$userId) {
-            return;
-        }
-
-        /** @var User|null $user */
-        $user = $this->entityManager->getEntity(User::ENTITY_TYPE, $userId);
-
-        if (!$user || !$user->isApi()) {
-            throw new Forbidden("User must be an API User.");
-        }
-    }
-
-    /**
-     * @throws Forbidden
-     */
-    protected function processEntityEventData(Entity $entity): void
-    {
-        $event = $entity->get('event');
-
-        if (!$event) {
-            throw new Forbidden("Event is empty.");
-        }
-
-        if (!$entity->isNew()) {
-            if ($entity->isAttributeChanged('event')) {
-                throw new Forbidden("Event can't be changed.");
-            }
-        }
-
-        $arr = explode('.', $event);
-
-        if (count($arr) !== 2 && count($arr) !== 3) {
-            throw new Forbidden("Not supported event.");
-        }
-
-        $entityType = $arr[0];
-        $type = $arr[1];
-
-        $entity->set('entityType', $entityType);
-        $entity->set('type', $type);
-
-        $field = null;
-
-        if (!$entityType) {
-            throw new Forbidden("Entity Type is empty.");
-        }
-
-        if (!$this->metadata->get(['scopes', $entityType, 'object'])) {
-            throw new Forbidden("Entity type is not available for Webhooks.");
-        }
-
-        if (!$this->entityManager->hasRepository($entityType)) {
-            throw new Forbidden("Not existing Entity Type.");
-        }
-
-        if (!$this->acl->checkScope($entityType, 'read')) {
-            throw new Forbidden("Entity type is forbidden.");
-        }
-
-        if (!in_array($type, $this->eventTypeList)) {
-            throw new Forbidden("Not supported event.");
-        }
-
-        if ($type === 'fieldUpdate') {
-            if (count($arr) == 3) {
-                $field = $arr[2];
-            }
-
-            $entity->set('field', $field);
-
-            if (!$field) {
-                throw new Forbidden("Field is empty.");
-            }
-
-            if (!$this->acl->checkField($entityType, $field)) {
-                throw new Forbidden("Field is forbidden.");
-            }
-
-            if (!$this->metadata->get(['entityDefs', $entityType, 'fields', $field])) {
-                throw new Forbidden("Field does not exist.");
-            }
-        } else {
-            /** @noinspection PhpRedundantOptionalArgumentInspection */
-            $entity->set('field', null);
-        }
-    }
-
-    protected function afterCreateEntity(Entity $entity, $data)
-    {
-        if ($entity->get('isActive')) {
-            $this->webhookManager->addEvent($entity->get('event'));
-        }
-    }
-
-    protected function afterDeleteEntity(Entity $entity)
-    {
-        if ($entity->get('isActive')) {
-            $this->webhookManager->removeEvent($entity->get('event'));
-        }
-    }
-
-    protected function afterUpdateEntity(Entity $entity, $data)
-    {
-        if (isset($data->isActive)) {
-            if ($entity->get('isActive')) {
-                $this->webhookManager->addEvent($entity->get('event'));
-            }
-            else {
-                $this->webhookManager->removeEvent($entity->get('event'));
-            }
-        }
     }
 }
