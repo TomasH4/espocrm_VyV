@@ -30,8 +30,6 @@
 namespace Espo\Services;
 
 use Espo\Entities\Webhook as WebhookEntity;
-use Espo\ORM\Entity;
-
 use stdClass;
 
 /**
@@ -39,15 +37,6 @@ use stdClass;
  */
 class Webhook extends Record
 {
-    public function populateDefaults(Entity $entity, stdClass $data): void
-    {
-        parent::populateDefaults($entity, $data);
-
-        if ($this->user->isApi()) {
-            $entity->set('userId', $this->user->getId());
-        }
-    }
-
     protected function filterInput(stdClass $data): void
     {
         parent::filterInput($data);
