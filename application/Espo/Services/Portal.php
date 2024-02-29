@@ -29,45 +29,12 @@
 
 namespace Espo\Services;
 
-use Espo\Entities\Portal as PortalEntity;
-use Espo\Core\Di;
-use stdClass;
+use Espo\Core\ORM\Entity;
 
 /**
- * @extends Record<PortalEntity>
+ * @extends Record<Entity>
  */
-class Portal extends Record implements
-
-    Di\DataManagerAware
+class Portal extends Record
 {
-    use Di\DataManagerSetter;
-
     protected bool $getEntityBeforeUpdate = true;
-
-    public function filterCreateInput(stdClass $data): void
-    {
-        parent::filterCreateInput($data);
-
-        $this->filterRestrictedFields($data);
-    }
-
-    public function filterUpdateInput(stdClass $data): void
-    {
-        parent::filterUpdateInput($data);
-
-        $this->filterRestrictedFields($data);
-    }
-
-    private function filterRestrictedFields(stdClass $data): void
-    {
-        if (!$this->config->get('restrictedMode')) {
-            return;
-        }
-
-        if ($this->user->isSuperAdmin()) {
-            return;
-        }
-
-        unset($data->customUrl);
-    }
 }
