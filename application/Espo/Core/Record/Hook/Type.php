@@ -43,4 +43,6 @@ class Type
 
     public const BEFORE_LINK = 'beforeLink';
     public const BEFORE_UNLINK = 'beforeUnlink';
+    public const AFTER_LINK = 'afterLink';
+    public const AFTER_UNLINK = 'afterUnlink';
 }
