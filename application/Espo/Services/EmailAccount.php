@@ -32,44 +32,13 @@ namespace Espo\Services;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Mail\Account\PersonalAccount\AccountFactory;
 use Espo\Core\Mail\Exceptions\NoSmtp;
-use Espo\ORM\Entity;
-use Espo\Core\Exceptions\Forbidden;
-use Espo\Core\Record\CreateParams;
 use Espo\Entities\EmailAccount as EmailAccountEntity;
-
-use stdClass;
 
 /**
  * @extends Record<EmailAccountEntity>
  */
 class EmailAccount extends Record
 {
-    public function create(stdClass $data, CreateParams $params): Entity
-    {
-        if (!$this->user->isAdmin()) {
-            $count = $this->entityManager
-                ->getRDBRepository(EmailAccountEntity::ENTITY_TYPE)
-                ->where([
-                    'assignedUserId' => $this->user->getId()
-                ])
-                ->count();
-
-            if ($count >= $this->config->get('maxEmailAccountCount', \PHP_INT_MAX)) {
-                throw new Forbidden();
-            }
-        }
-
-        $entity = parent::create($data, $params);
-
-        if (!$this->user->isAdmin()) {
-            $entity->set('assignedUserId', $this->user->getId());
-        }
-
-        $this->entityManager->saveEntity($entity);
-
-        return $entity;
-    }
-
     /**
      * @return ?array<string, mixed>
      * @throws Error
