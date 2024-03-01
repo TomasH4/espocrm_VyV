@@ -32,29 +32,14 @@ namespace Espo\Services;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Mail\Account\GroupAccount\AccountFactory;
 use Espo\Core\Mail\Exceptions\NoSmtp;
-use Espo\ORM\Entity;
-use Espo\Core\Exceptions\BadRequest;
 use Espo\Services\Record as RecordService;
 use Espo\Entities\InboundEmail as InboundEmailEntity;
-
-use stdClass;
 
 /**
  * @extends Record<InboundEmailEntity>
  */
 class InboundEmail extends RecordService
 {
-    public function processValidation(Entity $entity, stdClass $data): void
-    {
-        parent::processValidation($entity, $data);
-
-        if ($entity->get('useImap')) {
-            if (!$entity->get('fetchSince')) {
-                throw new BadRequest("EmailAccount validation: fetchSince is required.");
-            }
-        }
-    }
-
     /**
      * @return ?array<string, mixed>
      * @throws Error
