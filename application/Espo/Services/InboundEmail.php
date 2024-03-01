@@ -37,33 +37,13 @@ use Espo\Core\Exceptions\BadRequest;
 use Espo\Services\Record as RecordService;
 use Espo\Entities\InboundEmail as InboundEmailEntity;
 
-use Espo\Core\Di;
 use stdClass;
 
 /**
  * @extends Record<InboundEmailEntity>
  */
-class InboundEmail extends RecordService implements
-
-    Di\CryptAware,
-    Di\EmailSenderAware
+class InboundEmail extends RecordService
 {
-    use Di\CryptSetter;
-    use Di\EmailSenderSetter;
-
-    protected function filterInput(stdClass $data): void
-    {
-        parent::filterInput($data);
-
-        if (property_exists($data, 'password')) {
-            $data->password = $this->crypt->encrypt($data->password);
-        }
-
-        if (property_exists($data, 'smtpPassword')) {
-            $data->smtpPassword = $this->crypt->encrypt($data->smtpPassword);
-        }
-    }
-
     public function processValidation(Entity $entity, stdClass $data): void
     {
         parent::processValidation($entity, $data);
