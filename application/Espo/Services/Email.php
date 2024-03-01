@@ -31,17 +31,13 @@ namespace Espo\Services;
 
 use Espo\Tools\Email\SendService;
 use Espo\ORM\Entity;
-use Espo\Entities\User;
 use Espo\Entities\Email as EmailEntity;
-use Espo\Tools\Email\InboxService;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\Conflict;
 use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Mail\Exceptions\SendingError;
-use Espo\Core\Mail\SmtpParams;
 use Espo\Core\Record\CreateParams;
-use Espo\Tools\Email\Util;
 use stdClass;
 
 /**
@@ -53,26 +49,6 @@ class Email extends Record
 
     private ?SendService $sendService = null;
 
-    /**
-     * @deprecated Use `Espo\Tools\Email\SendService`.
-     */
-    public function getUserSmtpParams(string $userId): ?SmtpParams
-    {
-        return $this->getSendService()->getUserSmtpParams($userId);
-    }
-
-    /**
-     * @deprecated Use `Espo\Tools\Email\SendService`.
-     *
-     * @throws BadRequest
-     * @throws SendingError
-     * @throws Error
-     */
-    public function sendEntity(EmailEntity $entity, ?User $user = null): void
-    {
-        $this->getSendService()->send($entity, $user);
-    }
-
     private function getSendService(): SendService
     {
         if (!$this->sendService) {
@@ -83,6 +59,8 @@ class Email extends Record
     }
 
     /**
+     * @todo Move to hook? Make sure needed data is loaded before sending.
+     *
      * @throws BadRequest
      * @throws Error
      * @throws Forbidden
@@ -100,40 +78,5 @@ class Email extends Record
         }
 
         return $entity;
-    }
-
-    public function getEntity(string $id): ?Entity
-    {
-        /** @var ?EmailEntity $entity */
-        $entity = parent::getEntity($id);
-
-        if ($entity && !$entity->isRead()) {
-            $this->markAsRead($entity->getId());
-        }
-
-        return $entity;
-    }
-
-    private function markAsRead(string $id): void
-    {
-        $service = $this->injectableFactory->create(InboxService::class);
-
-        $service->markAsRead($id);
-    }
-
-    /**
-     * @deprecated Use `Util`.
-     */
-    static public function parseFromName(?string $string): string
-    {
-        return Util::parseFromName($string);
-    }
-
-    /**
-     * @deprecated Use `Util`.
-     */
-    static public function parseFromAddress(?string $string): string
-    {
-        return Util::parseFromAddress($string);
     }
 }
