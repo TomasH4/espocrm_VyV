@@ -27,8 +27,9 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Core\Upgrades\Migration;
+namespace tests\unit\Espo\Core\Upgrades\Migration;
 
+use Espo\Core\Upgrades\Migration\StepsProvider;
 use Espo\Core\Utils\File\Manager;
 use PHPUnit\Framework\TestCase;
 
