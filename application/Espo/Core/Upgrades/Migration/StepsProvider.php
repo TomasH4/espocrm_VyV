@@ -43,14 +43,30 @@ class StepsProvider
     /**
      * @return string[]
      */
+    public function getPrepare(): array
+    {
+        return $this->get('Prepare');
+    }
+
+    /**
+     * @return string[]
+     */
     public function getAfterUpgrade(): array
+    {
+        return $this->get('AfterUpgrade');
+    }
+
+    /**
+     * @return string[]
+     */
+    private function get(string $name): array
     {
         $list = $this->fileManager->getDirList($this->dir);
 
-        $list = array_filter($list, function ($item) {
+        $list = array_filter($list, function ($item) use ($name) {
             $dir = $this->dir . '/' . $item;
 
-            return $this->fileManager->isFile($dir . '/AfterUpgrade.php');
+            return $this->fileManager->isFile("$dir/$name.php");
         });
 
         $list = array_values($list);
