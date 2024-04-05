@@ -30,29 +30,23 @@
 namespace Espo\Core\Upgrades\Migration;
 
 use Espo\Core\Console\IO;
-use Espo\Core\Utils\Config;
-use Espo\Core\Utils\File\Manager;
 use RuntimeException;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 
 class Runner
 {
-    private string $defaultConfigPath = 'application/Espo/Resources/defaults/config.php';
-
     public function __construct(
-        private Config $config,
-        private Manager $fileManager,
         private StepsExtractor $stepsExtractor,
-        private StepsProvider $stepsProvider
+        private StepsProvider $stepsProvider,
+        private VersionDataProvider $versionDataProvider,
+        private StepRunner $stepRunner
     ) {}
 
     public function run(IO $io): void
     {
-        $version = $this->config->get('version');
-        $targetVersion = $this->getTargetVersion();
+        $version = $this->versionDataProvider->getPreviousVersion();
+        $targetVersion = $this->versionDataProvider->getTargetVersion();
 
-        $fullList = $this->stepsProvider->get();
+        $fullList = $this->stepsProvider->getAfterUpgrade();
         $steps = $this->stepsExtractor->extract($version, $targetVersion, $fullList);
 
         if ($steps === []) {
@@ -70,17 +64,11 @@ class Runner
 
     private function runVersionStep(IO $io, string $step): void
     {
-        $phpExecutablePath = $this->getPhpExecutablePath();
-
-        $command = "command.php migration-version-step --step=$step";
-
         $io->write("    $step...");
 
-        $process = new Process([$phpExecutablePath, $command]);
-        $process->setTimeout(null);
-        $process->run();
+        $isSuccessful = $this->stepRunner->run($step);
 
-        if ($process->isSuccessful()) {
+        if ($isSuccessful) {
             $io->writeLine(" DONE");
 
             return;
@@ -89,33 +77,5 @@ class Runner
         $io->writeLine(" FAIL");
 
         throw new RuntimeException();
-    }
-
-    private function getPhpExecutablePath(): string
-    {
-        $phpExecutablePath = $this->config->get('phpExecutablePath');
-
-        if (!$phpExecutablePath) {
-            $phpExecutablePath = (new PhpExecutableFinder)->find();
-        }
-
-        return $phpExecutablePath;
-    }
-
-    private function getTargetVersion(): string
-    {
-        $data = $this->fileManager->getPhpContents($this->defaultConfigPath);
-
-        if (!is_array($data)) {
-            throw new RuntimeException("No default config.");
-        }
-
-        $version = $data['version'] ?? null;
-
-        if (!$version || !is_string($version)) {
-            throw new RuntimeException("No or bad 'version' parameter in default config.");
-        }
-
-        return $version;
     }
 }
