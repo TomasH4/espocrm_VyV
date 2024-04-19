@@ -32,8 +32,8 @@ namespace tests\unit\Espo\Core\Acl;
 
 use Espo\Core\{
     Acl\Map\MetadataProvider,
-    Utils\Metadata,
-};
+    Acl\Permission,
+    Utils\Metadata};
 
 class MetadataProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -54,6 +54,6 @@ class MetadataProviderTest extends \PHPUnit\Framework\TestCase
             ->with(['app', 'acl', 'valuePermissionList'])
             ->willReturn(['assignmentPermission', 'portalPermission']);
 
-        $this->assertEquals(['assignment', 'portal'], $provider->getPermissionList());
+        $this->assertEquals([Permission::ASSIGNMENT, 'portal'], $provider->getPermissionList());
     }
 }
