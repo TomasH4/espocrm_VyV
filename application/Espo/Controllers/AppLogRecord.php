@@ -39,7 +39,19 @@ class AppLogRecord extends Record
 {
     protected function checkAccess(): bool
     {
-        return $this->user->isAdmin();
+        if (!$this->user->isAdmin()) {
+            return false;
+        }
+
+        if (!$this->config->get('restrictedMode')) {
+            return true;
+        }
+
+        if ($this->config->get('appLogAdminAllowed')) {
+            return true;
+        }
+
+        return $this->user->isSuperAdmin();
     }
 
     public function postActionCreate(Request $request, Response $response): stdClass
