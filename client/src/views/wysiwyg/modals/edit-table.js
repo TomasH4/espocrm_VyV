@@ -43,6 +43,7 @@ class EditTableModalView extends ModalView {
      *     params: {
      *         align: null|'left'|'center'|'right',
      *         width: null|string,
+     *         height: null|string,
      *         borderWidth: null|string,
      *         borderColor: null|string,
      *         cellPadding: null|string,
@@ -51,6 +52,7 @@ class EditTableModalView extends ModalView {
      *    onApply: function({
      *         align: null|'left'|'center'|'right',
      *         width: null|string,
+     *         height: null|string,
      *         borderWidth: null|string,
      *         borderColor: null|string,
      *         cellPadding: null|string,
@@ -86,6 +88,7 @@ class EditTableModalView extends ModalView {
         this.model = new Model({
             align: this.params.align,
             width: this.params.width,
+            height: this.params.height,
             borderWidth: this.params.borderWidth,
             borderColor: this.params.borderColor,
             cellPadding: this.params.cellPadding,
@@ -99,24 +102,18 @@ class EditTableModalView extends ModalView {
                     rows: [
                         [
                             {
-                                view: new EnumFieldView({
-                                    name: 'align',
-                                    labelText: this.translate('align', 'wysiwygLabels'),
+                                view: new VarcharFieldView({
+                                    name: 'width',
+                                    labelText: this.translate('width', 'wysiwygLabels'),
                                     params: {
-                                        options: [
-                                            '',
-                                            'left',
-                                            'center',
-                                            'right',
-                                        ],
-                                        translation: 'Global.wysiwygOptions.align',
+                                        maxLength: 12,
                                     },
                                 }),
                             },
                             {
                                 view: new VarcharFieldView({
-                                    name: 'width',
-                                    labelText: this.translate('width', 'wysiwygLabels'),
+                                    name: 'height',
+                                    labelText: this.translate('height', 'wysiwygLabels'),
                                     params: {
                                         maxLength: 12,
                                     },
@@ -157,6 +154,24 @@ class EditTableModalView extends ModalView {
                                 }),
                             },
                         ],
+                        [
+                            {
+                                view: new EnumFieldView({
+                                    name: 'align',
+                                    labelText: this.translate('align', 'wysiwygLabels'),
+                                    params: {
+                                        options: [
+                                            '',
+                                            'left',
+                                            'center',
+                                            'right',
+                                        ],
+                                        translation: 'Global.wysiwygOptions.align',
+                                    },
+                                }),
+                            },
+                            false
+                        ],
                     ],
                 },
             ],
@@ -172,6 +187,8 @@ class EditTableModalView extends ModalView {
 
         let borderWidth = this.model.attributes.borderWidth;
         let cellPadding = this.model.attributes.cellPadding;
+        let width = this.model.attributes.width;
+        let height = this.model.attributes.height;
 
         if (/^\d+$/.test(borderWidth)) {
             borderWidth += 'px';
@@ -181,9 +198,18 @@ class EditTableModalView extends ModalView {
             cellPadding += 'px';
         }
 
+        if (/^\d+$/.test(width)) {
+            width += 'px';
+        }
+
+        if (/^\d+$/.test(height)) {
+            height += 'px';
+        }
+
         this.onApply({
             align: this.model.attributes.align,
-            width: this.model.attributes.width,
+            width: width,
+            height: height,
             borderWidth: borderWidth,
             borderColor: this.model.attributes.borderColor,
             cellPadding: cellPadding,
