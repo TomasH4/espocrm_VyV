@@ -27,6 +27,7 @@
  ************************************************************************/
 
 import DatetimeOptionalFieldView from 'views/fields/datetime-optional';
+import moment from 'moment';
 
 class DateStartMeetingFieldView extends DatetimeOptionalFieldView {
 
@@ -36,18 +37,82 @@ class DateStartMeetingFieldView extends DatetimeOptionalFieldView {
         super.setup();
 
         this.noneOption = this.translate('All-Day', 'labels', 'Meeting');
+
+        this.notActualStatusList = [
+            ...(this.getMetadata().get(`scopes.${this.entityType}.completedStatusList`) || []),
+            ...(this.getMetadata().get(`scopes.${this.entityType}.canceledStatusList`) || []),
+        ];
     }
 
-    fetch() {
-        const data = super.data();
+    getAttributeList() {
+        return [
+            ...super.getAttributeList(),
+            'dateEnd',
+            'dateEndDate',
+            'status',
+        ];
+    }
 
-        if (data[this.nameDate]) {
-            data.isAllDay = true;
-        } else {
-            data.isAllDay = false;
+    data() {
+        let style;
+
+        const status = this.model.get('status');
+
+        if (
+            status &&
+            !this.notActualStatusList.includes(status) &&
+            (this.mode === this.MODE_DETAIL || this.mode === this.MODE_LIST)
+        ) {
+            if (this.isDateInPast('dateEnd')) {
+                style = 'danger';
+            } else if (this.isDateInPast('dateStart', true)) {
+                style = 'warning';
+            }
         }
 
-        return data;
+        // noinspection JSValidateTypes
+        return {
+            ...super.data(),
+            style: style,
+        };
+    }
+
+    /**
+     * @private
+     * @param {string} field
+     * @param {boolean} [isFrom]
+     * @return {boolean}
+     */
+    isDateInPast(field, isFrom) {
+        if (this.isDate()) {
+            const value = this.model.get(field + 'Date');
+
+            if (value) {
+                const timeValue = isFrom ? value + ' 00:00' : value + ' 23:59';
+
+                const d = moment.tz(timeValue, this.getDateTime().getTimeZone());
+                const now = this.getDateTime().getNowMoment();
+
+                if (d.unix() < now.unix()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        const value = this.model.get(field);
+
+        if (value) {
+            const d = this.getDateTime().toMoment(value);
+            const now = moment().tz(this.getDateTime().timeZone || 'UTC');
+
+            if (d.unix() < now.unix()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     afterRender() {
@@ -56,6 +121,18 @@ class DateStartMeetingFieldView extends DatetimeOptionalFieldView {
         if (this.isEditMode()) {
             this.controlTimePartVisibility();
         }
+    }
+
+    fetch() {
+        const data = super.fetch();
+
+        if (data[this.nameDate]) {
+            data.isAllDay = true;
+        } else {
+            data.isAllDay = false;
+        }
+
+        return data;
     }
 
     controlTimePartVisibility() {
