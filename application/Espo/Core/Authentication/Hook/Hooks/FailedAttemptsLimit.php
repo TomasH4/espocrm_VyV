@@ -65,27 +65,15 @@ class FailedAttemptsLimit implements BeforeLogin
             return;
         }
 
-        $isSecondStep = $request->getHeader(HeaderKey::AUTHORIZATION_CODE) !== null;
-
-        $failedAttemptsPeriod = $isSecondStep ?
-            $this->configDataProvider->getFailedCodeAttemptsPeriod() :
-            $this->configDataProvider->getFailedAttemptsPeriod();
+        $failedAttemptsPeriod = $this->configDataProvider->getFailedAttemptsPeriod();
 
         $ipAddress = $this->util->obtainIpFromRequest($request);
 
         $where = [
             'requestTime>' => $this->getTimeFrom($request, $failedAttemptsPeriod)->format('U'),
             'isDenied' => true,
+            'ipAddress' => $ipAddress,
         ];
-
-        if ($isSecondStep) {
-            $where['username'] = $data->getUsername();
-            $where['denialReason'] = AuthLogRecord::DENIAL_REASON_WRONG_CODE;
-        }
-
-        if (!$isSecondStep) {
-            $where['ipAddress'] = $ipAddress;
-        }
 
         $wasFailed = (bool) $this->entityManager
             ->getRDBRepository(AuthLogRecord::ENTITY_TYPE)
@@ -104,12 +92,6 @@ class FailedAttemptsLimit implements BeforeLogin
 
         if ($failAttemptCount <= $this->configDataProvider->getMaxFailedAttemptNumber()) {
             return;
-        }
-
-        if ($isSecondStep) {
-            $username = $data->getUsername() ?? '';
-
-            throw new Forbidden("Max failed 2FA login attempts exceeded for username '$username'.");
         }
 
         throw new Forbidden("Max failed login attempts exceeded for IP address $ipAddress.");
