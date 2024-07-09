@@ -27,13 +27,7 @@
  ************************************************************************/
 
 import EditSmallRecordView from 'views/record/edit-small';
-import OpportunityEditRecordView from 'modules/crm/views/opportunity/record/edit';
 
-class OpportunityEditSmallRecordView extends EditSmallRecordView {
-
-    populateDefaults() {
-        OpportunityEditRecordView.prototype.populateDefaults.call(this);
-    }
-}
+class OpportunityEditSmallRecordView extends EditSmallRecordView {}
 
 export default OpportunityEditSmallRecordView;
