@@ -59,7 +59,7 @@ class GetData implements ActionAlias
         return ResponseComposer::json([
             'total' => $result->getTotal(),
             'list' => $result->getCollection()->getValueMapList(),
-            'additionalData' => $result->getData(),
+            'groups' => array_map(fn ($it) => $it->toRaw(), $result->getGroupList()),
         ]);
     }
 }
