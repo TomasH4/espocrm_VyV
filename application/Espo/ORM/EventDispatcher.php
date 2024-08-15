@@ -53,6 +53,23 @@ class EventDispatcher
         $this->data[self::METADATA_UPDATE][] = $callback;
     }
 
+    /**
+     * @internal
+     * @since 8.4.0
+     */
+    public function unsubscribeFromMetadataUpdate(Closure $closure): void
+    {
+        $list = &$this->data[self::METADATA_UPDATE];
+
+        $index = array_search($closure, $list);
+
+        if ($index !== false) {
+            unset($list[$index]);
+
+            $list = array_values($list);
+        }
+    }
+
     public function dispatchMetadataUpdate(): void
     {
         foreach ($this->data[self::METADATA_UPDATE] as $callback) {
