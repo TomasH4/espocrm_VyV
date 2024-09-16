@@ -32,6 +32,8 @@ namespace Espo\Tools\AppSecret;
 use Espo\Core\Utils\Crypt;
 use Espo\Entities\AppSecret;
 use Espo\ORM\EntityManager;
+use Espo\ORM\Query\Part\Condition;
+use Espo\ORM\Query\Part\Expression;
 
 /**
  * @since 8.5.0
@@ -53,7 +55,12 @@ class SecretProvider
     {
         $secret = $this->entityManager
             ->getRDBRepositoryByClass(AppSecret::class)
-            ->where(['name' => $name])
+            ->where(
+                Condition::equal(
+                    Expression::binary(Expression::column('name')),
+                    $name
+                )
+            )
             ->findOne();
 
         if (!$secret) {
