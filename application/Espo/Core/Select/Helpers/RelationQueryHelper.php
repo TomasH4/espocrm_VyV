@@ -47,9 +47,34 @@ class RelationQueryHelper
 
     public function prepareAssignedUsersWhere(string $entityType, string $userId): WhereItem
     {
+        return $this->prepareRelatedUsersWhere(
+            $entityType,
+            $userId,
+            'assignedUsers',
+            User::RELATIONSHIP_ENTITY_USER
+        );
+    }
+
+    public function prepareCollaboratorsWhere(string $entityType, string $userId): WhereItem
+    {
+        return $this->prepareRelatedUsersWhere(
+            $entityType,
+            $userId,
+            'collaborators',
+            User::RELATIONSHIP_ENTITY_COLLABORATOR
+        );
+    }
+
+    private function prepareRelatedUsersWhere(
+        string $entityType,
+        string $userId,
+        string $field,
+        string $relationship
+    ): WhereItem {
+
         $relationDefs = $this->defs
             ->getEntity($entityType)
-            ->getRelation('assignedUsers');
+            ->getRelation($field);
 
         $middleEntityType = ucfirst($relationDefs->getRelationshipName());
         $key1 = $relationDefs->getMidKey();
@@ -60,7 +85,7 @@ class RelationQueryHelper
             'm.deleted' => false,
         ];
 
-        if ($middleEntityType === User::RELATIONSHIP_ENTITY_USER) {
+        if ($middleEntityType === $relationship) {
             $joinWhere['m.entityType'] = $entityType;
         }
 
