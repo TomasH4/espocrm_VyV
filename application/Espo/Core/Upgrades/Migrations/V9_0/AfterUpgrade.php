@@ -31,6 +31,7 @@ namespace Espo\Core\Upgrades\Migrations\V9_0;
 
 use Espo\Core\Upgrades\Migration\Script;
 use Espo\Entities\Preferences;
+use Espo\Entities\ScheduledJob;
 use Espo\Entities\User;
 use Espo\ORM\EntityManager;
 
@@ -65,5 +66,17 @@ class AfterUpgrade implements Script
             $preferences->set('reactionNotifications', true);
             $this->entityManager->saveEntity($preferences);
         }
+
+        $this->createScheduledJob();
+    }
+
+    private function createScheduledJob(): void
+    {
+        $this->entityManager->createEntity(ScheduledJob::ENTITY_TYPE, [
+            'name' => 'Send Scheduled Emails',
+            'job' => 'SendScheduledEmails',
+            'status' => 'Active',
+            'scheduling' => '*/10 * * * *',
+        ]);
     }
 }
