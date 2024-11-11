@@ -32,6 +32,7 @@ namespace Espo\Core\Select\Primary\Filters;
 use Espo\Core\Select\Primary\Filter;
 use Espo\Entities\StreamSubscription;
 use Espo\Entities\User;
+use Espo\ORM\Name\Attribute;
 use Espo\ORM\Query\SelectBuilder as QueryBuilder;
 
 class Followed implements Filter
@@ -48,7 +49,7 @@ class Followed implements Filter
             $alias,
             [
                 $alias . '.entityType' => $this->entityType,
-                $alias . '.entityId=:' => 'id',
+                $alias . '.entityId=:' => Attribute::ID,
                 $alias . '.userId' => $this->user->getId(),
             ]
         );
