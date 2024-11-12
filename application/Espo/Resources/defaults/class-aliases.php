@@ -28,7 +28,9 @@
  ************************************************************************/
 
 // To add aliases for backward compatibility.
-$map = [];
+$map = [
+    'Espo\\Core\\Hook\\Deprecations\\BaseHook' => 'Espo\\Core\\Hooks\\Base',
+];
 
 /** @phpstan-ignore-next-line  */
 foreach ($map as $item) {
