@@ -36,6 +36,7 @@ class Field
     public const CREATED_AT = 'createdAt';
     public const MODIFIED_BY = 'modifiedBy';
     public const MODIFIED_AT = 'modifiedAt';
+    public const STREAM_UPDATED_AT = 'streamUpdatedAt';
     public const ASSIGNED_USER = 'assignedUser';
     public const ASSIGNED_USERS = 'assignedUsers';
     public const COLLABORATORS = 'collaborators';
