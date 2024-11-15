@@ -29,6 +29,8 @@
 
 namespace Espo\ORM\Defs;
 
+use Espo\ORM\Defs\Params\IndexParam;
+
 /**
  * Index definitions.
  */
@@ -66,7 +68,7 @@ class IndexDefs
      */
     public function getKey(): string
     {
-        return $this->data['key'] ?? '';
+        return $this->data[IndexParam::KEY] ?? '';
     }
 
     /**
@@ -79,7 +81,7 @@ class IndexDefs
             return true;
         }
 
-        $type = $this->data['type'] ?? null;
+        $type = $this->data[IndexParam::TYPE] ?? null;
 
         return $type === 'unique';
     }
@@ -91,7 +93,7 @@ class IndexDefs
      */
     public function getColumnList(): array
     {
-        return $this->data['columns'] ?? [];
+        return $this->data[IndexParam::COLUMNS] ?? [];
     }
 
     /**
@@ -101,6 +103,6 @@ class IndexDefs
      */
     public function getFlagList(): array
     {
-        return $this->data['flags'] ?? [];
+        return $this->data[IndexParam::FLAGS] ?? [];
     }
 }
