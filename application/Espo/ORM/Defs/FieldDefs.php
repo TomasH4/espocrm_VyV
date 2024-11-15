@@ -29,6 +29,7 @@
 
 namespace Espo\ORM\Defs;
 
+use Espo\ORM\Defs\Params\FieldParam;
 use RuntimeException;
 
 /**
@@ -71,7 +72,7 @@ class FieldDefs
         $type = $this->data['type'] ?? null;
 
         if ($type === null) {
-            throw new RuntimeException("Field '{$this->name}' has no type.");
+            throw new RuntimeException("Field '$this->name' has no type.");
         }
 
         return $type;
@@ -82,7 +83,7 @@ class FieldDefs
      */
     public function isNotStorable(): bool
     {
-        return $this->data['notStorable'] ?? false;
+        return $this->data[FieldParam::NOT_STORABLE] ?? false;
     }
 
     /**
