@@ -29,8 +29,16 @@
 
 namespace Espo\ORM\Defs\Params;
 
+/**
+ * An attribute parameter.
+ */
 class AttributeParam
 {
+    /**
+     * A type.
+     */
+    public const TYPE = 'type';
+
     /**
      * Not stored in database.
      */
