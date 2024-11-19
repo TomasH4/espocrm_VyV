@@ -29,30 +29,18 @@
 
 namespace Espo\Core\Formula\Functions\PasswordGroup;
 
-use Espo\Core\Formula\{
-    Functions\BaseFunction,
-    ArgumentList,
-};
+use Espo\Core\Formula\EvaluatedArgumentList;
+use Espo\Core\Formula\Func;
+use Espo\Tools\UserSecurity\Password\Generator;
 
-use Espo\Core\Utils\Util;
-
-use Espo\Core\Di;
-
-class GenerateType extends BaseFunction implements
-    Di\ConfigAware
+class GenerateType implements Func
 {
-    use Di\ConfigSetter;
+    public function __construct(
+        private Generator $generator,
+    ) {}
 
-    public function process(ArgumentList $args)
+    public function process(EvaluatedArgumentList $arguments): string
     {
-        $config = $this->config;
-
-        $length = $config->get('passwordGenerateLength', 10);
-        $letterCount = $config->get('passwordGenerateLetterCount', 4);
-        $numberCount = $config->get('passwordGenerateNumberCount', 2);
-
-        $password = Util::generatePassword($length, $letterCount, $numberCount, true);
-
-        return $password;
+        return $this->generator->generate();
     }
 }
