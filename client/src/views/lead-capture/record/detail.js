@@ -38,6 +38,12 @@ export default class extends DetailRecordView {
             name: 'generateNewApiKey',
             onClick: () => this.actionGenerateNewApiKey(),
         });
+
+        this.addDropdownItem({
+            label: 'Generate New Form ID',
+            name: 'generateNewFormId',
+            onClick: () => this.actionGenerateNewFormId(),
+        });
     }
 
     actionGenerateNewApiKey() {
@@ -45,7 +51,19 @@ export default class extends DetailRecordView {
             Espo.Ajax.postRequest('LeadCapture/action/generateNewApiKey', {id: this.model.id})
                 .then(data => {
                     this.model.set(data);
+
+                    Espo.Ui.success(this.translate('Done'));
                 });
         });
+    }
+
+    async actionGenerateNewFormId() {
+        await this.confirm(this.translate('confirmation', 'messages'));
+
+        const data = await Espo.Ajax.postRequest('LeadCapture/action/generateNewFormId', {id: this.model.id});
+
+        this.model.set(data);
+
+        Espo.Ui.success(this.translate('Done'));
     }
 }
