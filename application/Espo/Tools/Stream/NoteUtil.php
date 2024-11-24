@@ -29,7 +29,7 @@
 
 namespace Espo\Tools\Stream;
 
-use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Config\ApplicationConfig;
 use Espo\Entities\Note;
 
 /**
@@ -37,7 +37,7 @@ use Espo\Entities\Note;
  */
 class NoteUtil
 {
-    public function __construct(private Config $config) {}
+    public function __construct(private ApplicationConfig $applicationConfig) {}
 
     public function handlePostText(Note $entity): void
     {
@@ -47,7 +47,7 @@ class NoteUtil
             return;
         }
 
-        $siteUrl = $this->config->getSiteUrl();
+        $siteUrl = $this->applicationConfig->getSiteUrl();
 
         // PhpStorm inspection highlights RegExpRedundantEscape by a mistake.
         /** @noinspection RegExpRedundantEscape */
