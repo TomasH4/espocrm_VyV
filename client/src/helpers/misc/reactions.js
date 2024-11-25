@@ -26,27 +26,33 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
+import {inject, register} from 'di';
+import Settings from 'models/settings';
+import Metadata from 'metadata';
+
+@register()
 class ReactionsHelper {
 
     /**
-     * @param {import('models/settings').default} config
-     * @param {import('metadata').default} metadata
+     * @type Settings
      */
-    constructor(config, metadata) {
-        /** @private */
-        this.config = config;
-        /** @private */
-        this.metadata = metadata;
+    @inject(Settings)
+    config
 
-        /**
-         * @private
-         * @type {{
-         *     type: string,
-         *     iconClass: string,
-         * }[]}
-         */
-        this.list = metadata.get('app.reactions.list') || [];
-    }
+    /**
+     * @type Metadata
+     */
+    @inject(Metadata)
+    metadata
+
+    /**
+     * @private
+     * @type {{
+     *     type: string,
+     *     iconClass: string,
+     * }[]}
+     */
+    list
 
     /**
      * @return {{
@@ -55,6 +61,10 @@ class ReactionsHelper {
      * }[]}
      */
     getDefinitionList() {
+        if (!this.list) {
+            this.list = this.metadata.get('app.reactions.list') || [];
+        }
+
         return this.list;
     }
 
@@ -70,7 +80,7 @@ class ReactionsHelper {
      * @return {string|null}
      */
     getIconClass(type) {
-        const item = this.list.find(it => it.type === type);
+        const item = this.getDefinitionList().find(it => it.type === type);
 
         if (!item) {
             return null;
