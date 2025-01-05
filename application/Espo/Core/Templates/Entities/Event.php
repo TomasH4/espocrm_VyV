@@ -38,4 +38,9 @@ class Event extends Entity
     public const STATUS_PLANNED = 'Planned';
     public const STATUS_HELD = 'Held';
     public const STATUS_NOT_HELD = 'Not Held';
+
+    public function getStatus(): string
+    {
+        return $this->get('status');
+    }
 }
