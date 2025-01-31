@@ -35,7 +35,7 @@ use Espo\Core\ApplicationState;
 use Espo\Core\Portal\Utils\Route as RouteUtil;
 use Espo\Core\Api\RouteProcessor;
 use Espo\Core\Api\Route\RouteParamsFetcher;
-use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\Log;
 
 class Starter extends StarterBase
@@ -46,7 +46,7 @@ class Starter extends StarterBase
         RouteParamsFetcher $routeParamsFetcher,
         MiddlewareProvider $middlewareProvider,
         Log $log,
-        Config $config,
+        SystemConfig $systemConfig,
         ApplicationState $applicationState
     ) {
         $routeCacheFile = 'data/cache/application/slim-routes-portal-' . $applicationState->getPortalId() . '.php';
@@ -57,7 +57,7 @@ class Starter extends StarterBase
             $routeParamsFetcher,
             $middlewareProvider,
             $log,
-            $config,
+            $systemConfig,
             $routeCacheFile
         );
     }
