@@ -35,6 +35,7 @@ use Espo\Entities\UserData as UserDataEntity;
 use Espo\Core\Repositories\Database;
 
 /**
+ * @internal Use Espo\Tools\User\UserDataProvider.
  * @extends Database<UserDataEntity>
  */
 class UserData extends Database
