@@ -29,15 +29,18 @@
 
 namespace Espo\Core\Utils;
 
+use Espo\Core\Utils\Theme\MetadataProvider;
+
 class ThemeManager
 {
     private string $defaultName = 'Espo';
-    private string $defaultStylesheet = 'client/css/espo/espo.css';
+
     private string $defaultLogoSrc = 'client/img/logo.svg';
 
     public function __construct(
         private Config $config,
-        private Metadata $metadata
+        private Metadata $metadata,
+        private MetadataProvider $metadataProvider,
     ) {}
 
     public function getName(): string
@@ -47,7 +50,7 @@ class ThemeManager
 
     public function getStylesheet(): string
     {
-        return $this->metadata->get(['themes', $this->getName(), 'stylesheet']) ?? $this->defaultStylesheet;
+        return $this->metadataProvider->getStylesheet($this->getName());
     }
 
     public function getLogoSrc(): string
@@ -57,6 +60,6 @@ class ThemeManager
 
     public function isDark(): bool
     {
-        return (bool) $this->metadata->get("themes.{$this->getName()}.isDark");
+        return $this->metadataProvider->isDark($this->getName());
     }
 }
