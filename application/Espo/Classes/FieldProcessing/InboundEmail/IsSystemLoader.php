@@ -31,7 +31,7 @@ namespace Espo\Classes\FieldProcessing\InboundEmail;
 
 use Espo\Core\FieldProcessing\Loader;
 use Espo\Core\FieldProcessing\Loader\Params;
-use Espo\Core\Utils\Config;
+use Espo\Core\Mail\ConfigDataProvider;
 use Espo\Entities\InboundEmail;
 use Espo\ORM\Entity;
 
@@ -41,12 +41,12 @@ use Espo\ORM\Entity;
 class IsSystemLoader implements Loader
 {
     public function __construct(
-        private Config $config,
+        private ConfigDataProvider $configDataProvider,
     ) {}
 
     public function process(Entity $entity, Params $params): void
     {
-        $isSystem = $entity->getEmailAddress() === $this->config->get('outboundEmailFromAddress');
+        $isSystem = $entity->getEmailAddress() === $this->configDataProvider->getOutboundEmailFromAddress();
 
         $entity->set('isSystem', $isSystem);
     }
