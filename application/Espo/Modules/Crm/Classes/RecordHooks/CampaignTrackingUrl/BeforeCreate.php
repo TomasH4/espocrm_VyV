@@ -32,6 +32,7 @@ namespace Espo\Modules\Crm\Classes\RecordHooks\CampaignTrackingUrl;
 use Espo\Core\Acl;
 use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Record\Hook\SaveHook;
+use Espo\Modules\Crm\Entities\Campaign;
 use Espo\Modules\Crm\Entities\CampaignTrackingUrl;
 use Espo\ORM\Entity;
 
@@ -49,5 +50,24 @@ class BeforeCreate implements SaveHook
         if (!$this->acl->check($entity, Acl\Table::ACTION_EDIT)) {
             throw new Forbidden("No 'edit' access.");
         }
+
+        $this->checkCampaign($entity);
+    }
+
+    /**
+     * @throws Forbidden
+     */
+    private function checkCampaign(CampaignTrackingUrl $entity): void
+    {
+        if (
+            !$entity->getCampaign() || in_array($entity->getCampaign()->getType(), [
+                Campaign::TYPE_EMAIL,
+                Campaign::TYPE_NEWSLETTER,
+            ])
+        ) {
+            return;
+        }
+
+        throw new Forbidden("Cannot create tacking URL for non-email campaign.");
     }
 }
