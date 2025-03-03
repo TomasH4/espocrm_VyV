@@ -32,7 +32,6 @@ namespace Espo\Hooks\Note;
 use Espo\Core\Hook\Hook\AfterSave;
 use Espo\Entities\Note;
 use Espo\ORM\Entity;
-use Espo\Core\Utils\Config;
 use Espo\Core\WebSocket\Submission as WebSocketSubmission;
 use Espo\ORM\Repository\Option\SaveOptions;
 
@@ -45,15 +44,10 @@ class WebSocketSubmit implements AfterSave
 
     public function __construct(
         private WebSocketSubmission $webSocketSubmission,
-        private Config $config
     ) {}
 
     public function afterSave(Entity $entity, SaveOptions $options): void
     {
-        if (!$this->config->get('useWebSocket')) {
-            return;
-        }
-
         $parentId = $entity->getParentId();
         $parentType = $entity->getParentType();
 
