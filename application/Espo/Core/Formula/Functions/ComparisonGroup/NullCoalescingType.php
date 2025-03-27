@@ -29,6 +29,7 @@
 
 namespace Espo\Core\Formula\Functions\ComparisonGroup;
 
+use Espo\Core\Formula\Exceptions\UndefinedKey;
 use Espo\Core\Formula\Functions\BaseFunction;
 use Espo\Core\Formula\ArgumentList;
 
@@ -47,7 +48,16 @@ class NullCoalescingType extends BaseFunction
         }
 
         foreach (array_slice($array, 0, -1) as $arg) {
-            $value = $this->evaluate($arg);
+            try {
+                $value = $this->evaluate($arg);
+            } catch (UndefinedKey $e) {
+                if ($e->getLevelsRisen() > 1) {
+                    throw $e;
+                }
+
+                $value = null;
+            }
+
 
             if ($value !== null) {
                 return $value;
