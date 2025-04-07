@@ -34,6 +34,6 @@ use DateTimeZone;
 readonly class Options
 {
     public function __construct(
-        public DateTimeZone $timeZone = new DateTimeZone('UTC'),
+        public DateTimeZone $timezone = new DateTimeZone('UTC'),
     ) {}
 }
