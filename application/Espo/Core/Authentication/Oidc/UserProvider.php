@@ -29,10 +29,10 @@
 
 namespace Espo\Core\Authentication\Oidc;
 
-use Espo\Core\Authentication\Jwt\Token\Payload;
+use Espo\Core\Authentication\Oidc\UserProvider\UserInfo;
 use Espo\Entities\User;
 
 interface UserProvider
 {
-    public function get(Payload $payload): ?User;
+    public function get(UserInfo $userInfo): ?User;
 }
