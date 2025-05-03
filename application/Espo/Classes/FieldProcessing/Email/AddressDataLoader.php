@@ -52,11 +52,6 @@ class AddressDataLoader implements Loader
         /** @var EmailRepository $repository */
         $repository = $this->entityManager->getRepository(Email::ENTITY_TYPE);
 
-        $repository->loadFromField($entity);
-        $repository->loadToField($entity);
-        $repository->loadCcField($entity);
-        $repository->loadBccField($entity);
-        $repository->loadReplyToField($entity);
         $repository->loadNameHash($entity);
     }
 }
