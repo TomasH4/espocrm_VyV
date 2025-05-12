@@ -32,6 +32,13 @@ class ForeignPhoneFieldView extends PhoneFieldView {
 
     type = 'foreign'
     readOnly = true
+
+    setup() {
+        super.setup();
+
+        // Numeric search does not work for foreign.
+        this.isNumeric = false;
+    }
 }
 
 export default ForeignPhoneFieldView;
