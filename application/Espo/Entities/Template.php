@@ -36,6 +36,8 @@ class Template extends Entity
 {
     public const ENTITY_TYPE = 'Template';
 
+    public const STATUS_ACTIVE = 'Active';
+
     public function getTargetEntityType(): string
     {
         $entityType = $this->get('entityType');
@@ -45,5 +47,10 @@ class Template extends Entity
         }
 
         return $entityType;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->get('status') === self::STATUS_ACTIVE;
     }
 }
