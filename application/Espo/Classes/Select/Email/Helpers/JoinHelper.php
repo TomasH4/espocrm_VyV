@@ -36,7 +36,7 @@ class JoinHelper
 {
     public function joinEmailUser(QueryBuilder $queryBuilder, string $userId): void
     {
-        if ($queryBuilder->hasLeftJoinAlias(Email::ALIAS_INBOX)) {
+        if ($queryBuilder->hasJoinAlias(Email::ALIAS_INBOX)) {
             return;
         }
 
