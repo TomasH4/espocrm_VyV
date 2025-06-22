@@ -33,10 +33,10 @@ use stdClass;
 
 class Data
 {
-    /**
-     * @var array<string, mixed>
-     */
+    /** @var array<string, mixed> */
     private $additionalTemplateData = [];
+    /** @var AttachmentWrapper[] */
+    private $attachments = [];
 
     public function getAdditionalTemplateData(): stdClass
     {
@@ -53,6 +53,28 @@ class Data
         );
 
         return $obj;
+    }
+
+    /**
+     * @param AttachmentWrapper[] $attachments
+     */
+    public function withAttachmentsAdded(array $attachments): self
+    {
+        $obj = clone $this;
+
+        foreach ($attachments as $attachment) {
+            $obj->attachments[] = $attachment;
+        }
+
+        return $obj;
+    }
+
+    /**
+     * @return AttachmentWrapper[]
+     */
+    public function getAttachments(): array
+    {
+        return $this->attachments;
     }
 
     public static function create(): self
