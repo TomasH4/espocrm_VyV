@@ -29,25 +29,18 @@
 
 namespace Espo\Core\Formula\Functions\EntityGroup;
 
-use Espo\Core\Exceptions\Error;
-
-use Espo\ORM\EntityManager;
+use Espo\Core\Formula\Exceptions\Error;
+use Espo\Core\Formula\Functions\Base;
 
 use Espo\Core\Di;
 
-class IsRelatedType extends \Espo\Core\Formula\Functions\Base implements
+class IsRelatedType extends Base implements
     Di\EntityManagerAware
 {
     use Di\EntityManagerSetter;
 
     /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
      * @return bool
-     * @throws \Espo\Core\Formula\Exceptions\Error
      * @throws Error
      */
     public function process(\stdClass $item)
