@@ -41,4 +41,9 @@ class ConfigDataProvider
     {
         return $this->config->get('outboundEmailFromAddress');
     }
+
+    public function isOutboundEmailShared(): bool
+    {
+        return (bool) $this->config->get('outboundEmailIsShared');
+    }
 }
