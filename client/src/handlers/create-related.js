@@ -46,9 +46,10 @@ class CreateRelatedHandler {
      *
      * @abstract
      * @param {module:model} model A model.
+     * @param {string} link A link name. As of v9.2.0.
      * @return {Promise<Object.<string, *>>} Attributes.
      */
-    getAttributes(model) {
+    getAttributes(model, link) {
         return Promise.resolve({});
     }
 }
