@@ -59,6 +59,11 @@ class WebhookEventQueueItem extends Entity
         return $this->get('targetId');
     }
 
+    public function getUserId(): ?string
+    {
+        return $this->get('userId');
+    }
+
     public function getData(): stdClass
     {
         return $this->get('data') ?? (object) [];
@@ -67,6 +72,11 @@ class WebhookEventQueueItem extends Entity
     public function setEvent(string $event): self
     {
         return $this->set('event', $event);
+    }
+
+    public function setUserId(?string $userId): self
+    {
+        return $this->set('userId', $userId);
     }
 
     public function setTarget(LinkParent|Entity $target): self
