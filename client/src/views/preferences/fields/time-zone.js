@@ -32,9 +32,18 @@ export default class extends EnumFieldView {
 
     setupOptions() {
         this.params.options = Espo.Utils.clone(this.getHelper().getAppParam('timeZoneList')) || [];
-        this.params.options.unshift('');
 
-        this.translatedOptions = this.translatedOptions || {};
-        this.translatedOptions[''] = `${this.translate('Default')} · ${this.getConfig().get('timeZone')}`;
+        this.translatedOptions = this.params.options.reduce((o, it) => {
+            o[it] = it.replace('/', ' / ');
+
+            return o;
+        }, {});
+
+        /** @type {string} */
+        const systemValue = this.getConfig().get('timeZone') ?? '';
+        const systemLabel = systemValue.replace('/', ' / ');
+
+        this.params.options.unshift('');
+        this.translatedOptions[''] = `${this.translate('Default')} · ${systemLabel}`;
     }
 }
