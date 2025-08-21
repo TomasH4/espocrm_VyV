@@ -30,13 +30,16 @@
 namespace Espo\Entities;
 
 use Espo\Core\Field\Link;
+use Espo\Core\ORM\Entity;
 
-class Team extends \Espo\Core\ORM\Entity
+class Team extends Entity
 {
     public const ENTITY_TYPE = 'Team';
 
     public const RELATIONSHIP_ENTITY_TEAM = 'EntityTeam';
     public const RELATIONSHIP_TEAM_USER = 'TeamUser';
+
+    public const LINK_ROLES = 'roles';
 
     public function getWorkingTimeCalendar(): ?Link
     {
