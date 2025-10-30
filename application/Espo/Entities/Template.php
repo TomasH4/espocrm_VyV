@@ -53,4 +53,9 @@ class Template extends Entity
     {
         return $this->get('status') === self::STATUS_ACTIVE;
     }
+
+    public function getFilename(): ?string
+    {
+        return $this->get('filename');
+    }
 }
