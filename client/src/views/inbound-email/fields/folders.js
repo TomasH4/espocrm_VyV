@@ -28,8 +28,25 @@
 
 import FoldersView from 'views/email-account/fields/folders';
 
-export default class extends FoldersView {
+export default class InboundEmailGroupFolderFieldView extends FoldersView {
 
     // noinspection JSUnusedGlobalSymbols
     getFoldersUrl = 'InboundEmail/action/getFolders'
+
+    // noinspection JSUnusedGlobalSymbols
+    noFolderMap = true
+
+    /*async fetchEmailFolders() {
+        if (!this.model.attributes.assignedUserId) {
+            return [];
+        }
+
+        const collection = await this.getCollectionFactory().create('GroupEmailFolder');
+
+        collection.data.select = ['id', 'name'].join(',');
+
+        await collection.fetch();
+
+        return collection.models.map(m => ({id: m.id, name: m.attributes.name}));
+    }*/
 }
