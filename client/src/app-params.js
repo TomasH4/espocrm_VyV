@@ -66,8 +66,8 @@ export default class AppParams {
      */
     async load() {
         /** @type {module:app~UserData} */
-        const data = await Espo.Ajax.getRequest('App/user');
+        const data = await Espo.Ajax.getRequest('App/appParams');
 
-        this.params = data.appParams;
+        this.params = data;
     }
 }
