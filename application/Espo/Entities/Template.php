@@ -38,9 +38,11 @@ class Template extends Entity
 
     public const STATUS_ACTIVE = 'Active';
 
+    public const string FIELD_ENTITY_TYPE = 'entityType';
+
     public function getTargetEntityType(): string
     {
-        $entityType = $this->get('entityType');
+        $entityType = $this->get(self::FIELD_ENTITY_TYPE);
 
         if ($entityType === null) {
             throw new UnexpectedValueException();
