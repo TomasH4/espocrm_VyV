@@ -30,6 +30,7 @@
 namespace Espo\Controllers;
 
 use Espo\Core\Name\Field;
+use Espo\Entities\Notification as NotificationEntity;
 use Espo\Tools\Notification\RecordService as Service;
 
 use Espo\Core\Api\Request;
@@ -60,6 +61,7 @@ class Notification extends RecordBase
         $maxSize = $searchParamsAux->getMaxSize();
 
         $after = $request->getQueryParam('after');
+        $beforeNumber = $request->getQueryParam('beforeNumber');
 
         $searchParams = SearchParams
             ::create()
@@ -76,19 +78,20 @@ class Notification extends RecordBase
                         ->setValue($after)
                         ->build()
                 );
-
         }
 
-        $recordCollection = $this->getNotificationService()->get($this->user, $searchParams);
+        $recordCollection = $this->getNotificationService()->get($this->user, $searchParams, $beforeNumber);
 
         return $recordCollection->toApiOutput();
     }
 
+    /**
+     * @throws BadRequest
+     * @throws Forbidden
+     */
     public function getActionNotReadCount(): int
     {
-        $userId = $this->user->getId();
-
-        return $this->getNotificationService()->getNotReadCount($userId);
+        return $this->getNotificationService()->getNotReadCount($this->user);
     }
 
     public function postActionMarkAllRead(Request $request): bool
