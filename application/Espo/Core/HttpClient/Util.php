@@ -29,7 +29,9 @@
 
 namespace Espo\Core\HttpClient;
 
+use Espo\Core\HttpClient\Exceptions\ConnectException;
 use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp;
 use Psr\Http\Message\StreamInterface;
 
 class Util
@@ -76,5 +78,22 @@ class Util
         $address = $host . ':' . $port;
 
         return in_array($address, $addressList);
+    }
+
+    /**
+     * @internal
+     * @throws ConnectException
+     */
+    public static function handleConnectException(GuzzleHttp\Exception\ConnectException $exception): never
+    {
+        $context = $exception->getHandlerContext();
+
+        $reason = null;
+
+        if (($context['errno'] ?? 0) === CURLE_OPERATION_TIMEDOUT) {
+            $reason = ConnectErrorReason::Timeout;
+        }
+
+        throw ConnectException::create(previous: $exception, reason: $reason);
     }
 }
