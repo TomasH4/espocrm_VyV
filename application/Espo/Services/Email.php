@@ -69,7 +69,7 @@ class Email extends Record
      * @throws BadRequest
      * @throws SendingError
      */
-    public function create(stdClass $data, CreateParams $params): CreateResult
+    public function create(stdClass $data, CreateParams $params = new CreateParams()): CreateResult
     {
         $result = parent::create($data, $params);
 
