@@ -42,6 +42,9 @@ export interface AddressParams extends BaseParams {
     viewMap?: boolean;
 }
 
+/**
+ * Options.
+ */
 export interface AddressOptions extends BaseOptions {}
 
 /**

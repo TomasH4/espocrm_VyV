@@ -348,7 +348,7 @@ class VarcharFieldView<
     }
 
     // noinspection JSUnusedGlobalSymbols
-    validatePattern() {
+    protected validatePattern(): boolean {
         const pattern = this.params.pattern;
 
         return this.fieldValidatePattern(this.name, pattern);

@@ -28,36 +28,68 @@
 
 /** @module views/fields/person-name */
 
-import VarcharFieldView from 'views/fields/varchar';
+import VarcharFieldView, {VarcharOptions, VarcharParams} from 'views/fields/varchar';
 import Select from 'ui/select';
+import {BaseViewSchema, FieldValidator} from 'views/fields/base';
+import {AddressOptions, AddressParams} from 'views/fields/address';
 
-class PersonNameFieldView extends VarcharFieldView {
+/**
+ * Parameters.
+ */
+export interface PersonNameParams extends VarcharParams {
+}
 
-    type = 'personName'
+/**
+ * Options.
+ */
+export interface PersonNameOptions extends VarcharOptions {}
 
-    detailTemplate = 'fields/person-name/detail'
-    editTemplate = 'fields/person-name/edit'
+/**
+ * A person name field.
+ */
+class PersonNameFieldView<
+    S extends BaseViewSchema = BaseViewSchema,
+    O extends PersonNameOptions = AddressOptions,
+    P extends PersonNameParams = AddressParams,
+> extends VarcharFieldView<S, O, P> {
+
+    readonly type: string = 'personName'
+
+    protected detailTemplate = 'fields/person-name/detail'
+    protected editTemplate = 'fields/person-name/edit'
     // noinspection JSUnusedGlobalSymbols
-    editTemplateLastFirst = 'fields/person-name/edit-last-first'
+    protected editTemplateLastFirst = 'fields/person-name/edit-last-first'
     // noinspection JSUnusedGlobalSymbols
-    editTemplateLastFirstMiddle = 'fields/person-name/edit-last-first-middle'
+    protected  editTemplateLastFirstMiddle = 'fields/person-name/edit-last-first-middle'
     // noinspection JSUnusedGlobalSymbols
-    editTemplateFirstMiddleLast = 'fields/person-name/edit-first-middle-last'
+    protected  editTemplateFirstMiddleLast = 'fields/person-name/edit-first-middle-last'
 
-    /** @inheritDoc */
-    validations = [
+    protected validations: (FieldValidator | string)[] = [
         'required',
         'pattern',
     ]
 
     /**
-     * @protected
-     * @type {string}
      * @since 9.3.0
      */
-    salutationField
+    protected salutationField: string
 
-    data() {
+    protected firstField: string
+
+    protected lastField: string
+
+    protected middleField: string
+
+    protected salutationOptions: string
+
+    private format: string
+
+    private $salutation: JQuery
+    private $first: JQuery
+    private $last: JQuery
+    private $middle: JQuery
+
+    protected data(): Record<string, any> {
         const data = super.data();
 
         data.ucName = Espo.Utils.upperCaseFirst(this.name);
@@ -94,7 +126,7 @@ class PersonNameFieldView extends VarcharFieldView {
         return data;
     }
 
-    setup() {
+    protected setup() {
         super.setup();
 
         this.searchTypeList =
@@ -110,7 +142,7 @@ class PersonNameFieldView extends VarcharFieldView {
         this.salutationOptions = this.model.getFieldParam(this.salutationField, 'options');
     }
 
-    afterRender() {
+    protected afterRender() {
         super.afterRender();
 
         if (this.isEditMode()) {
@@ -138,7 +170,7 @@ class PersonNameFieldView extends VarcharFieldView {
         }
     }
 
-    getFormattedValue() {
+    protected getFormattedValue(): string | null {
         let salutation = this.model.get(this.salutationField);
         const first = this.model.get(this.firstField);
         const last = this.model.get(this.lastField);
@@ -157,11 +189,15 @@ class PersonNameFieldView extends VarcharFieldView {
         });
     }
 
-    _getTemplateName() {
+    /**
+     * @internal
+     */
+    protected _getTemplateName(): string | null {
         if (this.isEditMode()) {
             const prop = 'editTemplate' + Espo.Utils.upperCaseFirst(this.getFormat().toString());
 
             if (prop in this) {
+                // @ts-ignore
                 return this[prop];
             }
         }
@@ -169,22 +205,22 @@ class PersonNameFieldView extends VarcharFieldView {
         return super._getTemplateName();
     }
 
-    getFormat() {
+    protected getFormat(): string {
         this.format = this.format || this.getConfig().get('personNameFormat') || 'firstLast';
 
         return this.format;
     }
 
-    formatHasMiddle() {
+    protected formatHasMiddle(): boolean {
         const format = this.getFormat();
 
         return format === 'firstMiddleLast' || format === 'lastFirstMiddle';
     }
 
-    validateRequired() {
+    validateRequired(): boolean {
         const isRequired = this.isRequired();
 
-        const validate = (name) => {
+        const validate = (name: string) => {
             if (this.model.isRequired(name)) {
                 if (!this.model.get(name)) {
                     const msg = this.translate('fieldIsRequired', 'messages')
@@ -217,7 +253,7 @@ class PersonNameFieldView extends VarcharFieldView {
         return result;
     }
 
-    validatePattern() {
+    protected validatePattern(): boolean {
         let result = false;
 
         result = this.fieldValidatePattern(this.firstField) || result;
@@ -227,7 +263,7 @@ class PersonNameFieldView extends VarcharFieldView {
         return result;
     }
 
-    hasRequiredMarker() {
+    protected hasRequiredMarker(): boolean {
         if (this.isRequired()) {
             return true;
         }
@@ -238,15 +274,15 @@ class PersonNameFieldView extends VarcharFieldView {
             this.model.getFieldParam(this.lastField, 'required');
     }
 
-    fetch() {
-        const data = {};
+    fetch(): Record<string, unknown> {
+        const data = {} as any;
 
-        data[this.salutationField] = this.$salutation.val() || null;
-        data[this.firstField] = this.$first.val().trim() || null;
-        data[this.lastField] = this.$last.val().trim() || null;
+        data[this.salutationField] = (this.$salutation.val()) || null;
+        data[this.firstField] = (this.$first.val() as string).trim() || null;
+        data[this.lastField] = (this.$last.val() as string).trim() || null;
 
         if (this.formatHasMiddle()) {
-            data[this.middleField] = this.$middle.val().trim() || null;
+            data[this.middleField] = (this.$middle.val() as string).trim() || null;
         }
 
         data[this.name] = this.formatName({
@@ -258,7 +294,7 @@ class PersonNameFieldView extends VarcharFieldView {
         return data;
     }
 
-    fetchSearch() {
+    fetchSearch(): Record<string, any> | null {
         if (this.fetchSearchType() === 'isNotEmpty') {
             return {
                 type: 'isNotNull',
@@ -273,12 +309,16 @@ class PersonNameFieldView extends VarcharFieldView {
         return super.fetchSearch();
     }
 
-    /**
-     * @param {{first?: string, last?: string, middle?: string, salutation?: string}}data
-     * @return {?string}
-     */
-    formatName(data) {
-        let name;
+    private formatName(
+        data: {
+            first?: string;
+            last?: string;
+            middle?: string;
+            salutation?: string;
+        }
+    ): string | null {
+
+        let name: string | null;
         const format = this.getFormat();
         const arr = [];
 
@@ -287,12 +327,10 @@ class PersonNameFieldView extends VarcharFieldView {
         if (format === 'firstLast') {
             arr.push(data.first);
             arr.push(data.last);
-        }
-        else if (format === 'lastFirst') {
+        } else if (format === 'lastFirst') {
             arr.push(data.last);
             arr.push(data.first);
-        }
-        else if (format === 'firstMiddleLast') {
+        } else if (format === 'firstMiddleLast') {
             arr.push(data.first);
             arr.push(data.middle);
             arr.push(data.last);
@@ -301,8 +339,7 @@ class PersonNameFieldView extends VarcharFieldView {
             arr.push(data.last);
             arr.push(data.first);
             arr.push(data.middle);
-        }
-        else {
+        } else {
             arr.push(data.first);
             arr.push(data.last);
         }
@@ -316,9 +353,8 @@ class PersonNameFieldView extends VarcharFieldView {
         return name;
     }
 
-    focusOnInlineEdit() {
-        /** @type {HTMLElement|null} */
-        const input = this.element.querySelector('input.form-control[type="text"]');
+    protected focusOnInlineEdit() {
+        const input = this.element.querySelector<HTMLInputElement>('input.form-control[type="text"]');
 
         if (!input) {
             return;
