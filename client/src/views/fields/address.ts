@@ -28,65 +28,81 @@
 
 /** @module views/fields/address */
 
-import BaseFieldView from 'views/fields/base';
+import BaseFieldView, {BaseOptions, BaseParams, BaseViewSchema, FieldValidator} from 'views/fields/base';
 import Varchar from 'views/fields/varchar';
 import Autocomplete from 'ui/autocomplete';
 
 /**
+ * Parameters.
+ */
+export interface AddressParams extends BaseParams {
+    /**
+     * Show the 'view map' button.
+     */
+    viewMap?: boolean;
+}
+
+export interface AddressOptions extends BaseOptions {}
+
+/**
  * An address field.
  */
-class AddressFieldView extends BaseFieldView {
+class AddressFieldView<
+    S extends BaseViewSchema = BaseViewSchema,
+    O extends AddressOptions = AddressOptions,
+    P extends AddressParams = AddressParams,
+> extends BaseFieldView<S, O, P> {
 
-    type = 'address'
+    readonly type: string = 'address'
 
-    listTemplate = 'fields/address/detail'
-    detailTemplate = 'fields/address/detail'
-    editTemplate = 'fields/address/edit'
+    protected listTemplate = 'fields/address/detail'
+    protected detailTemplate = 'fields/address/detail'
+    protected editTemplate = 'fields/address/edit'
     // noinspection JSUnusedGlobalSymbols
-    editTemplate1 = 'fields/address/edit-1'
+    protected editTemplate1 = 'fields/address/edit-1'
     // noinspection JSUnusedGlobalSymbols
-    editTemplate2 = 'fields/address/edit-2'
+    protected editTemplate2 = 'fields/address/edit-2'
     // noinspection JSUnusedGlobalSymbols
-    editTemplate3 = 'fields/address/edit-3'
+    protected editTemplate3 = 'fields/address/edit-3'
     // noinspection JSUnusedGlobalSymbols
-    editTemplate4 = 'fields/address/edit-4'
-    searchTemplate = 'fields/address/search'
-    listLinkTemplate = 'fields/address/list-link'
+    protected editTemplate4 = 'fields/address/edit-4'
+    protected searchTemplate = 'fields/address/search'
+    protected listLinkTemplate = 'fields/address/list-link'
 
-    postalCodeField
-    streetField
-    cityField
-    stateField
-    countryField
+    protected postalCodeField: string
+    protected streetField: string
+    protected cityField: string
+    protected stateField: string
+    protected countryField: string
 
-    /**
-     * @inheritDoc
-     * @type {Array<(function (): boolean)|string>}
-     */
-    validations = [
+    private addressPartList: string[]
+
+    protected validations: (FieldValidator | string)[] = [
         'required',
         'pattern',
     ]
 
-    /** @inheritDoc */
-    events = {
-        /** @this AddressFieldView */
-        'click [data-action="viewMap"]': function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+    private maxLengthMap: Record<string, number | null>
 
-            this.viewMapAction();
-        },
-    }
+    private subFieldMap: Record<string, string>
 
-    // noinspection JSCheckFunctionSignatures
-    data() {
+    private addressAttributeList: string[]
+
+    private $street: JQuery
+    private $city: JQuery
+    private $country: JQuery
+    private $postalCode: JQuery
+    private $state: JQuery
+
+    protected data(): Record<string, any> {
         const data = super.data();
 
         data.ucName = Espo.Utils.upperCaseFirst(this.name);
 
         this.addressPartList.forEach(item => {
-            data[item + 'Value'] = this.model.get(this[item + 'Field']);
+            const field = this.subFieldMap[item] as string;
+
+            data[`${item}Value`] = this.model.get(field);
         });
 
         if (this.isReadMode()) {
@@ -102,34 +118,30 @@ class AddressFieldView extends BaseFieldView {
             if (this.params.viewMap && this.canBeDisplayedOnMap()) {
                 data.viewMap = true;
 
-                data.viewMapLink = '#AddressMap/view/' +
-                    this.model.entityType + '/' +
-                    this.model.id + '/' +
-                    this.name;
+                data.viewMapLink = `#AddressMap/view/${this.model.entityType}/${this.model.id}/${this.name}`;
             }
         }
 
         if (this.isEditMode()) {
-            data.stateMaxLength = this.stateMaxLength;
-            data.streetMaxLength = this.streetMaxLength;
-            data.postalCodeMaxLength = this.postalCodeMaxLength;
-            data.cityMaxLength = this.cityMaxLength;
-            data.countryMaxLength = this.countryMaxLength;
+            data.stateMaxLength = this.maxLengthMap.state;
+            data.streetMaxLength = this.maxLengthMap.street;
+            data.postalCodeMaxLength = this.maxLengthMap.postalCode;
+            data.cityMaxLength = this.maxLengthMap.city;
+            data.countryMaxLength = this.maxLengthMap.country;
         }
 
-        // noinspection JSValidateTypes
         return data;
     }
 
-    setupSearch() {
-        this.searchData.value = this.getSearchParamsData().value || this.searchParams.additionalValue;
+    protected setupSearch() {
+        this.searchData.value = this.getSearchParamsData().value ?? this.searchParams?.additionalValue;
     }
 
-    canBeDisplayedOnMap() {
+    protected canBeDisplayedOnMap() {
         return !!this.model.get(this.name + 'City') || !!this.model.get(this.name + 'PostalCode');
     }
 
-    getFormattedAddress() {
+    private getFormattedAddress(): string | null | -1 {
         let isNotEmpty = false;
         let isSet = false;
 
@@ -152,15 +164,28 @@ class AddressFieldView extends BaseFieldView {
             return null;
         }
 
-        const methodName = 'getFormattedAddress' + this.getAddressFormat().toString();
+        const format = this.getAddressFormat();
 
-        if (methodName in this) {
-            return this[methodName]();
+        if (format === 1) {
+            return this.getFormattedAddress1();
         }
+
+        if (format === 2) {
+            return this.getFormattedAddress2();
+        }
+
+        if (format === 3) {
+            return this.getFormattedAddress3();
+        }
+
+        if (format === 4) {
+            return this.getFormattedAddress4();
+        }
+
+        return null;
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    getFormattedAddress1() {
+    private getFormattedAddress1(): string {
         const postalCodeValue = this.model.get(this.postalCodeField);
         const streetValue = this.model.get(this.streetField);
         const cityValue = this.model.get(this.cityField);
@@ -207,8 +232,7 @@ class AddressFieldView extends BaseFieldView {
         return html;
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    getFormattedAddress2() {
+    private getFormattedAddress2(): string {
         const postalCodeValue = this.model.get(this.postalCodeField);
         const streetValue = this.model.get(this.streetField);
         const cityValue = this.model.get(this.cityField);
@@ -260,8 +284,7 @@ class AddressFieldView extends BaseFieldView {
         return html;
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    getFormattedAddress3() {
+    private getFormattedAddress3(): string {
         const postalCodeValue = this.model.get(this.postalCodeField);
         const streetValue = this.model.get(this.streetField);
         const cityValue = this.model.get(this.cityField);
@@ -308,8 +331,7 @@ class AddressFieldView extends BaseFieldView {
         return html;
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    getFormattedAddress4() {
+    private getFormattedAddress4(): string {
         const postalCodeValue = this.model.get(this.postalCodeField);
         const streetValue = this.model.get(this.streetField);
         const cityValue = this.model.get(this.cityField);
@@ -359,12 +381,15 @@ class AddressFieldView extends BaseFieldView {
         return html;
     }
 
-    _getTemplateName() {
+    /**
+     * @internal
+     */
+    protected _getTemplateName(): string | null {
         if (this.mode === this.MODE_EDIT) {
             const prop = 'editTemplate' + this.getAddressFormat().toString();
 
             if (prop in this) {
-                return this[prop];
+                return (this as any)[prop];
             }
         }
 
@@ -372,11 +397,11 @@ class AddressFieldView extends BaseFieldView {
         return super._getTemplateName();
     }
 
-    getAddressFormat() {
+    protected getAddressFormat(): number {
         return this.getConfig().get('addressFormat') || 1;
     }
 
-    afterRender() {
+    protected afterRender() {
         if (this.mode === this.MODE_EDIT) {
             this.$street = this.$el.find(`[data-name="${this.streetField}"]`);
             this.$postalCode = this.$el.find(`[data-name="${this.postalCodeField}"]`);
@@ -395,7 +420,7 @@ class AddressFieldView extends BaseFieldView {
             const stateList = this.getConfig().get('addressStateList') || [];
 
             if (countryList.length) {
-                const autocomplete = new Autocomplete(this.$country.get(0), {
+                const autocomplete = new Autocomplete(this.$country.get(0) as HTMLInputElement, {
                     name: this.name + 'Country',
                     triggerSelectOnValidInput: true,
                     autoSelectFirst: true,
@@ -410,7 +435,7 @@ class AddressFieldView extends BaseFieldView {
             }
 
             if (cityList.length) {
-                const autocomplete = new Autocomplete(this.$city.get(0), {
+                const autocomplete = new Autocomplete(this.$city.get(0) as HTMLInputElement, {
                     name: this.name + 'City',
                     triggerSelectOnValidInput: true,
                     autoSelectFirst: true,
@@ -424,7 +449,7 @@ class AddressFieldView extends BaseFieldView {
             }
 
             if (stateList.length) {
-                const autocomplete = new Autocomplete(this.$state.get(0), {
+                const autocomplete = new Autocomplete(this.$state.get(0) as HTMLInputElement, {
                     name: this.name + 'State',
                     triggerSelectOnValidInput: true,
                     autoSelectFirst: true,
@@ -442,7 +467,7 @@ class AddressFieldView extends BaseFieldView {
         }
     }
 
-    controlStreetTextareaHeight(lastHeight) {
+    private controlStreetTextareaHeight(lastHeight?: number) {
         const scrollHeight = this.$street.prop('scrollHeight');
         const clientHeight = this.$street.prop('clientHeight');
 
@@ -461,15 +486,19 @@ class AddressFieldView extends BaseFieldView {
             this.controlStreetTextareaHeight(clientHeight);
         }
 
-        if (this.$street.val().length === 0) {
+        if (((this.$street.val() ?? '') as string).length === 0) {
             this.$street.attr('rows', 1);
         }
     }
 
-    setup() {
+    protected setup() {
         super.setup();
 
-        const actualAttributePartList = this.getMetadata().get(['fields', this.type, 'actualFields']) ||
+        this.addActionHandler('viewMap', (e) => this.viewMapHandler(e));
+
+        this.maxLengthMap = {};
+
+        const actualAttributePartList: string[] = this.getMetadata().get(['fields', this.type, 'actualFields']) ??
             [
                 'street',
                 'city',
@@ -480,6 +509,7 @@ class AddressFieldView extends BaseFieldView {
 
         this.addressAttributeList = [];
         this.addressPartList = [];
+        this.subFieldMap = {};
 
         actualAttributePartList.forEach(item => {
             const attribute = this.name + Espo.Utils.upperCaseFirst(item);
@@ -487,48 +517,73 @@ class AddressFieldView extends BaseFieldView {
             this.addressAttributeList.push(attribute);
             this.addressPartList.push(item);
 
+            // @ts-ignore
             this[item + 'Field'] = attribute;
 
-            this[item + 'MaxLength'] =
-                this.getMetadata().get(['entityDefs', this.entityType, 'fields', attribute, 'maxLength']);
+            this.subFieldMap[item] = attribute;
+
+            if (this.entityType) {
+                this.maxLengthMap[item] =
+                    this.getMetadata().get(['entityDefs', this.entityType, 'fields', attribute, 'maxLength']);
+            }
         });
     }
 
-    validateRequired() {
-        const validate = name => {
-            if (this.model.isRequired(name)) {
-                if (this.model.get(name) === '') {
-                    const msg = this.translate('fieldIsRequired', 'messages')
-                        .replace('{field}', this.translate(name, 'fields', this.entityType));
+    private viewMapHandler(e: MouseEvent) {
+        e.preventDefault();
+        e.stopPropagation();
 
-                    this.showValidationMessage(msg, '[data-name="' + name + '"]');
+        this.viewMapAction();
+    }
 
-                    return true;
-                }
+    validateRequired(): boolean {
+        const validate = (name: string) => {
+            if (!this.model.isRequired(name)) {
+                return false;
             }
+
+            if (this.model.get(name) !== null) {
+                return false;
+            }
+
+            const msg = this.translate('fieldIsRequired', 'messages')
+                .replace('{field}', this.translate(name, 'fields', this.entityType));
+
+            this.showValidationMessage(msg, `[data-name="${name}"]`);
+
+            return true;
         };
 
         let result = false;
 
-        result = validate(this.postalCodeField) || result;
-        result = validate(this.streetField) || result;
-        result = validate(this.stateField) || result;
-        result = validate(this.cityField) || result;
-        result = validate(this.countryField) || result;
+        this.getSubItems().forEach(item => {
+            result = validate(item.field) || result;
+        });
 
         return result;
     }
 
-    isRequired() {
-        return this.model.getFieldParam(this.postalCodeField, 'required') ||
-            this.model.getFieldParam(this.streetField, 'required') ||
-            this.model.getFieldParam(this.stateField, 'required') ||
-            this.model.getFieldParam(this.cityField, 'required') ||
-            this.model.getFieldParam(this.countryField, 'required');
+    private getSubItems(): {item: string, field: string}[] {
+        return this.addressPartList.map(it => {
+            return {
+                item: it,
+                field: this.subFieldMap[it] as string,
+            };
+        })
+    }
+
+    isRequired(): boolean {
+        for (const item of this.getSubItems()) {
+            if (this.model.getFieldParam(item.field, 'required')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // noinspection JSUnusedGlobalSymbols
-    validatePattern() {
+    protected validatePattern() {
         const fieldList = [
             this.postalCodeField,
             this.stateField,
@@ -545,14 +600,14 @@ class AddressFieldView extends BaseFieldView {
         return result;
     }
 
-    fetch() {
-        const data = {};
+    fetch(): Record<string, unknown> {
+        const data = {} as any;
 
-        data[this.postalCodeField] = this.$postalCode.val().toString().trim();
-        data[this.streetField] = this.$street.val().toString().trim();
-        data[this.stateField] = this.$state.val().toString().trim();
-        data[this.cityField] = this.$city.val().toString().trim();
-        data[this.countryField] = this.$country.val().toString().trim();
+        data[this.postalCodeField] = this.$postalCode.val()?.toString().trim();
+        data[this.streetField] = this.$street.val()?.toString().trim();
+        data[this.stateField] = this.$state.val()?.toString().trim();
+        data[this.cityField] = this.$city.val()?.toString().trim();
+        data[this.countryField] = this.$country.val()?.toString().trim();
 
         const attributeList = [
             this.postalCodeField,
@@ -571,7 +626,7 @@ class AddressFieldView extends BaseFieldView {
         return data;
     }
 
-    fetchSearch() {
+    fetchSearch(): Record<string, any> | null {
         const value = this.$el.find('input.main-element')
             .val()
             .toString()
@@ -616,18 +671,16 @@ class AddressFieldView extends BaseFieldView {
         };
     }
 
-    viewMapAction() {
-        this.createView('mapDialog', 'views/modals/view-map', {
+    private async viewMapAction() {
+        const view = await this.createView('mapDialog', 'views/modals/view-map', {
             model: this.model,
             field: this.name,
-        }, view => view.render());
+        });
+
+        await view.render();
     }
 
-    /**
-     * @private
-     * @return {string[]}
-     */
-    getCountryList() {
+    private getCountryList(): string[] {
         const list = (this.getHelper().getAppParam('addressCountryData') || {}).list || [];
 
         if (list.length) {
@@ -637,20 +690,16 @@ class AddressFieldView extends BaseFieldView {
         return [];
     }
 
-    /**
-     * @private
-     * @param {string[]} fullList
-     * @return {function(string): Promise|undefined}
-     */
-    getCountryAutocompleteLookupFunction(fullList) {
-        // noinspection JSUnresolvedReference
-        const list = (this.getHelper().getAppParam('addressCountryData') || {}).preferredList || [];
+    private getCountryAutocompleteLookupFunction(
+        fullList: string[]
+    ): ((query: string) => Promise<{value: string}[]>) | undefined {
+        const list: string[] = (this.getHelper().getAppParam('addressCountryData') || {}).preferredList || [];
 
         if (!list.length) {
             return undefined;
         }
 
-        return query => {
+        return (query: string) => {
             if (query.length === 0) {
                 const result = list.map(item => ({value: item}));
 
