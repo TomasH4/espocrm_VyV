@@ -164,7 +164,7 @@ export interface MainViewOptions {
 export interface MainViewSchema {
     model?: Model;
     collection?: Collection;
-    options: Record<string, unknown> & MainViewOptions;
+    options: Record<string, any> & MainViewOptions;
 }
 
 /**
@@ -936,6 +936,8 @@ class MainView<S extends MainViewSchema = MainViewSchema> extends View<S> {
 
         this.initShortcuts();
     }
+
+    updatePageTitle() {}
 }
 
 export default MainView;

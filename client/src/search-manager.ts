@@ -61,6 +61,7 @@ interface Options {
     storageKey?: string;
     defaultData?: Data;
     emptyOnReset?: boolean;
+    scope?: string;
 }
 
 import {inject} from 'di';
@@ -92,7 +93,7 @@ class SearchManager {
      * @param [options] Options. As of 9.1.
      */
     constructor(collection: Collection, options: Options = {}) {
-        this.scope = collection.entityType ?? null;
+        this.scope = options.scope ?? collection.entityType ?? null;
         this.storageKey = options.storageKey ?? null;
         this.useStorage = !!this.storageKey;
         this.emptyOnReset = options.emptyOnReset ?? false;

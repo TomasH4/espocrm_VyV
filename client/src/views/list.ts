@@ -26,176 +26,160 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module module:views/list */
-
-import MainView from 'views/main';
+import MainView, {MainViewOptions} from 'views/main';
 import SearchManager from 'search-manager';
 import RecordModal from 'helpers/record-modal';
 import Utils from 'utils';
 import PipelinesHelper from 'helpers/misc/pipelines';
+import Collection from 'collection';
+import type SearchView from 'views/record/search';
+import type View from 'view';
+import Ui from 'ui';
+import type ListRecordView from 'views/record/list';
+import EditModalView from 'views/modals/edit';
+
+export interface ListViewSchema {
+    collection: Collection;
+    options: ListViewOptions;
+}
+
+export interface ListViewOptions extends MainViewOptions {
+    defaultViewMode?: string;
+    params?: Record<string, any> & {
+        rootUrl?: string;
+        primaryFilter?: string | null;
+        fromAdmin?: boolean;
+    };
+}
 
 /**
  * A list view.
  */
-class ListView extends MainView {
+class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
 
-    /** @inheritDoc */
-    template = 'list'
+    protected template = 'list'
 
-    /** @inheritDoc */
-    name = 'List'
+    name: string = 'List'
 
-    /** @inheritDoc */
-    optionsToPass = []
+    protected optionsToPass: string[] = []
 
     /**
      * A header view name.
-     *
-     * @type {string}
-     * @protected
      */
-    headerView = 'views/header'
+    protected headerView: string = 'views/header'
 
     /**
      * A search view name.
-     *
-     * @type {string}
-     * @protected
      */
-    searchView = 'views/record/search'
+    protected searchView: string = 'views/record/search'
 
     /**
      * A record/list view name.
-     *
-     * @type {string}
-     * @protected
      */
-    recordView = 'views/record/list'
+    protected recordView: string = 'views/record/list'
 
     /**
      * A record/kanban view name.
-     *
-     * @type {string}
-     * @protected
      */
-    recordKanbanView = 'views/record/kanban'
+    protected recordKanbanView: string = 'views/record/kanban'
 
     /**
      * Has a search panel.
-     *
-     * @type {boolean}
-     * @protected
      */
-    searchPanel = true
+    protected searchPanel: boolean = true
 
-    /**
-     * @type {module:search-manager}
-     * @protected
-     */
-    searchManager = null
+    protected searchManager: SearchManager | null = null
 
     /**
      * Has a create button.
-     *
-     * @type {boolean}
-     * @protected
      */
-    createButton = true
+    protected createButton: boolean = true
 
     /**
      * To use a modal dialog when creating a record.
-     *
-     * @type {boolean}
-     * @protected
      */
-    quickCreate = false
+    protected quickCreate: boolean = false
 
     /**
      * After create a view will be stored, so it can be re-used after.
      * Useful to avoid re-rendering when come back the list view.
-     *
-     * @type {boolean}
      */
-    storeViewAfterCreate = false
+    protected storeViewAfterCreate: boolean = false
 
     /**
      * After update a view will be stored, so it can be re-used after.
      * Useful to avoid re-rendering when come back the list view.
-     *
-     * @type {boolean}
      */
-    storeViewAfterUpdate = true
+    readonly storeViewAfterUpdate: boolean = true
 
     /**
      * Use a current URL as a root URL when open a record. To be able to return to the same URL.
      */
-    keepCurrentRootUrl = false
+    protected keepCurrentRootUrl: boolean = false
 
     /**
      * A view mode. 'list', 'kanban'.
-     *
-     * @type {string}
      */
-    viewMode = ''
+    protected viewMode: string
 
     /**
      * An available view mode list.
-     *
-     * @type {string[]|null}
      */
-    viewModeList = null
+    protected viewModeList: string[]
 
     /**
      * A default view mode.
-     *
-     * @type {string}
      */
-    defaultViewMode = 'list'
+    protected defaultViewMode: string = 'list'
 
-    /** @const */
-    MODE_LIST = 'list'
-    /** @const */
-    MODE_KANBAN = 'kanban'
+    readonly MODE_LIST = 'list'
+    readonly MODE_KANBAN = 'kanban'
+
+    protected entityType: string | null
+
+    protected defaultOrderBy: string | null
+
+    protected defaultOrder: 'asc' | 'desc' | boolean | null
 
     /**
      * Root data. To be passed to the detail record view when following to a record.
      *
-     * @protected
-     * @type {Object.<string, *>}
      * @since 9.0.0
      */
-    rootData
+    protected rootData: Record<string, unknown>
 
-    /** @inheritDoc */
-    shortcutKeys = {
-        /** @this ListView */
-        'Control+Space': function (e) {
+    private collectionUrl: string | null
+    private collectionMaxSize: number
+
+    /**
+     * @internal
+     */
+    protected _primaryFilter: string | null;
+
+    private _fromAdmin: boolean;
+
+    protected shortcutKeys: (Record<string, (event: KeyboardEvent) => void>) | null = {
+        'Control+Space': function (this: ListView, e: KeyboardEvent) {
             this.handleShortcutKeyCtrlSpace(e);
         },
-        /** @this ListView */
-        'Control+Slash': function (e) {
+        /** @this ListView */       'Control+Slash': function (this: ListView, e: KeyboardEvent) {
             this.handleShortcutKeyCtrlSlash(e);
         },
-        /** @this ListView */
-        'Control+Comma': function (e) {
+        'Control+Comma': function (this: ListView, e: KeyboardEvent) {
             this.handleShortcutKeyCtrlComma(e);
         },
-        /** @this ListView */
-        'Control+Period': function (e) {
+        'Control+Period': function (this: ListView, e: KeyboardEvent) {
             this.handleShortcutKeyCtrlPeriod(e);
         },
-        /** @this ListView */
-        'Control+ArrowLeft': function (e) {
+        'Control+ArrowLeft': function (this: ListView, e: KeyboardEvent) {
             this.handleShortcutKeyControlArrowLeft(e);
         },
-        /** @this ListView */
-        'Control+ArrowRight': function (e) {
+        'Control+ArrowRight': function (this: ListView, e: KeyboardEvent) {
             this.handleShortcutKeyControlArrowRight(e);
         },
     }
 
-    /** @inheritDoc */
-    setup() {
+    protected setup() {
         this.collection.maxSize = this.getConfig().get('recordsPerPage') || this.collection.maxSize;
 
         this.collectionUrl = this.collection.url;
@@ -203,12 +187,8 @@ class ListView extends MainView {
 
         this.rootData = {};
 
-        /**
-         * @type {string|null}
-         * @protected
-         */
-        this._primaryFilter = this.options.params.primaryFilter ?? null;
-        this._fromAdmin = this.options.params.fromAdmin;
+        this._primaryFilter = this.options.params?.primaryFilter ?? null;
+        this._fromAdmin = this.options.params?.fromAdmin ?? false;
 
         this.setupModes();
         this.setViewMode(this.viewMode);
@@ -235,8 +215,8 @@ class ListView extends MainView {
 
         this.setupHeader();
 
-        this.defaultOrderBy = this.defaultOrderBy || this.collection.orderBy;
-        this.defaultOrder = this.defaultOrder || this.collection.order;
+        this.defaultOrderBy = this.defaultOrderBy ?? this.collection.orderBy ?? null;
+        this.defaultOrder = this.defaultOrder ?? this.collection.order ?? null;
 
         this.collection.setOrder(this.defaultOrderBy, this.defaultOrder, true);
 
@@ -261,7 +241,7 @@ class ListView extends MainView {
         this.addActionHandler('fullRefresh', () => this.actionFullRefresh());
     }
 
-    setupFinal() {
+    protected setupFinal() {
         super.setupFinal();
 
         this.wait(
@@ -272,9 +252,9 @@ class ListView extends MainView {
     /**
      * Set up modes.
      */
-    setupModes() {
-        this.defaultViewMode = this.options.defaultViewMode ||
-            this.getMetadata().get(['clientDefs', this.scope, 'listDefaultViewMode']) ||
+    protected setupModes() {
+        this.defaultViewMode = this.options.defaultViewMode ??
+            this.getMetadata().get(['clientDefs', this.scope, 'listDefaultViewMode']) ??
             this.defaultViewMode;
 
         this.viewMode = this.viewMode || this.defaultViewMode;
@@ -341,31 +321,31 @@ class ListView extends MainView {
     /**
      * Set up a create button.
      */
-    setupCreateButton() {
+    protected setupCreateButton() {
         if (this.quickCreate) {
-            this.menu.buttons.unshift({
+            this.addMenuItem('buttons', {
                 action: 'quickCreate',
                 iconHtml: '<span class="fas fa-plus fa-sm"></span>',
                 text: this.translate('Create ' +  this.scope, 'labels', this.scope),
                 style: 'default',
                 acl: 'create',
-                aclScope: this.entityType || this.scope,
+                aclScope: this.entityType ?? this.scope,
                 title: 'Ctrl+Space',
-            });
+            }, true);
 
             return;
         }
 
-        this.menu.buttons.unshift({
-            link: '#' + this.scope + '/create',
+        this.addMenuItem('buttons', {
+            link: `#${this.scope}/create`,
             action: 'create',
             iconHtml: '<span class="fas fa-plus fa-sm"></span>',
             text: this.translate('Create ' +  this.scope,  'labels', this.scope),
             style: 'default',
             acl: 'create',
-            aclScope: this.entityType || this.scope,
+            aclScope: this.entityType ?? this.scope,
             title: 'Ctrl+Space',
-        });
+        }, true);
     }
 
     /**
@@ -373,19 +353,15 @@ class ListView extends MainView {
      *
      * @protected
      */
-    setupSearchPanel() {
+    protected setupSearchPanel() {
         this.createSearchView();
     }
 
     /**
      * Create a search view.
-     *
-     * @return {Promise<module:view>}
-     * @protected
      */
-    createSearchView() {
-        // noinspection JSValidateTypes
-        return this.createView('search', this.searchView, {
+    protected async createSearchView(): Promise<View> {
+        const view = await this.createView('search', this.searchView, {
             collection: this.collection,
             fullSelector: '#main > .search-container',
             searchManager: this.searchManager,
@@ -395,21 +371,23 @@ class ListView extends MainView {
             isWide: true,
             disableSavePreset: !!this._primaryFilter,
             primaryFiltersDisabled: !!this._primaryFilter,
-        }, view => {
-            this.listenTo(view, 'reset', () => this.resetSorting());
+        }) as View;
 
-            if (this.viewModeList.length > 1) {
-                this.listenTo(view, 'change-view-mode', mode => this.switchViewMode(mode));
-            }
-        });
+        this.listenTo(view, 'reset', () => this.resetSorting());
+
+        if (this.viewModeList.length > 1) {
+            this.listenTo(view, 'change-view-mode', mode => this.switchViewMode(mode));
+        }
+
+        return view;
     }
 
     /**
      * Switch a view mode.
      *
-     * @param {string} mode
+     * @param mode A mode.
      */
-    switchViewMode(mode) {
+    protected switchViewMode(mode: string) {
         this.clearView('list');
         this.collection.isFetched = false;
         this.collection.reset();
@@ -421,10 +399,10 @@ class ListView extends MainView {
     /**
      * Set a view mode.
      *
-     * @param {string} mode A mode.
-     * @param {boolean} [toStore=false] To preserve a mode being set.
+     * @param mode A mode.
+     * @param toStore To preserve a mode being set.
      */
-    setViewMode(mode, toStore) {
+    protected setViewMode(mode: string, toStore: boolean = false) {
         this.viewMode = mode;
 
         this.collection.url = this.collectionUrl;
@@ -446,17 +424,17 @@ class ListView extends MainView {
             return;
         }
 
-        const methodName = 'setViewMode' + Espo.Utils.upperCaseFirst(this.viewMode);
+        const methodName = 'setViewMode' + Utils.upperCaseFirst(this.viewMode);
 
-        if (this[methodName]) {
-            this[methodName]();
+        if ((this as any)[methodName]) {
+            (this as any)[methodName]();
         }
     }
 
     /**
      * Called when the kanban mode is set.
      */
-    setViewModeKanban() {
+    protected setViewModeKanban() {
         this.collection.url = 'Kanban/' + this.scope;
         this.collection.maxSize = this.getConfig().get('recordsPerPageKanban');
         this.collection.resetOrderToDefault();
@@ -465,37 +443,36 @@ class ListView extends MainView {
     /**
      * Reset sorting in a storage.
      */
-    resetSorting() {
-        this.getStorage().clear('listSorting', this.collection.entityType);
+    protected resetSorting() {
+        this.getStorage().clear('listSorting', this.scope);
     }
 
     /**
      * Get default search data.
      *
-     * @returns {Object}
      */
-    getSearchDefaultData() {
+    protected getSearchDefaultData(): Record<string, any>{
         return this.getMetadata().get(`clientDefs.${this.scope}.defaultFilterData`);
     }
 
     /**
      * Set up a search manager.
      */
-    setupSearchManager() {
+    protected setupSearchManager() {
         const collection = this.collection;
 
         let key = 'list';
 
         if (this._primaryFilter) {
-            key += 'Filter' + Espo.Utils.upperCaseFirst(this._primaryFilter);
+            key += 'Filter' + Utils.upperCaseFirst(this._primaryFilter);
         }
 
         const searchManager = new SearchManager(collection, {
             storageKey: key,
             defaultData: this.getSearchDefaultData(),
+            scope: this.scope,
         });
 
-        searchManager.scope = this.scope;
         searchManager.loadStored();
 
         if (this._primaryFilter) {
@@ -511,7 +488,7 @@ class ListView extends MainView {
     /**
      * Set up sorting.
      */
-    setupSorting() {
+    protected setupSorting() {
         if (!this.searchPanel) {
             return;
         }
@@ -522,8 +499,8 @@ class ListView extends MainView {
     /**
      * Apply stored sorting.
      */
-    applyStoredSorting() {
-        const sortingParams = this.getStorage().get('listSorting', this.collection.entityType) || {};
+    protected applyStoredSorting() {
+        const sortingParams = this.getStorage().get('listSorting', this.scope) || {};
 
         if ('orderBy' in sortingParams) {
             this.collection.orderBy = sortingParams.orderBy;
@@ -534,28 +511,18 @@ class ListView extends MainView {
         }
     }
 
-    /**
-     * @protected
-     * @return {module:views/record/search}
-     */
-    getSearchView() {
-        return this.getView('search');
+    protected getSearchView(): SearchView {
+        return this.getView('search') as SearchView;
     }
 
-    /**
-     * @protected
-     * @return {module:view}
-     */
-    getRecordView() {
-        return this.getView('list');
+    protected getRecordView(): View {
+        return this.getView('list') as View;
     }
 
     /**
      * Get a record view name.
-     *
-     * @returns {string}
      */
-    getRecordViewName() {
+    protected getRecordViewName(): string {
         let viewName = this.getMetadata().get(['clientDefs', this.scope, 'recordViews', this.viewMode]);
 
         if (viewName) {
@@ -570,9 +537,9 @@ class ListView extends MainView {
             return this.recordKanbanView;
         }
 
-        const propertyName = 'record' + Espo.Utils.upperCaseFirst(this.viewMode) + 'View';
+        const propertyName = 'record' + Utils.upperCaseFirst(this.viewMode) + 'View';
 
-        viewName = this[propertyName];
+        viewName = (this as any)[propertyName];
 
         if (!viewName) {
             throw new Error("No record view.");
@@ -581,7 +548,6 @@ class ListView extends MainView {
         return viewName;
     }
 
-    /** @inheritDoc */
     cancelRender() {
         if (this.hasView('list')) {
             this.getRecordView();
@@ -594,31 +560,28 @@ class ListView extends MainView {
         super.cancelRender();
     }
 
-    /**
-     * @inheritDoc
-     */
-    afterRender() {
-        Espo.Ui.notify(false);
+    protected afterRender() {
+        Ui.notify();
 
         if (!this.hasView('list')) {
             this.loadList();
         }
 
         // noinspection JSUnresolvedReference
-        this.$el.get(0).focus({preventScroll: true});
+        this.$el.get(0)?.focus({preventScroll: true});
     }
 
     /**
      * Load a record list view.
      */
-    loadList() {
+    protected loadList() {
         if ('isFetched' in this.collection && this.collection.isFetched) {
             this.createListRecordView(false);
 
             return;
         }
 
-        Espo.Ui.notifyWait();
+        Ui.notifyWait();
 
         this.createListRecordView(true);
     }
@@ -626,19 +589,19 @@ class ListView extends MainView {
     /**
      * Prepare record view options. Options can be modified in an extended method.
      *
-     * @protected
-     * @param {Object} options Options
+     * @param options Options
      */
-    prepareRecordViewOptions(options) {}
+    protected prepareRecordViewOptions(options: Record<string, any>) {
+        // noinspection BadExpressionStatementJS
+        options;
+    }
 
     /**
      * Create a record list view.
      *
-     * @param {boolean} [fetch=false] To fetch after creation.
-     * @return {Promise<module:views/record/list>}
+     * @param fetch To fetch after creation.
      */
-    createListRecordView(fetch) {
-        /** @type {module:views/record/list~options | Bull.View~Options} */
+    protected async createListRecordView(fetch: boolean = false): Promise<ListRecordView> {
         const o = {
             collection: this.collection,
             selector: '.list-container',
@@ -649,7 +612,7 @@ class ListView extends MainView {
             additionalRowActionList: this.getMetadata().get(`clientDefs.${this.scope}.rowActionList`),
             settingsEnabled: true,
             forceSettings: this.getMetadata().get(`clientDefs.${this.scope}.forceListViewSettings`),
-        };
+        } as any; // @todo Add type.
 
         if (this.getHelper().isXsScreen()) {
             o.type = 'listSmall';
@@ -676,12 +639,13 @@ class ListView extends MainView {
 
         const listViewName = this.getRecordViewName();
 
-        // noinspection JSValidateTypes
-        return this.createView('list', listViewName, o, async /** import('views/record/list').default */view => {
+        const promise = this.createView('list', listViewName, o).then(async (inputView) => {
+            const view = inputView as unknown as ListRecordView;
+
             if (!this.hasParentView()) {
                 view.undelegateEvents();
 
-                return;
+                return view;
             }
 
             this.listenTo(view, 'after:paginate', () => window.scrollTo({top: 0}));
@@ -696,43 +660,42 @@ class ListView extends MainView {
             });
 
             if (!fetch) {
-                Espo.Ui.notify();
+                Ui.notify();
             }
 
-            if (this.searchPanel) {
+            if (this.searchPanel && this.scope) {
                 this.listenTo(view, 'sort', o => {
-                    this.getStorage().set('listSorting', this.collection.entityType, o);
+                    this.getStorage().set('listSorting', this.scope, o);
                 });
             }
 
             if (!fetch) {
                 await view.render();
 
-                return;
+                return view;
             }
 
             const selectAttributes = await view.getSelectAttributeList();
 
             if (this.options.mediator && this.options.mediator.abort) {
-                return;
+                return view;
             }
 
             if (selectAttributes) {
                 this.collection.data.select = selectAttributes.join(',');
             }
 
-            Espo.Ui.notifyWait();
+            Ui.notifyWait();
 
             await this.collection.fetch({main: true});
 
-            Espo.Ui.notify();
+            Ui.notify();
         });
+
+        return promise as Promise<ListRecordView>;
     }
 
-    /**
-     * @inheritDoc
-     */
-    getHeader() {
+    getHeader(): string {
         if (this._fromAdmin) {
             const root = document.createElement('a');
             root.href = '#Admin';
@@ -765,25 +728,23 @@ class ListView extends MainView {
         if (this._primaryFilter) {
             const label = this.translate(this._primaryFilter, 'presetFilters', this.entityType);
 
+            // noinspection SpellCheckingInspection
             root.insertAdjacentHTML('beforeend', ' · ' + label);
         }
 
         return this.buildHeaderHtml([root]);
     }
 
-    /**
-     * @inheritDoc
-     */
     updatePageTitle() {
         this.setPageTitle(this.getLanguage().translate(this.scope, 'scopeNamesPlural'));
     }
 
     /**
      * Create attributes for an entity being created.
-     *
-     * @return {Object}
      */
-    getCreateAttributes() {}
+    getCreateAttributes(): Record<string, unknown> | null {
+        return null;
+    }
 
     /**
      * Prepare return dispatch parameters to pass to a view when creating a record.
@@ -795,18 +756,24 @@ class ListView extends MainView {
      * params.options.categoryName = this.currentCategoryName;
      * ```
      *
-     * @param {{controller?: string, action?: string|null, options?: Record}} params Parameters to be modified.
+     * @param params Parameters to be modified.
      * Unset `controller` if bypass return dispatching (to force to come back to the `returnUrl`).
      */
-    prepareCreateReturnDispatchParams(params) {}
+    protected prepareCreateReturnDispatchParams(
+        params: {
+            controller?: string;
+            action?: string| null;
+            options?: Record<string, any> & {isReturn?: boolean};
+        }
+    ) {
+        // noinspection BadExpressionStatementJS
+        params;
+    }
 
     /**
      * Action `quickCreate`.
-     *
-     * @param {Object.<string,*>} [data]
-     * @returns {Promise<module:views/modals/edit>}
      */
-    actionQuickCreate(data) {
+    protected actionQuickCreate(data?: Record<string, any>): Promise<EditModalView> {
         data = data || {};
 
         const attributes = this.getCreateAttributes() || {};
@@ -836,10 +803,8 @@ class ListView extends MainView {
 
     /**
      * Action 'create'.
-     *
-     * @param {Object.<string,*>} [data]
      */
-    actionCreate(data) {
+    protected actionCreate(data?: Record<string, any>) {
         data = data || {};
 
         const router = this.getRouter();
@@ -847,7 +812,7 @@ class ListView extends MainView {
         const url = '#' + this.scope + '/create';
         const attributes = this.getCreateAttributes() || {};
 
-        let options = {attributes: attributes};
+        let options = {attributes: attributes} as any;
 
         if (this.keepCurrentRootUrl) {
             options.rootUrl = this.getRouter().getCurrentUrl();
@@ -877,18 +842,12 @@ class ListView extends MainView {
 
     /**
      * Whether the view is actual to be reused.
-     *
-     * @returns {boolean}
      */
-    isActualForReuse() {
+    isActualForReuse(): boolean {
         return 'isFetched' in this.collection && this.collection.isFetched;
     }
 
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlSpace(e) {
+    protected handleShortcutKeyCtrlSpace(event: KeyboardEvent) {
         if (!this.createButton) {
             return;
         }
@@ -897,8 +856,8 @@ class ListView extends MainView {
             return;
         }
 
-        e.preventDefault();
-        e.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
         if (this.quickCreate) {
             this.actionQuickCreate({focusForCreate: true});
@@ -909,11 +868,7 @@ class ListView extends MainView {
         this.actionCreate({focusForCreate: true});
     }
 
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlSlash(e) {
+    protected handleShortcutKeyCtrlSlash(event: KeyboardEvent) {
         if (!this.searchPanel) {
             return;
         }
@@ -924,18 +879,16 @@ class ListView extends MainView {
             return;
         }
 
-        e.preventDefault();
-        e.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
         $search.focus();
     }
 
-    // noinspection JSUnusedLocalSymbols
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlComma(e) {
+    protected handleShortcutKeyCtrlComma(event: KeyboardEvent) {
+        // noinspection BadExpressionStatementJS
+        event;
+
         if (!this.getSearchView()) {
             return;
         }
@@ -943,12 +896,10 @@ class ListView extends MainView {
         this.getSearchView().selectPreviousPreset();
     }
 
-    // noinspection JSUnusedLocalSymbols
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlPeriod(e) {
+    protected handleShortcutKeyCtrlPeriod(event: KeyboardEvent) {
+        // noinspection BadExpressionStatementJS
+        event;
+
         if (!this.getSearchView()) {
             return;
         }
@@ -956,39 +907,28 @@ class ListView extends MainView {
         this.getSearchView().selectNextPreset();
     }
 
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyControlArrowLeft(e) {
-        if (Utils.isKeyEventInTextInput(e)) {
+    protected handleShortcutKeyControlArrowLeft(event: KeyboardEvent) {
+        if (Utils.isKeyEventInTextInput(event)) {
             return;
         }
 
         this.getRecordView().trigger('request-page', 'previous');
     }
 
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyControlArrowRight(e) {
-        if (Utils.isKeyEventInTextInput(e)) {
+    protected handleShortcutKeyControlArrowRight(event: KeyboardEvent) {
+        if (Utils.isKeyEventInTextInput(event)) {
             return;
         }
 
         this.getRecordView().trigger('request-page', 'next');
     }
 
-    /**
-     * @protected
-     */
-    async actionFullRefresh() {
-        Espo.Ui.notifyWait();
+    protected async actionFullRefresh() {
+        Ui.notifyWait();
 
         await this.collection.fetch();
 
-        Espo.Ui.notify();
+        Ui.notify();
     }
 }
 

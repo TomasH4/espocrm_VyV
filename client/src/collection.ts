@@ -218,8 +218,13 @@ export default class Collection<TModel extends Model = Model> {
 
     private _byId: Record<string, TModel>
 
-
     private readonly _onModelEventBind: any;
+
+    /**
+     * @internal
+     * @todo Revise.
+     */
+    isFetched: boolean
 
     /**
      * @param {Model[]|Record<string, *>[]|null} [models] Models.

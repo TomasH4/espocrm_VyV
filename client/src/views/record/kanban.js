@@ -30,8 +30,6 @@
 
 import ListRecordView from 'views/record/list';
 import RecordModal from 'helpers/record-modal';
-import {inject} from 'di';
-import AppParams from 'app-params';
 import KanbanPipelineDropdownView from 'views/record/kanban/pipeline-dropdown';
 import PipelinesHelper from 'helpers/misc/pipelines';
 
