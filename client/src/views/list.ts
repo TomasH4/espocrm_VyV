@@ -639,9 +639,7 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
 
         const listViewName = this.getRecordViewName();
 
-        const promise = this.createView('list', listViewName, o).then(async (inputView) => {
-            const view = inputView as unknown as ListRecordView;
-
+        const promise = this.createView<ListRecordView>('list', listViewName, o).then(async (view) => {
             if (!this.hasParentView()) {
                 view.undelegateEvents();
 

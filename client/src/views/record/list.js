@@ -631,7 +631,9 @@ class ListRecordView extends View {
      */
     hasStars
 
-    /** @inheritDoc */
+    /**
+     * @type {Record<string, function (any): void>}
+     */
     events = {
         /**
          * @param {JQueryMouseEventObject} e
