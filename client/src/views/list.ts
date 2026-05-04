@@ -60,7 +60,7 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
 
     protected template = 'list'
 
-    name: string = 'List'
+    readonly name: string = 'List'
 
     protected optionsToPass: string[] = []
 

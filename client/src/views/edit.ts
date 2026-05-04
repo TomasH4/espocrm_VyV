@@ -26,23 +26,40 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module module:views/edit */
+import MainView, {MainViewOptions} from 'views/main';
+import Model from 'model';
+import type View from 'view';
 
-import MainView from 'views/main';
+export interface EditViewSchema {
+    model: Model;
+    options: EditViewOptions;
+}
+
+export interface EditViewOptions extends MainViewOptions {
+    rootUrl?: string;
+    params?: {
+        rootUrl?: string;
+        rootData?: Record<string, unknown>;
+        focusForCreate?: boolean;
+    };
+    recordView?: string;
+}
+
+type RecordView = View & {
+    setupReuse?: () => void;
+    getMode: () => 'detail' | 'edit';
+}
 
 /**
  * An edit view.
  */
-class EditView extends MainView {
+class EditView<S extends EditViewSchema = EditViewSchema> extends MainView<S> {
 
-    /** @inheritDoc */
-    template = 'edit'
+    protected template: string = 'edit'
 
-    /** @inheritDoc */
-    name = 'Edit'
+    readonly name = 'Edit'
 
-    /** @inheritDoc */
-    optionsToPass = [
+    protected optionsToPass: string[] = [
         'returnUrl',
         'returnDispatchParams',
         'attributes',
@@ -54,53 +71,50 @@ class EditView extends MainView {
 
     /**
      * A header view name.
-     *
-     * @type {string}
      */
-    headerView = 'views/header'
+    protected headerView = 'views/header'
 
     /**
      * A record view name.
-     *
-     * @type {string}
      */
-    recordView = 'views/record/edit'
+    protected recordView = 'views/record/edit'
 
     /**
      * A root breadcrumb item not to be a link.
-     *
-     * @type {boolean}
      */
-    rootLinkDisabled = false
+    protected readonly rootLinkDisabled: boolean = false
 
     /**
      * A root URL.
-     *
-     * @type {string}
      */
-    rootUrl
+    protected rootUrl: string
 
-    /**
-     * @private
-     * @type {string}
-     */
-    nameAttribute
+    private nameAttribute: string = 'name'
 
-    /** @inheritDoc */
-    setup() {
+    protected entityType: string | null
+
+    protected setup() {
+        if (!this.model.entityType) {
+            throw new Error('No entity type.');
+        }
+
+        this.entityType = this.model.entityType;
+
         this.headerView = this.options.headerView || this.headerView;
         this.recordView = this.options.recordView || this.recordView;
 
-        this.rootUrl = this.options.rootUrl ?? this.options.params.rootUrl ?? this.rootUrl ?? '#' + this.scope;
+        this.rootUrl = this.options.rootUrl ?? this.options.params?.rootUrl ?? this.rootUrl ?? `#${this.scope}`;
 
-        this.nameAttribute = this.getMetadata().get(`clientDefs.${this.entityType}.nameAttribute`) || 'name';
+        if (this.entityType) {
+            this.nameAttribute = this.getMetadata().get(`clientDefs.${this.entityType}.nameAttribute`) ??
+                this.nameAttribute;
+        }
 
         this.setupHeader();
         this.setupRecord();
     }
 
-    /** @inheritDoc */
-    setupFinal() {
+    protected setupFinal() {
         super.setupFinal();
 
         this.wait(
@@ -111,7 +125,7 @@ class EditView extends MainView {
     /**
      * Set up a header.
      */
-    setupHeader() {
+    protected setupHeader() {
         this.createView('header', this.headerView, {
             model: this.model,
             fullSelector: '#main > .header',
@@ -122,19 +136,19 @@ class EditView extends MainView {
     /**
      * Set up a record.
      */
-    setupRecord() {
+    protected setupRecord() {
         const o = {
             model: this.model,
             fullSelector: '#main > .record',
             scope: this.scope,
             shortcutKeysEnabled: true,
-        };
+        } as Record<string, unknown>;
 
         this.optionsToPass.forEach(option => {
             o[option] = this.options[option];
         });
 
-        const params = this.options.params || {};
+        const params = this.options.params ?? {};
 
         o.rootUrl = this.rootUrl;
 
@@ -149,28 +163,22 @@ class EditView extends MainView {
         return this.createView('record', this.getRecordViewName(), o);
     }
 
-    /**
-     * @return {module:views/record/edit}
-     */
-    getRecordView() {
-        return this.getView('record');
+    protected getRecordView(): RecordView {
+        return this.getView<RecordView>('record') as RecordView;
     }
 
     /**
      * Get a record view name.
-     *
-     * @returns {string}
      */
-    getRecordViewName() {
-        return this.getMetadata().get('clientDefs.' + this.scope + '.recordViews.edit') || this.recordView;
+    private getRecordViewName(): string {
+        return this.getMetadata().get('clientDefs.' + this.scope + '.recordViews.edit') ?? this.recordView;
     }
 
-    /** @inheritDoc */
-    getHeader() {
+    getHeader(): string {
         const scopeLabel = this.getLanguage().translate(this.scope, 'scopeNamesPlural');
 
         let root = document.createElement('span');
-        root.text = scopeLabel;
+        root.textContent = scopeLabel;
         root.style.userSelect = 'none';
 
         if (!this.options.noHeaderLinks && !this.rootLinkDisabled) {
@@ -219,7 +227,6 @@ class EditView extends MainView {
         return this.buildHeaderHtml([root, title]);
     }
 
-    /** @inheritDoc */
     updatePageTitle() {
         if (this.model.isNew()) {
             const title = this.getLanguage().translate('Create') + ' ' +
@@ -237,7 +244,10 @@ class EditView extends MainView {
         this.setPageTitle(title);
     }
 
-    setupReuse(params) {
+    setupReuse(params: Record<string, unknown>) {
+        // noinspection BadExpressionStatementJS
+        params;
+
         const recordView = this.getRecordView();
 
         if (!recordView) {

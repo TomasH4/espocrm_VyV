@@ -26,8 +26,6 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module views/main */
-
 import View from 'view';
 import {inject} from 'di';
 import ShortcutManager from 'helpers/site/shortcut-manager';
@@ -180,7 +178,7 @@ class MainView<S extends MainViewSchema = MainViewSchema> extends View<S> {
     /**
      * A name.
      */
-    name: string = ''
+    readonly name: string = ''
 
     /**
      * Top-right menu definitions.

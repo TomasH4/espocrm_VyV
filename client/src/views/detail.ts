@@ -45,7 +45,7 @@ export interface DetailViewOptions extends MainViewOptions {
         rootUrl?: string;
         isReturn?: boolean;
         isAfterCreate?: boolean;
-        rootData?: Record<string, unknown>
+        rootData?: Record<string, unknown>;
     };
     recordView?: string;
 }
@@ -62,7 +62,7 @@ class DetailView<S extends DetailViewSchema = DetailViewSchema> extends MainView
 
     protected template = 'detail'
 
-    name: string = 'Detail'
+    readonly name: string = 'Detail'
 
     protected optionsToPass: string[] = [
         'attributes',
@@ -135,8 +135,6 @@ class DetailView<S extends DetailViewSchema = DetailViewSchema> extends MainView
     protected viewModeList: string[]
 
     protected setup() {
-        super.setup();
-
         if (!this.model.entityType) {
             throw new Error('No entity type.');
         }
