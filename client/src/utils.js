@@ -38,7 +38,7 @@ Espo.Utils = {
     /**
      * Handle a click event action.
      *
-     * @param {module:view} view A view.
+     * @param {import('view').default} view A view.
      * @param {MouseEvent} event An event.
      * @param {HTMLElement} element An  element.
      * @param {{
@@ -47,10 +47,10 @@ Espo.Utils = {
      *     actionFunction?: string,
      *     actionItems?: Array<{
      *         onClick?: function(),
-     *         name?: string,
+     *         name?: string | null,
      *         handler?: string,
      *         actionFunction?: string,
-     *     }>,
+     *     } | false>,
      *     className?: string,
      * }} [actionData] Data. If an action is not specified, it will be fetched from a target element.
      * @return {boolean} True if handled.
@@ -269,15 +269,7 @@ Espo.Utils = {
     },
 
     /**
-     * @typedef {Object} Espo.Utils~AccessDefs
-     *
-     * @property {'create'|'read'|'edit'|'stream'|'delete'|null} action An ACL action to check.
-     * @property {string|null} [scope] A scope to check.
-     * @property {string[]} [portalIdList] A portal ID list. To check whether a user in one of portals.
-     * @property {string[]} [teamIdList] A team ID list. To check whether a user in one of teams.
-     * @property {boolean} [isPortalOnly=false] Allow for portal users only.
-     * @property {boolean} [inPortalDisabled=false] Disable for portal users.
-     * @property {boolean} [isAdminOnly=false] Allow for admin users only.
+     * @typedef {import('util/util.d').AccessDefs} Espo.Utils~AccessDefs
      */
 
     /**

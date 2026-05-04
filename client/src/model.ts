@@ -543,7 +543,7 @@ export default class Model<T extends Record<string, unknown> = Record<string, an
      * @param [options] Options.
      * @fires Model#sync
      */
-    fetch(options: Record<string, any>): AjaxPromise {
+    fetch(options?: Record<string, any>): AjaxPromise {
         options = {...options};
 
         options.action = 'fetch';

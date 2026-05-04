@@ -64,7 +64,7 @@ export interface ConfirmOptions {
  */
 type ActionHandlerCallback = (event: MouseEvent, element: HTMLElement) => void;
 
-interface ViewSchema {
+export interface ViewSchema {
     model?: Model;
     collection?: Collection;
     options?: Record<string, any>;

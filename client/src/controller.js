@@ -35,7 +35,7 @@ import ModalBarProvider from 'helpers/site/modal-bar-provider';
 
 /**
  * @callback module:controller~viewCallback
- * @param {module:view} view A view.
+ * @param {import('view')} view A view.
  */
 
 /**
@@ -286,7 +286,7 @@ class Controller {
      * Get a stored main view.
      *
      * @param {string} key A key.
-     * @returns {module:view|null}
+     * @returns {import('view').default|null}
      */
     getStoredMainView(key) {
         return this.get(this._composeMainViewKey(key));
@@ -320,7 +320,7 @@ class Controller {
      * Store a main view.
      *
      * @param {string} key A key.
-     * @param {module:view} view A view.
+     * @param {import('view').default} view A view.
      */
     storeMainView(key, view) {
         this.set(this._composeMainViewKey(key), view);
@@ -542,7 +542,7 @@ class Controller {
     /**
      * Create a main view in the master container and render it.
      *
-     * @param {string|module:view} [view] A view name or view instance.
+     * @param {string|import('view').default} [view] A view name or view instance.
      * @param {Object.<string, *>} [options] Options for a view.
      * @param {module:controller~viewCallback} [callback] A callback with a created view.
      * @param {module:controller~mainParams} [params] Parameters.
@@ -733,7 +733,7 @@ class Controller {
      * Create a view in the BODY element. Use for rendering separate pages without the default navbar and footer.
      * If a callback is not passed, the view will be automatically rendered.
      *
-     * @param {string|module:view} view A view name or view instance.
+     * @param {string|import('view').default} view A view name or view instance.
      * @param {Object.<string, *>} [options] Options for a view.
      * @param {module:controller~viewCallback} [callback] A callback with a created view.
      */
