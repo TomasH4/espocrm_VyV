@@ -284,7 +284,7 @@ const Ajax = {
      */
     deleteRequest: function (
         url: string,
-        data: any,
+        data?: any,
         options?: Options & Record<string, any>,
     ): Promise<any> & AjaxPromise {
 

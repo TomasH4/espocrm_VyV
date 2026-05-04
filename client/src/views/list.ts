@@ -50,6 +50,7 @@ export interface ListViewOptions extends MainViewOptions {
         primaryFilter?: string | null;
         fromAdmin?: boolean;
     };
+    recordView?: string;
 }
 
 /**
@@ -391,7 +392,7 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
      *
      * @param mode A mode.
      */
-    private switchViewMode(mode: string) {
+    protected switchViewMode(mode: string) {
         this.clearView('list');
         this.collection.isFetched = false;
         this.collection.reset();
@@ -526,7 +527,7 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
     /**
      * Get a record view name.
      */
-    protected getRecordViewName(): string {
+    private getRecordViewName(): string {
         let viewName = this.getMetadata().get(['clientDefs', this.scope, 'recordViews', this.viewMode]);
 
         if (viewName) {

@@ -26,23 +26,45 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module module:views/detail */
-
-import MainView from 'views/main';
+import MainView, {MainViewOptions} from 'views/main';
 import DetailModesView from 'views/detail/modes';
+import Model from 'model';
+import Ui from 'ui';
+import type View from 'view';
+import Ajax from 'ajax';
+
+export interface DetailViewSchema {
+    model: Model;
+    options: DetailViewOptions;
+}
+
+export interface DetailViewOptions extends MainViewOptions {
+    defaultViewMode?: string;
+    rootUrl?: string;
+    params?: {
+        rootUrl?: string;
+        isReturn?: boolean;
+        isAfterCreate?: boolean;
+        rootData?: Record<string, unknown>
+    };
+    recordView?: string;
+}
+
+type RecordView = View & {
+    setupReuse?: () => void;
+    getMode: () => 'detail' | 'edit';
+}
 
 /**
  * A detail view.
  */
-class DetailView extends MainView {
+class DetailView<S extends DetailViewSchema = DetailViewSchema> extends MainView<S> {
 
-    /** @inheritDoc */
-    template = 'detail'
-    /** @inheritDoc */
-    name = 'Detail'
+    protected template = 'detail'
 
-    /** @inheritDoc */
-    optionsToPass = [
+    name: string = 'Detail'
+
+    protected optionsToPass: string[] = [
         'attributes',
         'returnUrl',
         'returnDispatchParams',
@@ -51,107 +73,83 @@ class DetailView extends MainView {
 
     /**
      * A header view name.
-     *
-     * @type {string}
      */
-    headerView = 'views/header'
+    protected headerView: string = 'views/header'
 
     /**
      * A record view name.
-     *
-     * @type {string}
      */
-    recordView = 'views/record/detail'
+    protected recordView: string = 'views/record/detail'
 
     /**
      * A root breadcrumb item not to be a link.
-     *
-     * @type {boolean}
      */
-    rootLinkDisabled = false
+    protected rootLinkDisabled: boolean = false
 
     /**
      * A root URL.
-     *
-     * @type {string}
      */
-    rootUrl
+    protected rootUrl: string
 
     /**
      * Is return.
-     *
-     * @protected
      */
-    isReturn = false
+    protected isReturn: boolean = false
 
-    /** @inheritDoc */
-    shortcutKeys = {}
+    /**
+     * A shortcut-key => action map.
+     */
+    protected shortcutKeys: (Record<string, (event: KeyboardEvent) => void>) | null = null
 
     /**
      * An entity type.
-     *
-     * @type {string}
      */
-    entityType
+    protected entityType: string
 
     /**
      * A default view mode.
-     *
-     * @protected
      */
-    defaultViewMode = 'detail'
+    protected defaultViewMode: string = 'detail'
 
     /**
      * A view mode.
-     *
-     * @protected
-     * @type {string}
      */
-    viewMode
+    protected viewMode: string
 
-    /**
-     * @private
-     * @type {string}
-     */
-    viewModeIsStorable
+    private viewModeIsStorable: boolean
 
-    /**
-     * @private
-     * @type {boolean}
-     */
-    hasMultipleModes = false
+    private hasMultipleModes: boolean = false
 
-    /**
-     * @private
-     * @type {import('views/detail/modes').default}
-     */
-    modesView
+    private modesView: DetailModesView
 
     /**
      * A 'detail' view mode.
-     * @const
      */
-    MODE_DETAIL = 'detail'
+    readonly MODE_DETAIL = 'detail'
+
+    private nameAttribute: string
 
     /**
-     * @private
-     * @type {string}
+     * An available view mode list.
      */
-    nameAttribute
+    protected viewModeList: string[]
 
-    /** @inheritDoc */
-    setup() {
+    protected setup() {
         super.setup();
 
-        this.entityType = this.model.entityType || this.model.name;
+        if (!this.model.entityType) {
+            throw new Error('No entity type.');
+        }
+
+        this.entityType = this.model.entityType;
 
         this.headerView = this.options.headerView || this.headerView;
         this.recordView = this.options.recordView || this.recordView;
 
-        this.rootUrl = this.options.rootUrl ?? this.options.params.rootUrl ?? this.rootUrl ?? '#' + this.scope;
-        this.isReturn = this.options.isReturn || this.options.params.isReturn || false;
+        this.rootUrl = this.options.rootUrl ?? this.options.params?.rootUrl ?? this.rootUrl ?? `#${this.scope}`;
+        this.isReturn = this.options.isReturn || this.options.params?.isReturn || false;
 
-        this.nameAttribute = this.getMetadata().get(`clientDefs.${this.entityType}.nameAttribute`) || 'name';
+        this.nameAttribute = this.getMetadata().get(`clientDefs.${this.entityType}.nameAttribute`) ?? 'name';
 
         this.setupModes();
         this.setupHeader();
@@ -164,8 +162,7 @@ class DetailView extends MainView {
         this.addActionHandler('fullRefresh', () => this.actionFullRefresh());
     }
 
-    /** @inheritDoc */
-    setupFinal() {
+    protected setupFinal() {
         super.setupFinal();
 
         this.wait(
@@ -173,14 +170,13 @@ class DetailView extends MainView {
         );
     }
 
-    /** @private */
-    initRedirect() {
-        if (!this.options.params.isAfterCreate) {
+    private initRedirect() {
+        if (!this.options.params?.isAfterCreate) {
             return;
         }
 
         const redirect = () => {
-            Espo.Ui.success(this.translate('Created'));
+            Ui.success(this.translate('Created'));
 
             setTimeout(() => {
                 this.getRouter().navigate(this.rootUrl, {trigger: true});
@@ -202,7 +198,7 @@ class DetailView extends MainView {
     /**
      * Set up a page title.
      */
-    setupPageTitle() {
+    protected setupPageTitle() {
         this.listenTo(this.model, 'after:save', () => {
             this.updatePageTitle();
         });
@@ -217,7 +213,7 @@ class DetailView extends MainView {
     /**
      * Set up a header.
      */
-    setupHeader() {
+    protected setupHeader() {
         this.createView('header', this.headerView, {
             model: this.model,
             fullSelector: '#main > .header',
@@ -227,9 +223,7 @@ class DetailView extends MainView {
 
         this.listenTo(this.model, 'sync', model => {
             if (model && model.hasChanged(this.nameAttribute)) {
-                if (this.getView('header')) {
-                    this.getView('header').reRender();
-                }
+                this.getHeaderView()?.reRender();
             }
         });
     }
@@ -237,14 +231,14 @@ class DetailView extends MainView {
     /**
      * Set up modes.
      */
-    setupModes() {
+    protected setupModes() {
         this.defaultViewMode = this.options.defaultViewMode ||
             this.getMetadata().get(`clientDefs.${this.scope}.detailDefaultViewMode`) ||
             this.defaultViewMode;
 
         this.viewMode = this.viewMode || this.defaultViewMode;
 
-        const viewModeList = this.options.viewModeList || this.viewModeList ||
+        const viewModeList = this.options.viewModeList ?? this.viewModeList ??
             this.getMetadata().get(`clientDefs.${this.scope}.detailViewModeList`);
 
         this.viewModeList = viewModeList ? viewModeList : [this.MODE_DETAIL];
@@ -272,11 +266,11 @@ class DetailView extends MainView {
                 viewMode = this.defaultViewMode;
             }
 
-            this.viewMode = /** @type {string} */viewMode;
+            this.viewMode = viewMode;
         }
 
         if (this.hasMultipleModes) {
-            this.addActionHandler('switchMode', (e, target) => this.switchViewMode(target.dataset.value));
+            this.addActionHandler('switchMode', (_e, target) => this.switchViewMode(target.dataset.value as string));
 
             this.modesView = new DetailModesView({
                 mode: this.viewMode,
@@ -288,27 +282,21 @@ class DetailView extends MainView {
         }
     }
 
-    /**
-     * @private
-     * @return {string}
-     */
-    getViewModeKey() {
+    private getViewModeKey(): string {
         return `detailViewMode-${this.scope}-${this.model.id}}`;
     }
 
     /**
      * Set up a record.
-     *
-     * @return {Promise<import('view').default>}
      */
-    setupRecord() {
+    protected async setupRecord(): Promise<RecordView> {
         const o = {
             model: this.model,
             fullSelector: '#main > .record',
             scope: this.scope,
             shortcutKeysEnabled: true,
             isReturn: this.isReturn,
-        };
+        } as Record<string, unknown>;
 
         this.optionsToPass.forEach((option) => {
             o[option] = this.options[option];
@@ -319,57 +307,56 @@ class DetailView extends MainView {
         o.rootUrl = this.rootUrl;
 
         if (params.rootData) {
-            o.rootData = this.options.params.rootData;
+            o.rootData = this.options.params?.rootData;
         }
 
         if (this.model.get('deleted')) {
             o.readOnly = true;
         }
 
-        // noinspection JSValidateTypes
-        return this.createView('record', this.getRecordViewName(), o, view => {
-            this.listenTo(view, 'after:mode-change', mode => {
-                // Mode change should also re-render the header what the methods do.
-                mode === 'edit' ?
-                    this.hideAllHeaderActionItems() :
-                    this.showAllHeaderActionItems();
-            });
+        const view = await this.createView<RecordView>('record', this.getRecordViewName(), o);
 
-            if (this.modesView) {
-                this.listenTo(view, 'after:set-detail-mode', () => this.modesView.enable());
-                this.listenTo(view, 'after:set-edit-mode', () => this.modesView.disable());
-            }
+        this.listenTo(view, 'after:mode-change', mode => {
+            // Mode change should also re-render the header what the methods do.
+            mode === 'edit' ?
+                this.hideAllHeaderActionItems() :
+                this.showAllHeaderActionItems();
         });
+
+        if (this.modesView) {
+            this.listenTo(view, 'after:set-detail-mode', () => this.modesView.enable());
+            this.listenTo(view, 'after:set-edit-mode', () => this.modesView.disable());
+        }
+
+        return view;
     }
 
     /**
      * Get a record view name.
-     *
-     * @returns {string}
      */
-    getRecordViewName() {
-        return this.getMetadata().get(`clientDefs.${this.scope}.recordViews.${this.viewMode}`) || this.recordView;
+    protected getRecordViewName(): string {
+        return this.getMetadata().get(`clientDefs.${this.scope}.recordViews.${this.viewMode}`) ?? this.recordView;
     }
 
     /**
      * Switch a view mode.
      *
-     * @param {string} mode
+     * @param mode A mode.
      */
-    switchViewMode(mode) {
+    protected async switchViewMode(mode: string) {
         this.clearView('record');
         this.setViewMode(mode, true);
 
-        Espo.Ui.notifyWait();
+        Ui.notifyWait();
 
         if (this.modesView) {
-            this.modesView.changeMode(mode);
+            this.modesView.changeMode(mode).then(() => {});
         }
 
-        this.setupRecord().then(view => {
-            view.render()
-                .then(() => Espo.Ui.notify(false));
-        });
+        const view = await this.setupRecord();
+
+        await view.render();
+        Ui.notify();
     }
 
     /**
@@ -378,7 +365,7 @@ class DetailView extends MainView {
      * @param {string} mode A mode.
      * @param {boolean} [toStore=false] To preserve a mode being set.
      */
-    setViewMode(mode, toStore) {
+    private setViewMode(mode: string, toStore: boolean = false) {
         this.viewMode = mode;
 
         if (toStore && this.viewModeIsStorable) {
@@ -388,8 +375,7 @@ class DetailView extends MainView {
         }
     }
 
-    /** @private */
-    initStarButtons() {
+    private initStarButtons() {
         if (!this.getMetadata().get(`scopes.${this.scope}.stars`)) {
             return;
         }
@@ -398,8 +384,7 @@ class DetailView extends MainView {
         this.listenTo(this.model, 'change:isStarred', () => this.controlStarButtons());
     }
 
-    /** @private */
-    addStarButtons() {
+    private addStarButtons() {
         const isStarred = this.model.get('isStarred');
 
         this.addMenuItem('buttons', {
@@ -419,14 +404,12 @@ class DetailView extends MainView {
             className: 'btn-s-wide',
             text: this.translate('Star'),
             style: 'text',
-            //title: this.translate('Star'),
             hidden: isStarred || !this.model.has('isStarred'),
             onClick: () => this.actionStar(),
         }, true);
     }
 
-    /** @private */
-    controlStarButtons() {
+    private controlStarButtons() {
         const isStarred = this.model.get('isStarred');
 
         if (isStarred) {
@@ -443,11 +426,10 @@ class DetailView extends MainView {
     /**
      * Action 'star'.
      */
-    actionStar() {
+    private actionStar() {
         this.disableMenuItem('star');
 
-        Espo.Ajax
-            .putRequest(`${this.entityType}/${this.model.id}/starSubscription`)
+        Ajax.putRequest(`${this.entityType}/${this.model.id}/starSubscription`)
             .then(() => {
                 this.hideHeaderActionItem('star');
 
@@ -459,11 +441,10 @@ class DetailView extends MainView {
     /**
      * Action 'unstar'.
      */
-    actionUnstar() {
+    private actionUnstar() {
         this.disableMenuItem('unstar');
 
-        Espo.Ajax
-            .deleteRequest(`${this.entityType}/${this.model.id}/starSubscription`)
+        Ajax.deleteRequest(`${this.entityType}/${this.model.id}/starSubscription`)
             .then(() => {
                 this.hideHeaderActionItem('unstar');
 
@@ -472,8 +453,7 @@ class DetailView extends MainView {
             .finally(() => this.enableMenuItem('unstar'));
     }
 
-    /** @private */
-    initFollowButtons() {
+    private initFollowButtons() {
         if (!this.getMetadata().get(['scopes', this.scope, 'stream'])) {
             return;
         }
@@ -485,8 +465,7 @@ class DetailView extends MainView {
         });
     }
 
-    /** @private */
-    addFollowButtons() {
+    private addFollowButtons() {
         const isFollowed = this.model.get('isFollowed');
 
         this.addMenuItem('buttons', {
@@ -495,6 +474,7 @@ class DetailView extends MainView {
             style: 'success',
             action: 'unfollow',
             hidden: !isFollowed,
+            onClick: () => this.actionUnfollow(),
         }, true);
 
         this.addMenuItem('buttons', {
@@ -507,11 +487,11 @@ class DetailView extends MainView {
             hidden: isFollowed ||
                 !this.model.has('isFollowed') ||
                 !this.getAcl().checkModel(this.model, 'stream'),
+            onClick: () => this.actionFollow(),
         }, true);
     }
 
-    /** @private */
-    controlFollowButtons() {
+    private controlFollowButtons() {
         const isFollowed = this.model.get('isFollowed');
 
         if (isFollowed) {
@@ -528,15 +508,13 @@ class DetailView extends MainView {
         }
     }
 
-    // noinspection JSUnusedGlobalSymbols
     /**
      * Action 'follow'.
      */
-    actionFollow() {
+    private actionFollow() {
         this.disableMenuItem('follow');
 
-        Espo.Ajax
-            .putRequest(this.entityType + '/' + this.model.id + '/subscription')
+        Ajax.putRequest(`${this.entityType}/${this.model.id}/subscription`)
             .then(() => {
                 this.hideHeaderActionItem('follow');
 
@@ -549,15 +527,13 @@ class DetailView extends MainView {
             });
     }
 
-    // noinspection JSUnusedGlobalSymbols
     /**
      * Action 'unfollow'.
      */
-    actionUnfollow() {
+    private actionUnfollow() {
         this.disableMenuItem('unfollow');
 
-        Espo.Ajax
-            .deleteRequest(this.entityType + '/' + this.model.id + '/subscription')
+        Ajax.deleteRequest(`${this.entityType}/${this.model.id}/subscription`)
             .then(() => {
                 this.hideHeaderActionItem('unfollow');
 
@@ -570,10 +546,7 @@ class DetailView extends MainView {
             });
     }
 
-    /**
-     * @inheritDoc
-     */
-    getHeader() {
+    getHeader(): string {
         const name = this.model.attributes[this.nameAttribute] || this.model.id;
 
         const title = document.createElement('span');
@@ -593,7 +566,7 @@ class DetailView extends MainView {
         const scopeLabel = this.getLanguage().translate(this.scope, 'scopeNamesPlural');
 
         let root = document.createElement('span');
-        root.text = scopeLabel;
+        root.textContent = scopeLabel;
         root.style.userSelect = 'none';
 
         if (!this.rootLinkDisabled) {
@@ -620,9 +593,6 @@ class DetailView extends MainView {
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
     updatePageTitle() {
         if (this.model.has(this.nameAttribute)) {
             this.setPageTitle(this.model.attributes[this.nameAttribute] || this.model.id);
@@ -633,22 +603,8 @@ class DetailView extends MainView {
         super.updatePageTitle();
     }
 
-    /**
-     * @return {module:views/record/detail}
-     */
-    getRecordView() {
-        return this.getView('record');
-    }
-
-    // noinspection JSUnusedGlobalSymbols
-    /**
-     * @param {string} name A relationship name.
-     * @deprecated As of v8.4.
-     */
-    updateRelationshipPanel(name) {
-        this.model.trigger(`update-related:${name}`);
-
-        console.warn('updateRelationshipPanel method is deprecated.');
+    protected getRecordView(): RecordView {
+        return this.getView<RecordView>('record') as RecordView;
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -656,14 +612,14 @@ class DetailView extends MainView {
      * Action 'duplicate'.
      */
     actionDuplicate() {
-        Espo.Ui.notifyWait();
+        Ui.notifyWait();
 
-        Espo.Ajax
-            .postRequest(this.scope + '/action/getDuplicateAttributes', {id: this.model.id})
+        Ajax
+            .postRequest(`${this.scope}/action/getDuplicateAttributes`, {id: this.model.id})
             .then(attributes => {
-                Espo.Ui.notify(false);
+                Ui.notify();
 
-                const url = '#' + this.scope + '/create';
+                const url = `#${this.scope}/create`;
 
                 this.getRouter().dispatch(this.scope, 'create', {
                     attributes: attributes,
@@ -677,10 +633,7 @@ class DetailView extends MainView {
             });
     }
 
-    /**
-     * @protected
-     */
-    hideAllHeaderActionItems() {
+    protected hideAllHeaderActionItems() {
         if (!this.getHeaderView()) {
             return;
         }
@@ -688,10 +641,7 @@ class DetailView extends MainView {
         this.getHeaderView().hideAllMenuItems();
     }
 
-    /**
-     * @protected
-     */
-    showAllHeaderActionItems() {
+    protected showAllHeaderActionItems() {
         if (!this.getHeaderView()) {
             return;
         }
@@ -703,10 +653,10 @@ class DetailView extends MainView {
     /**
      * Hide a view mode.
      *
-     * @param {string} mode
+     * @param {string} mode A mode.
      * @since 8.4.0
      */
-    hideViewMode(mode) {
+    hideViewMode(mode: string) {
         if (!this.modesView) {
             return;
         }
@@ -718,10 +668,10 @@ class DetailView extends MainView {
     /**
      * Show a view mode.
      *
-     * @param {string} mode
+     * @param {string} mode A mode.
      * @since 8.4.0
      */
-    showViewMode(mode) {
+    showViewMode(mode: string) {
         if (!this.modesView) {
             return;
         }
@@ -729,28 +679,21 @@ class DetailView extends MainView {
         this.modesView.showMode(mode);
     }
 
-    /**
-     * @protected
-     */
-    async actionFullRefresh() {
+    protected async actionFullRefresh() {
         if (this.getRecordMode() === 'edit') {
             return;
         }
 
-        Espo.Ui.notifyWait();
+        Ui.notifyWait();
 
         await this.model.fetch();
 
         this.model.trigger('update-all');
 
-        Espo.Ui.notify();
+        Ui.notify();
     }
 
-    /**
-     * @private
-     * @return {'detail'|'edit'}
-     */
-    getRecordMode() {
+    private getRecordMode(): 'detail' | 'edit' {
         if (this.getRecordView().getMode) {
             return this.getRecordView().getMode();
         }
@@ -758,7 +701,10 @@ class DetailView extends MainView {
         return 'detail';
     }
 
-    setupReuse(params) {
+    setupReuse(params: Record<string, unknown>) {
+        // noinspection BadExpressionStatementJS
+        params;
+
         const recordView = this.getRecordView();
 
         if (!recordView) {
