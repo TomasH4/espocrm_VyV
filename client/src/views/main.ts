@@ -33,7 +33,7 @@ import {inject} from 'di';
 import ShortcutManager from 'helpers/site/shortcut-manager';
 import type Model from 'model';
 import type Collection from 'collection';
-import {AccessDefs} from 'util/util';
+import type {AccessDefs} from 'util/util';
 
 /**
  * A top-right menu item (button or dropdown action).
