@@ -88,6 +88,9 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
      */
     protected searchPanel: boolean = true
 
+    /**
+     * A search manager.
+     */
     protected searchManager: SearchManager | null = null
 
     /**
@@ -149,6 +152,7 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
     protected rootData: Record<string, unknown>
 
     private collectionUrl: string | null
+
     private collectionMaxSize: number
 
     /**
@@ -387,7 +391,7 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
      *
      * @param mode A mode.
      */
-    protected switchViewMode(mode: string) {
+    private switchViewMode(mode: string) {
         this.clearView('list');
         this.collection.isFetched = false;
         this.collection.reset();
@@ -771,8 +775,10 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
     /**
      * Action `quickCreate`.
      */
-    protected actionQuickCreate(data?: Record<string, any>): Promise<EditModalView> {
-        data = data || {};
+    protected actionQuickCreate(
+        data?: Record<string, any> & {focusForCreate?: boolean},
+    ): Promise<EditModalView> {
+        data = data ?? {};
 
         const attributes = this.getCreateAttributes() || {};
 

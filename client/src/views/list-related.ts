@@ -26,160 +26,155 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module module:views/list-related */
 
-import MainView from 'views/main';
+import MainView, {MainViewOptions} from 'views/main';
 import SearchManager from 'search-manager';
 import CreateRelatedHelper from 'helpers/record/create-related';
+import Collection from 'collection';
+import type Model from 'model';
+import SearchView from 'views/record/search';
+import ListRecordView from 'views/record/list';
+import Ui from 'ui';
+import Ajax from 'ajax';
+import EditModalView from 'views/modals/edit';
+import Utils from 'utils';
+
+export interface ListRelatedViewSchema {
+    collection: Collection;
+    model: Model;
+    options: ListRelatedViewOptions;
+}
+
+export interface ListRelatedViewOptions extends MainViewOptions {
+    link: string;
+    defaultViewMode?: string;
+    params?: Record<string, any> & {
+        rootUrl?: string;
+        primaryFilter?: string | null;
+        fromAdmin?: boolean;
+    };
+}
 
 /**
  * A list-related view.
  */
-class ListRelatedView extends MainView {
+class ListRelatedView<S extends ListRelatedViewSchema = ListRelatedViewSchema> extends MainView<S> {
 
-    /** @inheritDoc */
-    template = 'list'
+    protected template = 'list'
 
-    /** @inheritDoc */
-    name = 'ListRelated'
+    name: string = 'ListRelated'
 
     /**
      * A header view name.
-     *
-     * @type {string}
      */
-    headerView = 'views/header'
+    protected headerView: string = 'views/header'
 
     /**
      * A search view name.
-     *
-     * @type {string}
      */
-    searchView = 'views/record/search'
+    protected searchView: string = 'views/record/search'
 
     /**
      * A record/list view name.
-     *
-     * @type {string}
      */
-    recordView = 'views/record/list'
+    protected recordView: string = 'views/record/list'
 
     /**
      * Has a search panel.
-     *
-     * @type {boolean}
      */
-    searchPanel = true
+    protected searchPanel: boolean = true
 
     /**
-     * @type {module:search-manager}
+     * A search manager.
      */
-    searchManager = null
+    protected searchManager: SearchManager | null = null
 
-    /**
-     * @inheritDoc
-     */
-    optionsToPass = []
+    optionsToPass: string[] = []
 
     /**
      * Use a current URL as a root URL when open a record. To be able to return to the same URL.
      */
-    keepCurrentRootUrl = false
+    protected keepCurrentRootUrl: boolean = false
 
     /**
-     * A view mode.
-     *
-     * @type {string}
+     * A view mode. 'list', 'kanban'.
      */
-    viewMode = ''
+    protected viewMode: string
 
     /**
      * An available view mode list.
-     *
-     * @type {string[]|null}
      */
-    viewModeList = null
+    protected viewModeList: string[]
 
     /**
      * A default view mode.
-     *
-     * @type {string}
      */
-    defaultViewMode = 'list'
+    protected defaultViewMode: string = 'list'
 
-    /**
-     * @const
-     */
-    MODE_LIST = 'list'
+    readonly MODE_LIST = 'list'
 
-    /**
-     * @private
-     */
-    rowActionsView = 'views/record/row-actions/relationship'
+    private rowActionsView: string = 'views/record/row-actions/relationship'
 
     /**
      * A create button.
      *
-     * @protected
      */
-    createButton = true
+    protected createButton = true
 
-    /**
-     * @protected
-     */
-    unlinkDisabled = false
+    protected unlinkDisabled = false
 
-    /**
-     * @protected
-     */
-    filtersDisabled = false
+    protected filtersDisabled = false
 
-    /**
-     * @private
-     * @type {string}
-     */
-    nameAttribute
+    private nameAttribute: string
 
     /**
      * Disable select-all-result.
      *
-     * @protected
-     * @type {boolean}
      */
-    allResultDisabled = false
+    protected allResultDisabled = false
 
-    /**
-     * @inheritDoc
-     */
-    shortcutKeys = {
-        /** @this ListRelatedView */
-        'Control+Space': function (e) {
+    protected entityType: string
+
+    protected link: string
+
+    private panelDefs: Record<string, any> & {
+        filterList?: any[];
+    }
+
+    private collectionUrl: string | null
+
+    private collectionMaxSize: number
+
+    private foreignScope: string
+
+    protected defaultOrderBy: string | null
+
+    protected defaultOrder: 'asc' | 'desc' | boolean | null
+
+    protected shortcutKeys: (Record<string, (event: KeyboardEvent) => void>) | null = {
+        'Control+Space': function (this: ListRelatedView, e: KeyboardEvent) {
             this.handleShortcutKeyCtrlSpace(e);
         },
-        /** @this ListRelatedView */
-        'Control+Slash': function (e) {
+        'Control+Slash': function (this: ListRelatedView, e: KeyboardEvent) {
             this.handleShortcutKeyCtrlSlash(e);
         },
-        /** @this ListRelatedView */
-        'Control+Comma': function (e) {
+        'Control+Comma': function (this: ListRelatedView, e: KeyboardEvent) {
             this.handleShortcutKeyCtrlComma(e);
         },
-        /** @this ListRelatedView */
-        'Control+Period': function (e) {
+        'Control+Period': function (this: ListRelatedView, e: KeyboardEvent) {
             this.handleShortcutKeyCtrlPeriod(e);
         },
     }
 
-    /**
-     * @inheritDoc
-     */
-    setup() {
-        this.link = this.options.link;
+    protected readonly rootLinkDisabled: boolean
 
-        if (!this.link) {
+    protected setup() {
+        if (!this.options.link) {
             console.error(`Link not passed.`);
             throw new Error();
         }
+
+        this.link = this.options.link;
 
         if (!this.model) {
             console.error(`Model not passed.`);
@@ -191,12 +186,10 @@ class ListRelatedView extends MainView {
             throw new Error();
         }
 
-        this.rootUrl = this.options.rootUrl || this.options.params.rootUrl || `#${this.scope}`;
+        this.rootUrl = this.options.rootUrl ?? this.options.params?.rootUrl ?? `#${this.scope}`;
 
-        this.nameAttribute = this.getMetadata().get(`clientDefs.${this.scope}.nameAttribute`) || 'name';
-
-        /** @type {Record} */
-        this.panelDefs = this.getMetadata().get(['clientDefs', this.scope, 'relationshipPanels', this.link]) || {};
+        this.nameAttribute = this.getMetadata().get(`clientDefs.${this.scope}.nameAttribute`) ?? 'name';
+        this.panelDefs = this.getMetadata().get(['clientDefs', this.scope, 'relationshipPanels', this.link]) ?? {};
 
         if (this.panelDefs.fullFormDisabled) {
             console.error(`Full-form disabled.`);
@@ -212,6 +205,12 @@ class ListRelatedView extends MainView {
             this.collection.data.primaryFilter = this.panelDefs.primaryFilter;
         }
 
+        if (!this.collection.entityType) {
+            console.error(`Not foreign entity type.`);
+
+            throw new Error();
+        }
+
         this.foreignScope = this.collection.entityType;
 
         this.setupModes();
@@ -221,10 +220,11 @@ class ListRelatedView extends MainView {
             this.searchPanel = false;
         }
 
-        if (this.getUser().isPortal()) {
-            if (this.getMetadata().get(['clientDefs', this.foreignScope, 'searchPanelInPortalDisabled'])) {
-                this.searchPanel = false;
-            }
+        if (
+            this.getUser().isPortal() &&
+            this.getMetadata().get(['clientDefs', this.foreignScope, 'searchPanelInPortalDisabled'])
+        ) {
+            this.searchPanel = false;
         }
 
         if (this.getMetadata().get(['clientDefs', this.foreignScope, 'createDisabled'])) {
@@ -280,15 +280,16 @@ class ListRelatedView extends MainView {
         );
 
         this.addActionHandler('fullRefresh', () => this.actionFullRefresh());
-        this.addActionHandler('removeRelated', (e, target) => this.actionRemoveRelated({id: target.dataset.id}));
+        this.addActionHandler('removeRelated',
+            (_e, target) => this.actionRemoveRelated({id: target.dataset.id as string}));
     }
 
     /**
      * Set up modes.
      */
-    setupModes() {
-        this.defaultViewMode = this.options.defaultViewMode ||
-            this.getMetadata().get(['clientDefs', this.foreignScope, 'listRelatedDefaultViewMode']) ||
+    protected setupModes() {
+        this.defaultViewMode = this.options.defaultViewMode ??
+            this.getMetadata().get(['clientDefs', this.foreignScope, 'listRelatedDefaultViewMode']) ??
             this.defaultViewMode;
 
         this.viewMode = this.viewMode || this.defaultViewMode;
@@ -316,14 +317,14 @@ class ListRelatedView extends MainView {
                 viewMode = this.defaultViewMode;
             }
 
-            this.viewMode = /** @type {string} */viewMode;
+            this.viewMode = viewMode;
         }
     }
 
     /**
      * Set up a header.
      */
-    setupHeader() {
+    protected setupHeader() {
         this.createView('header', this.headerView, {
             collection: this.collection,
             fullSelector: '#main > .page-header',
@@ -335,8 +336,8 @@ class ListRelatedView extends MainView {
     /**
      * Set up a create button.
      */
-    setupCreateButton() {
-        this.menu.buttons.unshift({
+    protected setupCreateButton() {
+        this.addMenuItem('buttons', {
             action: 'quickCreate',
             iconHtml: '<span class="fas fa-plus fa-sm"></span>',
             text: this.translate('Create ' + this.foreignScope, 'labels', this.foreignScope),
@@ -349,22 +350,18 @@ class ListRelatedView extends MainView {
 
     /**
      * Set up a search panel.
-     *
-     * @protected
      */
-    setupSearchPanel() {
+    protected setupSearchPanel() {
         this.createSearchView();
     }
 
     /**
      * Create a search view.
      *
-     * @return {Promise<module:view>}
-     * @protected
      */
-    createSearchView() {
-        let filterList = Espo.Utils
-            .clone(this.getMetadata().get(['clientDefs', this.foreignScope, 'filterList']) || []);
+    protected async createSearchView(): Promise<SearchView> {
+        let filterList = Utils
+            .clone(this.getMetadata().get(['clientDefs', this.foreignScope, 'filterList']) || []) as any[];
 
         if (this.panelDefs.filterList) {
             this.panelDefs.filterList.forEach(item1 => {
@@ -393,7 +390,7 @@ class ListRelatedView extends MainView {
             filterList = [];
         }
 
-        return this.createView('search', this.searchView, {
+        const view = await this.createView<SearchView>('search', this.searchView, {
             collection: this.collection,
             fullSelector: '#main > .search-container',
             searchManager: this.searchManager,
@@ -402,11 +399,13 @@ class ListRelatedView extends MainView {
             viewModeList: this.viewModeList,
             isWide: true,
             filterList: filterList,
-        }, view => {
-            if (this.viewModeList.length > 1) {
-                this.listenTo(view, 'change-view-mode', mode => this.switchViewMode(mode));
-            }
         });
+
+        if (this.viewModeList.length > 1) {
+            this.listenTo(view, 'change-view-mode', mode => this.switchViewMode(mode));
+        }
+
+        return view;
     }
 
     /**
@@ -414,7 +413,7 @@ class ListRelatedView extends MainView {
      *
      * @param {string} mode
      */
-    switchViewMode(mode) {
+    private switchViewMode(mode: string) {
         this.clearView('list');
         this.collection.isFetched = false;
         this.collection.reset();
@@ -425,10 +424,10 @@ class ListRelatedView extends MainView {
     /**
      * Set a view mode.
      *
-     * @param {string} mode A mode.
-     * @param {boolean} [toStore=false] To preserve a mode being set.
+     * @param mode A mode.
+     * @param toStore To preserve a mode being set.
      */
-    setViewMode(mode, toStore) {
+    protected setViewMode(mode: string, toStore: boolean = false) {
         this.viewMode = mode;
 
         this.collection.url = this.collectionUrl;
@@ -444,9 +443,11 @@ class ListRelatedView extends MainView {
             this.getSearchView().setViewMode(mode);
         }
 
-        const methodName = 'setViewMode' + Espo.Utils.upperCaseFirst(this.viewMode);
+        const methodName = 'setViewMode' + Utils.upperCaseFirst(this.viewMode);
 
+        // @ts-ignore
         if (this[methodName]) {
+            // @ts-ignore
             this[methodName]();
         }
     }
@@ -475,45 +476,33 @@ class ListRelatedView extends MainView {
      */
     setupSorting() {}
 
-    /**
-     * @protected
-     * @return {module:views/record/search}
-     */
-    getSearchView() {
-        return this.getView('search');
+    protected getSearchView(): SearchView {
+        return this.getView<SearchView>('search') as SearchView;
     }
 
-    /**
-     * @protected
-     * @return {module:view}
-     */
-    getRecordView() {
-        return this.getView('list');
+    protected getRecordView(): ListRecordView {
+        return this.getView<ListRecordView>('list') as ListRecordView;
     }
 
     /**
      * Get a record view name.
-     *
-     * @returns {string}
      */
-    getRecordViewName() {
+    protected getRecordViewName(): string {
         if (this.viewMode === this.MODE_LIST) {
-            return this.panelDefs.recordListView ||
-                this.getMetadata().get(['clientDefs', this.foreignScope, 'recordViews', this.MODE_LIST]) ||
+            return this.panelDefs.recordListView ??
+                this.getMetadata().get(['clientDefs', this.foreignScope, 'recordViews', this.MODE_LIST]) ??
                 this.recordView;
         }
 
-        const propertyName = 'record' + Espo.Utils.upperCaseFirst(this.viewMode) + 'View';
+        const propertyName = 'record' + Utils.upperCaseFirst(this.viewMode) + 'View';
 
         return this.getMetadata().get(['clientDefs', this.foreignScope, 'recordViews', this.viewMode]) ||
+            // @ts-ignore
             this[propertyName];
     }
 
-    /**
-     * @inheritDoc
-     */
-    afterRender() {
-        Espo.Ui.notify(false);
+    protected afterRender() {
+        Ui.notify();
 
         if (!this.hasView('list')) {
             this.loadList();
@@ -526,14 +515,14 @@ class ListRelatedView extends MainView {
     /**
      * Load a record list view.
      */
-    loadList() {
+    protected loadList() {
         if ('isFetched' in this.collection && this.collection.isFetched) {
             this.createListRecordView(false);
 
             return;
         }
 
-        Espo.Ui.notifyWait();
+        Ui.notifyWait();
 
         this.createListRecordView(true);
     }
@@ -541,22 +530,26 @@ class ListRelatedView extends MainView {
     /**
      * Prepare record view options. Options can be modified in an extended method.
      *
-     * @param {Object} options Options
+     * @param options Options
      */
-    prepareRecordViewOptions(options) {}
+    protected prepareRecordViewOptions(options: Record<string, any>) {
+        // noinspection BadExpressionStatementJS
+        options;
+    }
 
     /**
      * Create a record list view.
+     *
+     * @param fetch To fetch after creation.
      */
-    createListRecordView() {
-        /** @type {module:views/record/list~options | Bull.View~Options} */
+    protected async createListRecordView(fetch: boolean = false): Promise<ListRecordView> {
         let o = {
             collection: this.collection,
             selector: '.list-container',
             scope: this.foreignScope,
             skipBuildRows: true,
             shortcutKeysEnabled: true,
-        };
+        } as Record<string, unknown>;
 
         this.optionsToPass.forEach(option => {
             o[option] = this.options[option];
@@ -583,7 +576,6 @@ class ListRelatedView extends MainView {
         const massUnlinkDisabled = this.panelDefs.massUnlinkDisabled ||
             this.panelDefs.unlinkDisabled || this.unlinkDisabled;
 
-        /** @type {module:views/record/list~options | Bull.View~Options} */
         o = {
             unlinkMassAction: !massUnlinkDisabled,
             skipBuildRows: true,
@@ -598,7 +590,7 @@ class ListRelatedView extends MainView {
             ...o,
             settingsEnabled: true,
             removeDisabled: this.panelDefs.removeDisabled,
-        };
+        } as Record<string, unknown>;
 
         if (this.getHelper().isXsScreen()) {
             o.type = 'listSmall';
@@ -620,11 +612,11 @@ class ListRelatedView extends MainView {
 
         const listViewName = this.getRecordViewName();
 
-        this.createView('list', listViewName, o, view => {
+        const promise = this.createView<ListRecordView>('list', listViewName, o).then(async view => {
             if (!this.hasParentView()) {
                 view.undelegateEvents();
 
-                return;
+                return view;
             }
 
             this.listenTo(view, 'after:paginate', () => window.scrollTo({top: 0}));
@@ -638,34 +630,49 @@ class ListRelatedView extends MainView {
                 }
             });
 
-            view.getSelectAttributeList(selectAttributeList => {
-                if (this.options.mediator && this.options.mediator.abort) {
-                    return;
-                }
+            if (!fetch) {
+                await view.render();
 
-                if (selectAttributeList) {
-                    this.collection.data.select = selectAttributeList.join(',');
-                }
+                return view;
+            }
 
-                Espo.Ui.notifyWait();
+            const selectAttributes = await view.getSelectAttributeList();
 
-                this.collection.fetch({main: true})
-                    .then(() => Espo.Ui.notify(false));
-            });
+            if (this.options.mediator && this.options.mediator.abort) {
+                return view;
+            }
+
+            if (selectAttributes) {
+                this.collection.data.select = selectAttributes.join(',');
+            }
+
+            Ui.notifyWait();
+
+            await this.collection.fetch({main: true});
+
+            Ui.notify();
+
+            return view;
         });
+
+        return promise as Promise<ListRecordView>;
     }
 
     /**
      * A quick-create action.
-     *
-     * @protected
      */
-    async actionQuickCreate() {
+    protected async actionQuickCreate(
+        data?: {focusForCreate?: boolean},
+    ): Promise<EditModalView> {
+
+        data = data ?? {};
+
         const link = this.link;
 
         const helper = new CreateRelatedHelper(this);
 
         return helper.process(this.model, link, {
+            focusForCreate: data.focusForCreate,
             afterSave: () => {
                 this.collection.fetch()
             },
@@ -675,34 +682,27 @@ class ListRelatedView extends MainView {
     // noinspection JSUnusedGlobalSymbols
     /**
      * An `unlink-related` action.
-     *
-     * @protected
      */
-    actionUnlinkRelated(data) {
+    protected async actionUnlinkRelated(data: {id: string}) {
         const id = data.id;
 
-        this.confirm({
+        await this.confirm({
             message: this.translate('unlinkRecordConfirmation', 'messages'),
             confirmText: this.translate('Unlink'),
-        }, () => {
-            Espo.Ui.notifyWait();
+        })
 
-            Espo.Ajax
-                .deleteRequest(this.collection.url, {id: id})
-                .then(() => {
-                    Espo.Ui.success(this.translate('Unlinked'));
+        Ui.notifyWait();
 
-                    this.collection.fetch();
+        await Ajax.deleteRequest(this.collection.url as string, {id: id})
 
-                    this.model.trigger('after:unrelate');
-                    this.model.trigger('after:unrelate:' + this.link);
-                });
-        });
+        Ui.success(this.translate('Unlinked'));
+
+        this.collection.fetch();
+
+        this.model.trigger('after:unrelate');
+        this.model.trigger(`after:unrelate:${this.link}`);
     }
 
-    /**
-     * @inheritDoc
-     */
     getHeader() {
         const name = this.model.attributes[this.nameAttribute] || this.model.id;
 
@@ -721,12 +721,16 @@ class ListRelatedView extends MainView {
         const scopeLabel = this.getLanguage().translate(this.scope, 'scopeNamesPlural');
 
         let root = document.createElement('span');
-        root.text = scopeLabel;
+        root.textContent = scopeLabel;
         root.style.userSelect = 'none';
 
         if (!this.rootLinkDisabled) {
             const a = document.createElement('a');
-            a.href = this.rootUrl;
+
+            if (this.rootUrl) {
+                a.href = this.rootUrl;
+            }
+
             a.classList.add('action');
             a.dataset.action = 'navigateToRoot';
             a.text = scopeLabel;
@@ -757,25 +761,18 @@ class ListRelatedView extends MainView {
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
     updatePageTitle() {
         this.setPageTitle(this.getLanguage().translate(this.link, 'links', this.scope));
     }
 
     /**
      * Create attributes for an entity being created.
-     *
-     * @return {Object}
      */
-    getCreateAttributes() {}
+    getCreateAttributes(): Record<string, unknown> | null {
+        return null;
+    }
 
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlSpace(e) {
+    protected handleShortcutKeyCtrlSpace(e: KeyboardEvent) {
         if (!this.createButton) {
             return;
         }
@@ -791,11 +788,7 @@ class ListRelatedView extends MainView {
         this.actionQuickCreate({focusForCreate: true});
     }
 
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlSlash(e) {
+    protected handleShortcutKeyCtrlSlash(e: KeyboardEvent) {
         if (!this.searchPanel) {
             return;
         }
@@ -812,12 +805,10 @@ class ListRelatedView extends MainView {
         $search.focus();
     }
 
-    // noinspection JSUnusedLocalSymbols
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlComma(e) {
+    protected handleShortcutKeyCtrlComma(event: KeyboardEvent) {
+        // noinspection BadExpressionStatementJS
+        event;
+
         if (!this.getSearchView()) {
             return;
         }
@@ -825,12 +816,10 @@ class ListRelatedView extends MainView {
         this.getSearchView().selectPreviousPreset();
     }
 
-    // noinspection JSUnusedLocalSymbols
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlPeriod(e) {
+    protected handleShortcutKeyCtrlPeriod(event: KeyboardEvent) {
+        // noinspection BadExpressionStatementJS
+        event;
+
         if (!this.getSearchView()) {
             return;
         }
@@ -838,23 +827,15 @@ class ListRelatedView extends MainView {
         this.getSearchView().selectNextPreset();
     }
 
-    /**
-     * @protected
-     */
-    async actionFullRefresh() {
-        Espo.Ui.notifyWait();
+    protected async actionFullRefresh() {
+        Ui.notifyWait();
 
         await this.collection.fetch();
 
-        Espo.Ui.notify();
+        Ui.notify();
     }
 
-    /**
-     * @protected
-     * @param {{id: string}} data
-     * @return {Promise<void>}
-     */
-    async actionRemoveRelated(data) {
+    protected async actionRemoveRelated(data: {id: string}): Promise<void> {
         const id = data.id;
 
         await this.confirm({
@@ -868,11 +849,11 @@ class ListRelatedView extends MainView {
             return;
         }
 
-        Espo.Ui.notifyWait();
+        Ui.notifyWait();
 
         await model.destroy();
 
-        Espo.Ui.success(this.translate('Removed'));
+        Ui.success(this.translate('Removed'));
 
         this.collection.fetch().then(() => {});
 
