@@ -108,7 +108,7 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
      * After create a view will be stored, so it can be re-used after.
      * Useful to avoid re-rendering when come back the list view.
      */
-    protected storeViewAfterCreate: boolean = false
+    readonly storeViewAfterCreate: boolean = false
 
     /**
      * After update a view will be stored, so it can be re-used after.

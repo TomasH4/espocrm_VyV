@@ -33,7 +33,7 @@ import Collection from 'collection';
 class TreeCollection extends Collection {
 
     /**
-     * @type {string}
+     * @type {string | null}
      */
     parentId
 
@@ -51,6 +51,18 @@ class TreeCollection extends Collection {
      * @type {string[]|null}
      */
     openPath
+
+    /**
+     * @internal
+     * @type {string | null}
+     */
+    currentCategoryId
+
+    /**
+     * @internal
+     * @type {string | null}
+     */
+    currentCategoryName
 
     /**
      * @return {TreeCollection}

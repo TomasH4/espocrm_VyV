@@ -32,6 +32,7 @@ import ModelFactory from 'model-factory';
 import Settings from 'models/settings';
 import Metadata from 'metadata';
 import Collection from 'collection';
+import Model from 'model';
 
 /**
  * A collection factory.
@@ -61,14 +62,18 @@ export default class CollectionFactory {
      * @param [context] Deprecated.
      * @returns A created collection.
      */
-    create(entityType: string, callback?: Function, context?: object): Promise<Collection> {
+    create<T extends Model = Model>(
+        entityType: string,
+        callback?: Function, context?: object,
+    ): Promise<Collection<T>> {
+
         return new Promise(resolve => {
             context = context || this;
 
             this.modelFactory.getSeed(entityType, Model => {
                 const orderBy = this.metadata.get(['entityDefs', entityType, 'collection', 'orderBy']);
                 const order = this.metadata.get(['entityDefs', entityType, 'collection', 'order']);
-                const className = this.metadata .get(['clientDefs', entityType, 'collection']) || 'collection';
+                const className = this.metadata.get(['clientDefs', entityType, 'collection']) || 'collection';
                 const defs = this.metadata.get(['entityDefs', entityType]) || {};
 
                 Espo.loader.require(className, (collectionClass: typeof Collection) => {
@@ -87,7 +92,7 @@ export default class CollectionFactory {
                         callback.call(context, collection);
                     }
 
-                    resolve(collection);
+                    resolve(collection as Collection<T>);
                 });
             });
         });
