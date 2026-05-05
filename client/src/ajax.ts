@@ -88,7 +88,7 @@ const Ajax = {
         }
 
         if (apiUrl) {
-            url = Espo.Utils.trimSlash(apiUrl) + '/' + url;
+            url = Utils.trimSlash(apiUrl) + '/' + url;
         }
 
         if (!['GET', 'OPTIONS'].includes(method) && data) {
@@ -232,7 +232,7 @@ const Ajax = {
             data = JSON.stringify(data);
         }
 
-        return /** @type {Promise<any> & AjaxPromise} */ Ajax.request(url, 'POST', data, options);
+        return Ajax.request(url, 'POST', data, options);
     },
 
     /**
@@ -252,7 +252,7 @@ const Ajax = {
             data = JSON.stringify(data);
         }
 
-        return /** @type {Promise<any> & AjaxPromise} */ Ajax.request(url, 'PATCH', data, options);
+        return Ajax.request(url, 'PATCH', data, options);
     },
 
     /**
@@ -272,7 +272,7 @@ const Ajax = {
             data = JSON.stringify(data);
         }
 
-        return /** @type {Promise<any> & AjaxPromise} */ Ajax.request(url, 'PUT', data, options);
+        return Ajax.request(url, 'PUT', data, options);
     },
 
     /**
@@ -292,7 +292,7 @@ const Ajax = {
             data = JSON.stringify(data);
         }
 
-        return /** @type {Promise<any> & AjaxPromise} */ Ajax.request(url, 'DELETE', data, options);
+        return Ajax.request(url, 'DELETE', data, options);
     },
 
     /**
@@ -308,7 +308,7 @@ const Ajax = {
         options?: Options & Record<string, any>,
     ): Promise<any> & AjaxPromise {
 
-        return /** @type {Promise<any> & AjaxPromise} */ Ajax.request(url, 'GET', data, options);
+        return Ajax.request(url, 'GET', data, options);
     },
 
     /**

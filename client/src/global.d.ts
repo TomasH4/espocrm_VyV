@@ -1,6 +1,7 @@
 export {};
 
 import Ui from 'ui';
+import Utils from 'utils';
 
 /**
  * A callback with resolved dependencies passed as parameters.
@@ -22,5 +23,8 @@ declare global {
 
         // noinspection ES6ConvertVarToLetConst
         var Ui: Ui
+
+        // noinspection ES6ConvertVarToLetConst
+        var Utils: Utils
     }
 }

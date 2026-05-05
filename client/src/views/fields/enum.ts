@@ -32,6 +32,7 @@ import BaseFieldView, {BaseOptions as BaseOptions, BaseParams as BaseParams, Bas
 import MultiSelect from 'ui/multi-select';
 import Select from 'ui/select'
 import _ from 'underscore';
+import Utils from 'utils';
 
 type OptionItemHandler = (item: {value: string}) => {
     text?: string,
@@ -217,7 +218,7 @@ class EnumFieldView<
     protected setup() {
         if (!this.params.options) {
             // @todo Revise.
-            const methodName = 'get' + Espo.Utils.upperCaseFirst(this.name) + 'Options';
+            const methodName = 'get' + Utils.upperCaseFirst(this.name) + 'Options';
 
             if (typeof (this.model as any)[methodName] === 'function') {
                 this.params.options = (((this.model as any)[methodName] as any).call(this.model)) as string[];
@@ -244,7 +245,7 @@ class EnumFieldView<
         }
 
         if (optionsPath) {
-            this.params.options = Espo.Utils.clone(this.getMetadata().get(optionsPath)) || [];
+            this.params.options = Utils.clone(this.getMetadata().get(optionsPath)) || [];
         }
 
         this.setupOptions();
@@ -272,7 +273,7 @@ class EnumFieldView<
         if (this.params.isSorted && this.translatedOptions) {
             const translations = this.translatedOptions;
 
-            this.params.options = Espo.Utils.clone(this.params.options) || [];
+            this.params.options = Utils.clone(this.params.options) ?? [];
 
             this.params.options = this.params.options.sort((v1, v2) => {
                 return (translations[v1] || v1)
@@ -367,7 +368,7 @@ class EnumFieldView<
             this.originalOptionList = this.params.options ?? null
         }
 
-        const newOptions = Espo.Utils.clone(optionList) || [];
+        const newOptions = Utils.clone(optionList) || [];
 
         this.params.options = newOptions;
 
@@ -403,7 +404,7 @@ class EnumFieldView<
 
         const previousOptions = this.params.options;
 
-        this.params.options = Espo.Utils.clone(this.originalOptionList);
+        this.params.options = Utils.clone(this.originalOptionList);
 
         const isChanged = !_(previousOptions).isEqual(this.originalOptionList);
 

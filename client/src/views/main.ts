@@ -31,7 +31,8 @@ import {inject} from 'di';
 import ShortcutManager from 'helpers/site/shortcut-manager';
 import type Model from 'model';
 import type Collection from 'collection';
-import type {AccessDefs} from 'util/util';
+import type {AccessDefs} from 'utils';
+import Utils from 'utils';
 
 /**
  * A top-right menu item (button or dropdown action).
@@ -234,19 +235,19 @@ class MainView<S extends MainViewSchema = MainViewSchema> extends View<S> {
         this.options.params = this.options.params ?? {};
 
         if (this.name && this.scope) {
-            const key = `clientDefs.${this.scope}.menu.${Espo.Utils.lowerCaseFirst(this.name)}`;
+            const key = `clientDefs.${this.scope}.menu.${Utils.lowerCaseFirst(this.name)}`;
 
             menu = this.getMetadata().get(key) ?? {};
         }
 
-        menu = Espo.Utils.cloneDeep(menu);
+        menu = Utils.cloneDeep(menu);
 
         let globalMenu = {} as any;
 
         if (this.name) {
-            const key = `clientDefs.Global.menu.${Espo.Utils.lowerCaseFirst(this.name)}`;
+            const key = `clientDefs.Global.menu.${Utils.lowerCaseFirst(this.name)}`;
 
-            globalMenu = Espo.Utils.cloneDeep(this.getMetadata().get(key) ?? {});
+            globalMenu = Utils.cloneDeep(this.getMetadata().get(key) ?? {});
         }
 
         this._reRenderHeaderOnSync = false;
@@ -333,11 +334,11 @@ class MainView<S extends MainViewSchema = MainViewSchema> extends View<S> {
         this.on('after:render', () => this.adjustButtons());
 
         if (this.shortcutKeys) {
-            this.shortcutKeys = Espo.Utils.cloneDeep(this.shortcutKeys);
+            this.shortcutKeys = Utils.cloneDeep(this.shortcutKeys);
         }
 
         this.addHandler('click', '.action', (event, target) => {
-            Espo.Utils.handleAction(this, event as MouseEvent, target, {
+            Utils.handleAction(this, event as MouseEvent, target, {
                 actionItems: [...this.menu.buttons, ...this.menu.dropdown],
                 className: 'main-header-manu-action',
             });
@@ -389,22 +390,20 @@ class MainView<S extends MainViewSchema = MainViewSchema> extends View<S> {
                     return;
                 }
 
-                item = Espo.Utils.clone(item);
+                item = Utils.clone(item);
 
                 menu[type] = menu[type] || [];
 
-                if (!Espo.Utils.checkActionAvailability(this.getHelper(), item)) {
+                if (!Utils.checkActionAvailability(this.getHelper(), item)) {
                     return;
                 }
 
-                if (!Espo.Utils.checkActionAccess(this.getAcl(), this.model || this.scope, item)) {
+                if (!Utils.checkActionAccess(this.getAcl(), this.model || this.scope, item)) {
                     return;
                 }
 
                 if (item.accessDataList) {
-                    if (!Espo.Utils
-                        .checkAccessDataList(item.accessDataList, this.getAcl(), this.getUser())
-                    ) {
+                    if (!Utils.checkAccessDataList(item.accessDataList, this.getAcl(), this.getUser())) {
                         return;
                     }
                 }
@@ -576,7 +575,7 @@ class MainView<S extends MainViewSchema = MainViewSchema> extends View<S> {
         const list = this.menu[type];
 
         if (item) {
-            item.name = item.name ?? item.action ?? Espo.Utils.generateId();
+            item.name = item.name ?? item.action ?? Utils.generateId();
             const name = item.name;
 
             const index = list.findIndex(it => (it || {}).name === name);

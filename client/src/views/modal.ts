@@ -34,8 +34,10 @@ import ModalBarProvider from 'helpers/site/modal-bar-provider';
 import ShortcutManager from 'helpers/site/shortcut-manager';
 import Model from 'model';
 import Collection from 'collection';
-import {Dialog, DialogButton} from 'ui';
+import type {Dialog, DialogButton} from 'ui';
 import JQuery from 'jquery';
+import Ui from 'ui';
+import Utils from 'utils';
 
 const $ = JQuery;
 
@@ -306,7 +308,7 @@ class ModalView<S extends ViewSchema = ViewSchema> extends View<S> {
 
     protected init() {
         this.addHandler('click', '.action', (e, target) => {
-            Espo.Utils.handleAction(this, e as MouseEvent, target);
+            Utils.handleAction(this, e as MouseEvent, target);
         });
 
         const id = this.cssName + '-container-' + Math.floor((Math.random() * 10000) + 1).toString();
@@ -324,11 +326,11 @@ class ModalView<S extends ViewSchema = ViewSchema> extends View<S> {
         this.buttonList = this.options.buttonList || this.buttonList;
         this.dropdownItemList = this.options.dropdownItemList || this.dropdownItemList;
 
-        this.buttonList = Espo.Utils.cloneDeep(this.buttonList);
-        this.dropdownItemList = Espo.Utils.cloneDeep(this.dropdownItemList);
+        this.buttonList = Utils.cloneDeep(this.buttonList);
+        this.dropdownItemList = Utils.cloneDeep(this.dropdownItemList);
 
         if (this.shortcutKeys) {
-            this.shortcutKeys = Espo.Utils.cloneDeep(this.shortcutKeys);
+            this.shortcutKeys = Utils.cloneDeep(this.shortcutKeys);
         }
 
         if (this.options.collapseDisabled) {
@@ -376,7 +378,7 @@ class ModalView<S extends ViewSchema = ViewSchema> extends View<S> {
             const footerAtTheTop = (this.footerAtTheTop !== null) ? this.footerAtTheTop :
                 this.getThemeManager().getParam('modalFooterAtTheTop');
 
-            this.dialog = new Espo.Ui.Dialog({
+            this.dialog = new Ui.Dialog({
                 backdrop: this.backdrop,
                 header: headerHtml,
                 container: this.containerSelector,
@@ -502,7 +504,7 @@ class ModalView<S extends ViewSchema = ViewSchema> extends View<S> {
             o.onClick = o.onClick ?? ((_d, event, target) => {
                 const handler = o.handler || (o.data || {}).handler;
 
-                Espo.Utils.handleAction(this, event, target, {
+                Utils.handleAction(this, event, target, {
                     action: o.name,
                     handler: handler,
                     actionFunction: o.actionFunction,
@@ -546,7 +548,7 @@ class ModalView<S extends ViewSchema = ViewSchema> extends View<S> {
                 // noinspection ES6ConvertLetToConst
                 let handler = o.handler || (o.data || {}).handler;
 
-                Espo.Utils.handleAction(this, e.originalEvent, e.currentTarget, {
+                Utils.handleAction(this, e.originalEvent, e.currentTarget, {
                     action: o.name,
                     handler: handler,
                     actionFunction: o.actionFunction,

@@ -233,14 +233,14 @@ class ViewHelper {
     /**
      * A router.
      *
-     * @type {module:router}
+     * @type {import('router').default}
      */
     router = null
 
     /**
      * A storage.
      *
-     * @type {module:storage}
+     * @type {import('storage').default}
      */
     storage = null
 
@@ -993,7 +993,7 @@ class ViewHelper {
     /**
      * Process view-setup-handlers.
      *
-     * @param {module:view} view A view.
+     * @param {import('view').default<any>} view A view.
      * @param {string} type A view-setup-handler type.
      * @param {string} [scope] A scope.
      * @return Promise
@@ -1023,7 +1023,7 @@ class ViewHelper {
         /**
          * @function
          * @name ViewHelper~Handler#process
-         * @param {module:view} [view] Deprecated.
+         * @param {import('view').default} [view] Deprecated.
          */
         const promiseList = [];
 

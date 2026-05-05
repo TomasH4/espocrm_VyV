@@ -54,6 +54,7 @@ interface DialogParams {
     keyboard?: boolean;
     footerAtTheTop?: boolean;
     buttonList?: DialogButton[];
+    dropdownItemList?: (DialogButton | false)[];
     fullHeight?: boolean;
     bodyDiffHeight?: number;
     screenWidthXs?: number;
@@ -62,6 +63,10 @@ interface DialogParams {
     onMinimize?: () => void;
     backdropClassName?: string;
     fixedHeaderHeight?: boolean;
+    /**
+     * @internal
+     */
+    fitHeight?: boolean;
 }
 
 /**

@@ -26,45 +26,115 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module utils */
+import type View from 'view';
+import type ViewHelper from 'view-helper';
+import type AclManager from 'acl-manager';
+import type Model from 'model';
+import type User from 'models/user';
+import _ from 'underscore';
+
+export interface AccessDefs {
+    /**
+     * An ACL action to check.
+     */
+    action: 'create' | 'read' | 'edit' | 'stream' | 'delete' | null;
+    /**
+     * A scope to check.
+     */
+    scope?: string | null;
+    /**
+     * A portal ID list. To check whether a user in one of portals.
+     */
+    portalIdList?: string[];
+    /**
+     * A team ID list. To check whether a user in one of teams.
+     */
+    teamIdList?: string[];
+    /**
+     * Allow for portal users only.
+     */
+    isPortalOnly?: boolean;
+    /**
+     * Disable for portal users.
+     */
+    inPortalDisabled?: boolean;
+    /**
+     * Allow for admin users only.
+     */
+    isAdminOnly?: boolean;
+}
+
+interface ActionAvailabilityDefs {
+    /**
+     * A config path to check. Path items are separated
+     * by the dot. If a config value is not empty, then the action is allowed.
+     * The `!` prefix reverses the check.
+     */
+    configCheck?: string | null;
+}
+
+interface ActionAccessDefs {
+    /**
+     * An ACL action to check.
+     */
+    acl?: 'create' | 'read' | 'edit' | 'stream' | 'delete' | null;
+    /**
+     * A scope to check.
+     */
+    aclScope?: string | null;
+    /**
+     * @deprecated Use `aclScope`.
+     */
+    scope?: string | null;
+}
 
 const IS_MAC = /Mac/.test(navigator.userAgent);
 
 /**
  * Utility functions.
  */
-Espo.Utils = {
+const Utils = {
 
     /**
      * Handle a click event action.
      *
-     * @param {import('view').default} view A view.
-     * @param {MouseEvent} event An event.
-     * @param {HTMLElement} element An  element.
-     * @param {{
-     *     action?: string,
-     *     handler?: string,
-     *     actionFunction?: string,
-     *     actionItems?: Array<{
-     *         onClick?: function(),
-     *         name?: string | null,
-     *         handler?: string,
-     *         actionFunction?: string,
-     *     } | false>,
-     *     className?: string,
-     * }} [actionData] Data. If an action is not specified, it will be fetched from a target element.
-     * @return {boolean} True if handled.
+     * @param view A view.
+     * @param event An event.
+     * @param element An  element.
+     * @param actionData Data. If an action is not specified, it will be fetched from a target element.
+     * @return True if handled.
      */
-    handleAction: function (view, event, element, actionData) {
+    handleAction: function (
+        view: View,
+        event: MouseEvent,
+        element: HTMLElement,
+        actionData?: {
+            action?: string;
+            handler?: string;
+            actionFunction?: string;
+            actionItems?: ({
+                onClick?: () => void;
+                name?: string | null;
+                handler?: string;
+                actionFunction?: string;
+                /**
+                 * @internal
+                 */
+                action?: string | null;
+            } | false)[];
+            className?: string;
+        },
+    ): boolean {
+
         actionData = actionData || {};
 
         const $target = $(element);
-        const action = actionData.action || $target.data('action');
 
-        const name = $target.data('name') || action;
+        const action = actionData.action || element.dataset.action || null;
+        const name = element.dataset.name || action;
 
-        let method;
-        let handler;
+        let method: string | null = null;
+        let handler: string | null = null;
 
         if (
             name &&
@@ -75,7 +145,7 @@ Espo.Utils = {
             )
         ) {
             const data = actionData.actionItems.find(item => {
-                return item.name === name || item.action === name;
+                return item && (item.name === name || item.action === name);
             });
 
             if (data && data.onClick) {
@@ -85,8 +155,8 @@ Espo.Utils = {
             }
 
             if (data) {
-                handler = data.handler;
-                method = data.actionFunction;
+                handler = data.handler ?? null;
+                method = data.actionFunction ?? null;
             }
         }
 
@@ -95,7 +165,7 @@ Espo.Utils = {
         }
 
         if (event.ctrlKey || event.metaKey || event.shiftKey) {
-            const href = $target.attr('href');
+            const href = element.getAttribute('href');
 
             if (href && href !== 'javascript:') {
                 return false;
@@ -103,8 +173,18 @@ Espo.Utils = {
         }
 
         const data = $target.data();
-        method = actionData.actionFunction || method || 'action' + Espo.Utils.upperCaseFirst(action);
-        handler = actionData.handler || handler || data.handler;
+
+        method = actionData.actionFunction ?? method ?? null;
+
+        if (!method) {
+            if (!action) {
+                throw new Error(`No action.`);
+            }
+
+            method = 'action' + Utils.upperCaseFirst(action);
+        }
+
+        handler = actionData.handler ?? handler ?? data.handler ?? null;
 
         let fired = false;
 
@@ -119,14 +199,18 @@ Espo.Utils = {
 
                 handler[method].call(handler, data, event);
             });
-        }
-        else if (typeof view[method] === 'function') {
+        } else if (
+            // @ts-ignore
+            typeof view[method] === 'function'
+        ) {
+            // @ts-ignore
             if (view?.events[`click [data-action="${action}"]`]) {
                 // Prevents from firing if a handler is already assigned. Important.
                 // Does not prevent if handled from a nested view. @todo
                 return false;
             }
 
+            // @ts-ignore
             view[method].call(view, data, event);
 
             event.preventDefault();
@@ -139,62 +223,18 @@ Espo.Utils = {
             return false;
         }
 
-        this._processAfterActionDropdown($target);
+        _processAfterActionDropdown($target);
 
         return true;
     },
 
     /**
-     * @private
-     * @param {JQuery} $target
-     */
-    _processAfterActionDropdown: function ($target) {
-        const $dropdown = $target.closest('.dropdown-menu');
-
-        if (!$dropdown.length) {
-            return;
-        }
-
-        const $dropdownToggle = $dropdown.parent().find('[data-toggle="dropdown"]');
-
-        if (!$dropdownToggle.length) {
-            return;
-        }
-
-        let isDisabled = false;
-
-        if ($dropdownToggle.attr('disabled')) {
-            isDisabled = true;
-
-            $dropdownToggle.removeAttr('disabled').removeClass('disabled');
-        }
-
-        // noinspection JSUnresolvedReference
-        $dropdownToggle.dropdown('toggle');
-
-        $dropdownToggle.focus();
-
-        if (isDisabled) {
-            $dropdownToggle.attr('disabled', 'disabled').addClass('disabled');
-        }
-    },
-
-    /**
-     * @typedef {Object} Espo.Utils~ActionAvailabilityDefs
-     *
-     * @property {string|null} [configCheck] A config path to check. Path items are separated
-     *   by the dot. If a config value is not empty, then the action is allowed.
-     *   The `!` prefix reverses the check.
-     */
-
-    /**
      * Check action availability.
      *
-     * @param {module:view-helper} helper A view helper.
-     * @param {Espo.Utils~ActionAvailabilityDefs} item Definitions.
-     * @returns {boolean}
+     * @param helper A view helper.
+     * @param item Definitions.
      */
-    checkActionAvailability: function (helper, item) {
+    checkActionAvailability: function (helper: ViewHelper, item: ActionAvailabilityDefs): boolean {
         const config = helper.config;
 
         if (item.configCheck) {
@@ -223,45 +263,38 @@ Espo.Utils = {
     },
 
     /**
-     * @typedef {Object} Espo.Utils~ActionAccessDefs
-     *
-     * @property {'create'|'read'|'edit'|'stream'|'delete'|null} acl An ACL action to check.
-     * @property {string|null} [aclScope] A scope to check.
-     * @property {string|null} [scope] Deprecated. Use `aclScope`.
-     */
-
-    /**
      * Check access to an action.
      *
-     * @param {module:acl-manager} acl An ACL manager.
-     * @param {string|module:model|null} [obj] A scope or a model.
-     * @param {Espo.Utils~ActionAccessDefs} item Definitions.
-     * @param {boolean} [isPrecise=false] To return `null` if not enough data is set in a model.
+     * @param acl An ACL manager.
+     * @param [obj] A scope or a model.
+     * @param item Definitions.
+     * @param[isPrecise=false] To return `null` if not enough data is set in a model.
      *   E.g. the `teams` field is not yet loaded.
-     * @returns {boolean|null}
      */
-    checkActionAccess: function (acl, obj, item, isPrecise) {
-        let hasAccess = true;
+    checkActionAccess: function (
+        acl: AclManager,
+        obj: string | Model | null,
+        item: ActionAccessDefs,
+        isPrecise: boolean = false,
+    ): boolean | null {
+
+        let hasAccess: boolean | null = true;
 
         if (item.acl) {
             if (!item.aclScope) {
                 if (obj) {
                     if (typeof obj === 'string' || obj instanceof String) {
                         hasAccess = acl.check(obj, item.acl);
-                    }
-                    else {
+                    } else {
                         hasAccess = acl.checkModel(obj, item.acl, isPrecise);
                     }
+                } else {
+                    hasAccess = acl.check((item as any).scope, item.acl);
                 }
-                else {
-                    hasAccess = acl.check(item.scope, item.acl);
-                }
-            }
-            else {
+            } else {
                 hasAccess = acl.check(item.aclScope, item.acl);
             }
-        }
-        else if (item.aclScope) {
+        } else if (item.aclScope) {
             hasAccess = acl.checkScope(item.aclScope);
         }
 
@@ -269,20 +302,22 @@ Espo.Utils = {
     },
 
     /**
-     * @typedef {import('util/util.d').AccessDefs} Espo.Utils~AccessDefs
-     */
-
-    /**
      * Check access to an action.
      *
-     * @param {module:utils~AccessDefs[]} dataList List of definitions.
-     * @param {module:acl-manager} acl An ACL manager.
-     * @param {module:models/user} user A user.
-     * @param {module:model|null} [entity] A model.
-     * @param {boolean} [allowAllForAdmin=false] Allow all for an admin.
-     * @returns {boolean}
+     * @param dataList List of definitions.
+     * @param acl An ACL manager.
+     * @param user A user.
+     * @param [entity] A model.
+     * @param [allowAllForAdmin=false] Allow all for an admin.
      */
-    checkAccessDataList: function (dataList, acl, user, entity, allowAllForAdmin) {
+    checkAccessDataList: function (
+        dataList: AccessDefs[],
+        acl: AclManager,
+        user: User,
+        entity: Model | null = null,
+        allowAllForAdmin: boolean = false,
+    ): boolean {
+
         if (!dataList || !dataList.length) {
             return true;
         }
@@ -295,32 +330,24 @@ Espo.Utils = {
                     if (!acl.check(item.scope, item.action)) {
                         return false;
                     }
-                } else {
-                    if (!acl.checkScope(item.scope)) {
-                        return false;
-                    }
+                } else if (!acl.checkScope(item.scope)) {
+                    return false;
                 }
-            } else if (item.action) {
-                if (entity) {
-                    if (!acl.check(entity, item.action)) {
-                        return false;
-                    }
-                }
+            } else if (item.action && entity && !acl.check(entity, item.action)) {
+                return false;
             }
 
-            if (item.teamIdList) {
-                if (user && !(allowAllForAdmin && user.isAdmin())) {
-                    let inTeam = false;
+            if (item.teamIdList && user && !(allowAllForAdmin && user.isAdmin())) {
+                let inTeam = false;
 
-                    user.getLinkMultipleIdList('teams').forEach(teamId => {
-                        if (~item.teamIdList.indexOf(teamId)) {
-                            inTeam = true;
-                        }
-                    });
-
-                    if (!inTeam) {
-                        return false;
+                user.getLinkMultipleIdList('teams').forEach(teamId => {
+                    if (item.teamIdList?.indexOf(teamId)) {
+                        inTeam = true;
                     }
+                });
+
+                if (!inTeam) {
+                    return false;
                 }
             }
 
@@ -329,7 +356,7 @@ Espo.Utils = {
                     let inPortal = false;
 
                     user.getLinkMultipleIdList('portals').forEach(portalId => {
-                        if (~item.portalIdList.indexOf(portalId)) {
+                        if (item.portalIdList?.includes(portalId)) {
                             inPortal = true;
                         }
                     });
@@ -368,12 +395,9 @@ Espo.Utils = {
     },
 
     /**
-     * @private
-     * @param {string} string
-     * @param {string} p
-     * @returns {string}
+     * @internal
      */
-    convert: function (string, p) {
+    convert: function (string: string, p: string): string {
         if (string === null) {
             return string;
         }
@@ -383,17 +407,17 @@ Espo.Utils = {
         switch (p) {
             case 'c-h':
             case 'C-h':
-                result = Espo.Utils.camelCaseToHyphen(string);
+                result = Utils.camelCaseToHyphen(string);
 
                 break;
 
             case 'h-c':
-                result = Espo.Utils.hyphenToCamelCase(string);
+                result = Utils.hyphenToCamelCase(string);
 
                 break;
 
             case 'h-C':
-                result = Espo.Utils.hyphenToUpperCamelCase(string);
+                result = Utils.hyphenToUpperCamelCase(string);
 
                 break;
         }
@@ -404,10 +428,9 @@ Espo.Utils = {
     /**
      * Is object.
      *
-     * @param {*} obj What to check.
-     * @returns {boolean}
+     * @param obj What to check.
      */
-    isObject: function (obj) {
+    isObject: function (obj: unknown): boolean {
         if (obj === null) {
             return false;
         }
@@ -418,29 +441,27 @@ Espo.Utils = {
     /**
      * A shallow clone.
      *
-     * @template {*} TObject
-     * @param {TObject} obj An object.
-     * @returns {TObject}
+     * @param obj What to clone.
+     * @returns A clone.
      */
-    clone: function (obj) {
-        if (!Espo.Utils.isObject(obj)) {
+    clone: function<T> (obj: T): T {
+        if (!Utils.isObject(obj)) {
             return obj;
         }
 
-        return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
+        return (_.isArray(obj) ? obj.slice() : _.extend({}, obj)) as T;
     },
 
     /**
      * A deep clone.
      *
-     * @template {*} TObject
-     * @param {TObject} data An object.
-     * @returns {TObject}
+     * @param data What to clone.
+     * @return A clone.
      */
-    cloneDeep: function (data) {
-        data = Espo.Utils.clone(data);
+    cloneDeep: function<T> (data: T): T {
+        data = Utils.clone(data);
 
-        if (Espo.Utils.isObject(data) || _.isArray(data)) {
+        if (Utils.isObject(data) || _.isArray(data)) {
             for (const i in data) {
                 data[i] = this.cloneDeep(data[i]);
             }
@@ -452,23 +473,22 @@ Espo.Utils = {
     /**
      * Deep comparison.
      *
-     * @param {Object} a1 An argument 1.
-     * @param {Object} a2 An argument 2.
-     * @return {boolean}
+     * @param a1 An argument 1.
+     * @param a2 An argument 2.
      */
-    areEqual: function (a1, a2) {
+    areEqual: function (a1: object, a2: object): boolean {
         return _.isEqual(a1, a2);
     },
 
     /**
      * Compose a class name.
      *
-     * @param {string} module A module.
-     * @param {string} name A name.
-     * @param {string} [location=''] A location.
-     * @return {string}
+     * @param module A module.
+     * @param name A name.
+     * @param location A location.
+     * @return
      */
-    composeClassName: function (module, name, location) {
+    composeClassName: function (module: string, name: string, location: string = ''): string {
         if (module) {
             module = this.camelCaseToHyphen(module);
             name = this.camelCaseToHyphen(name).split('.').join('/');
@@ -476,20 +496,18 @@ Espo.Utils = {
 
             return module + ':' + location + '/' + name;
         }
-        else {
-            name = this.camelCaseToHyphen(name).split('.').join('/');
 
-            return location + '/' + name;
-        }
+        name = this.camelCaseToHyphen(name).split('.').join('/');
+
+        return location + '/' + name;
     },
 
     /**
      * Compose a view class name.
      *
-     * @param {string} name A name.
-     * @returns {string}
+     * @param name A name.
      */
-    composeViewClassName: function (name) {
+    composeViewClassName: function (name: string): string {
         if (name && name[0] === name[0].toLowerCase()) {
             return name;
         }
@@ -502,24 +520,22 @@ Espo.Utils = {
             modPart = this.camelCaseToHyphen(modPart);
             namePart = this.camelCaseToHyphen(namePart).split('.').join('/');
 
-            return modPart + ':' + 'views' + '/' + namePart;
+            return `${modPart}:views/${namePart}`;
         }
-        else {
-            name = this.camelCaseToHyphen(name).split('.').join('/');
 
-            return 'views' + '/' + name;
-        }
+        name = this.camelCaseToHyphen(name).split('.').join('/');
+
+        return `views/${name}`;
     },
 
     /**
      * Convert a string from camelCase to hyphen and replace dots with hyphens.
      * Useful for setting to DOM attributes.
      *
-     * @param {string} string A string.
-     * @returns {string}
+     * @param string A string.
      */
-    toDom: function (string) {
-        return Espo.Utils.convert(string, 'c-h')
+    toDom: function (string: string): string {
+        return Utils.convert(string, 'c-h')
             .split('.')
             .join('-');
     },
@@ -527,10 +543,9 @@ Espo.Utils = {
     /**
      * Lower-case a first character.
      *
-     * @param  {string} string A string.
-     * @returns {string}
+     * @param string A string.
      */
-    lowerCaseFirst: function (string) {
+    lowerCaseFirst: function (string: string): string {
         if (string === null) {
             return string;
         }
@@ -541,10 +556,9 @@ Espo.Utils = {
     /**
      * Upper-case a first character.
      *
-     * @param  {string} string A string.
-     * @returns {string}
+     * @param string A string.
      */
-    upperCaseFirst: function (string) {
+    upperCaseFirst: function (string: string): string {
         if (string === null) {
             return string;
         }
@@ -555,10 +569,9 @@ Espo.Utils = {
     /**
      * Hyphen to UpperCamelCase.
      *
-     * @param {string} string A string.
-     * @returns {string}
+     * @param string A string.
      */
-    hyphenToUpperCamelCase: function (string) {
+    hyphenToUpperCamelCase: function (string: string): string {
         if (string === null) {
             return string;
         }
@@ -576,10 +589,9 @@ Espo.Utils = {
     /**
      * Hyphen to camelCase.
      *
-     * @param {string} string A string.
-     * @returns {string}
+     * @param string A string.
      */
-    hyphenToCamelCase: function (string) {
+    hyphenToCamelCase: function (string: string): string {
         if (string === null) {
             return string;
         }
@@ -595,10 +607,9 @@ Espo.Utils = {
     /**
      * CamelCase to hyphen.
      *
-     * @param {string} string A string.
-     * @returns {string}
+     * @param string A string.
      */
-    camelCaseToHyphen: function (string) {
+    camelCaseToHyphen: function (string: string) {
         if (string === null) {
             return string;
         }
@@ -609,24 +620,22 @@ Espo.Utils = {
     /**
      * Trim an ending slash.
      *
-     * @param {String} str A string.
-     * @returns {string}
+     * @param string A string.
      */
-    trimSlash: function (str) {
-        if (str.slice(-1) === '/') {
-            return str.slice(0, -1);
+    trimSlash: function (string: string): string {
+        if (string.slice(-1) === '/') {
+            return string.slice(0, -1);
         }
 
-        return str;
+        return string;
     },
 
     /**
      * Parse params in string URL options.
      *
-     * @param {string} string An URL part.
-     * @returns {Object.<string,string>}
+     * @param string An URL part.
      */
-    parseUrlOptionsParam: function (string) {
+    parseUrlOptionsParam: function (string: string): Record<string, string | boolean> {
         if (!string) {
             return {};
         }
@@ -635,7 +644,7 @@ Espo.Utils = {
             return {};
         }
 
-        const options = {};
+        const options = {} as Record<string, string | boolean>;
 
         if (typeof string !== 'undefined') {
             string.split('&').forEach(item => {
@@ -655,23 +664,23 @@ Espo.Utils = {
     /**
      * Key a key from a key-event.
      *
-     * @param {JQueryKeyEventObject|KeyboardEvent} e A key event.
+     * @param event A key event.
      * @return {string}
      */
-    getKeyFromKeyEvent: function (e) {
-        let key = e.code;
+    getKeyFromKeyEvent: function (event: KeyboardEvent | JQuery.Event): string {
+        let key: string = (event as any).code;
 
-        key = keyMap[key] || key;
+        key = (keyMap as Record<string, string>)[key] ?? key;
 
-        if (e.shiftKey) {
+        if (event.shiftKey) {
             key = 'Shift+' + key;
         }
 
-        if (e.altKey) {
+        if (event.altKey) {
             key = 'Alt+' + key;
         }
 
-        if (IS_MAC ? e.metaKey : e.ctrlKey) {
+        if (IS_MAC ? event.metaKey : event.ctrlKey) {
             key = 'Control+' + key;
         }
 
@@ -681,23 +690,22 @@ Espo.Utils = {
     /**
      * Check whether the pressed key is in a text input.
      *
-     * @param {KeyboardEvent} e A key event.
-     * @return {boolean}
+     * @param event A key event.
      * @since 9.2.0
      */
-    isKeyEventInTextInput: function (e) {
-        if (!(e.target instanceof HTMLElement)) {
+    isKeyEventInTextInput: function (event: KeyboardEvent): boolean {
+        if (!(event.target instanceof HTMLElement)) {
             return false;
         }
 
-        if (e.target.tagName === 'TEXTAREA') {
+        if (event.target.tagName === 'TEXTAREA') {
             return true;
         }
 
-        if (e.target instanceof HTMLInputElement) {
+        if (event.target instanceof HTMLInputElement) {
             if (
-                e.target.type === 'radio' ||
-                e.target.type === 'checkbox'
+                event.target.type === 'radio' ||
+                event.target.type === 'checkbox'
             ) {
                 return false;
             }
@@ -705,7 +713,7 @@ Espo.Utils = {
             return true;
         }
 
-        if (e.target.classList.contains('note-editable')) {
+        if (event.target.classList.contains('note-editable')) {
             return true;
         }
 
@@ -716,18 +724,17 @@ Espo.Utils = {
      * Generate an ID. Not to be used by 3rd party code.
      *
      * @internal
-     * @return {string}
      */
-    generateId: function () {
+    generateId: function (): string {
         return (Math.floor(Math.random() * 10000001)).toString()
     },
 
     /**
      * Not to be used in custom code. Can be removed in future versions.
+     *
      * @internal
-     * @return {string}
      */
-    obtainBaseUrl: function () {
+    obtainBaseUrl: function (): string {
         let baseUrl = window.location.origin + window.location.pathname;
 
         if (baseUrl.slice(-1) !== '/') {
@@ -744,9 +751,38 @@ const keyMap = {
     'NumpadEnter': 'Enter',
 };
 
-/**
- * @deprecated Use `Espo.Utils`.
- */
-Espo.utils = Espo.Utils;
+Espo.Utils = Utils;
 
-export default Espo.Utils;
+export default Utils;
+
+function _processAfterActionDropdown($target: JQuery) {
+    const $dropdown = $target.closest('.dropdown-menu');
+
+    if (!$dropdown.length) {
+        return;
+    }
+
+    const $dropdownToggle = $dropdown.parent().find('[data-toggle="dropdown"]');
+
+    if (!$dropdownToggle.length) {
+        return;
+    }
+
+    let isDisabled = false;
+
+    if ($dropdownToggle.attr('disabled')) {
+        isDisabled = true;
+
+        $dropdownToggle.removeAttr('disabled').removeClass('disabled');
+    }
+
+    // noinspection JSUnresolvedReference
+    // @ts-ignore
+    $dropdownToggle.dropdown('toggle');
+
+    $dropdownToggle.trigger('focus');
+
+    if (isDisabled) {
+        $dropdownToggle.attr('disabled', 'disabled').addClass('disabled');
+    }
+}

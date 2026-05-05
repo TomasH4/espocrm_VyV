@@ -41,6 +41,7 @@ import EditForModalRecordView from 'views/record/edit-for-modal';
 import VarcharFieldView from 'views/fields/varchar';
 import _ from 'underscore';
 import JQuery from 'jquery'
+import Utils from 'utils';
 
 const $ = JQuery;
 
@@ -239,10 +240,10 @@ class ArrayFieldView<
         this.maxItemLength = this.maxItemLength || this.MAX_ITEM_LENGTH;
 
         this.listenTo(this.model, 'change:' + this.name, () => {
-            this.selected = Espo.Utils.clone(this.model.get(this.name)) || [];
+            this.selected = Utils.clone(this.model.get(this.name)) || [];
         });
 
-        this.selected = Espo.Utils.clone(this.model.get(this.name) || []);
+        this.selected = Utils.clone(this.model.get(this.name) || []);
 
         if (Object.prototype.toString.call(this.selected) !== '[object Array]') {
             this.selected = [];
@@ -265,7 +266,7 @@ class ArrayFieldView<
         }
 
         if (optionsPath) {
-            this.params.options = Espo.Utils.clone(this.getMetadata().get(optionsPath)) || [];
+            this.params.options = Utils.clone(this.getMetadata().get(optionsPath)) || [];
         }
 
         this.setupOptions();
@@ -412,7 +413,7 @@ class ArrayFieldView<
             this.originalOptionList = this.params.options ?? [];
         }
 
-        this.params.options = Espo.Utils.clone(optionList);
+        this.params.options = Utils.clone(optionList);
 
         const isChanged = !_(previousOptions).isEqual(optionList);
 
@@ -451,7 +452,7 @@ class ArrayFieldView<
 
         const previousOptions = this.params.options;
 
-        this.params.options = Espo.Utils.clone(this.originalOptionList);
+        this.params.options = Utils.clone(this.originalOptionList);
 
         const isChanged = !_(previousOptions).isEqual(this.originalOptionList);
 
@@ -504,7 +505,7 @@ class ArrayFieldView<
                 $select.on('input', () => this.controlAddItemButton());
 
                 $select.on('keydown', (e: any) => {
-                    const key = Espo.Utils.getKeyFromKeyEvent(e);
+                    const key = Utils.getKeyFromKeyEvent(e);
 
                     if (key === 'Enter') {
                         const value = $select.val().toString();
@@ -844,7 +845,7 @@ class ArrayFieldView<
     fetch(): Record<string, any> {
         const data = {} as Record<string, any>;
 
-        let list = Espo.Utils.clone(this.selected || []);
+        let list = Utils.clone(this.selected || []);
 
         const translations = this.translatedOptions;
 
