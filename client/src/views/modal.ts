@@ -624,7 +624,7 @@ class ModalView<S extends ViewSchema = ViewSchema> extends View<S> {
     }
 
     /**
-     * Close a dialog.
+     * Close the dialog.
      */
     close() {
         this.dialog.close();
