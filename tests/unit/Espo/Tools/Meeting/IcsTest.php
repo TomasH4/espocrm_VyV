@@ -61,7 +61,6 @@ class IcsTest extends TestCase
             "DTSTART:20250101T100000Z\r\n".
             "DTEND:20250101T110000Z\r\n".
             "SUMMARY:Test\r\n".
-            "LOCATION:\r\n".
             "ORGANIZER;CN=Hello Test:MAILTO:hello@test.com\r\n".
             "DESCRIPTION:Test.\r\n".
             "UID:test-id\r\n".
