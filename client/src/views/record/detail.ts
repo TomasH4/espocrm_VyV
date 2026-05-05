@@ -818,7 +818,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         this.model
             .save(attributes, {patch: true})
             .then(() => {
-                Espo.Ui.success(this.translate('Self-Assigned'));
+                Ui.success(this.translate('Self-Assigned'));
             });
     }
 
@@ -845,7 +845,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
                 }
 
                 if (!isChanged) {
-                    Espo.Ui.warning(this.translate('notUpdated', 'messages'));
+                    Ui.warning(this.translate('notUpdated', 'messages'));
 
                     return;
                 }
@@ -853,7 +853,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
                 this.model
                     .fetch()
                     .then(() => {
-                        Espo.Ui.success(this.translate('done', 'messages'));
+                        Ui.success(this.translate('done', 'messages'));
                     });
             });
         });
@@ -1288,7 +1288,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
 
         softLockedType = softLockedType || 'default';
 
-        const softLockedParam = 'hidden' + Espo.Utils.upperCaseFirst(softLockedType) + 'Locked'
+        const softLockedParam = 'hidden' + Utils.upperCaseFirst(softLockedType) + 'Locked'
 
         this.recordHelper.setPanelStateParam(name, softLockedParam, false);
 
@@ -1306,7 +1306,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
                 continue;
             }
 
-            const iParam = 'hidden' + Espo.Utils.upperCaseFirst(iType) + 'Locked';
+            const iParam = 'hidden' + Utils.upperCaseFirst(iType) + 'Locked';
 
             if (this.recordHelper.getPanelStateParam(name, iParam)) {
                 return;
@@ -1396,7 +1396,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
             this.recordHelper.setPanelStateParam(name, 'hiddenLocked', true);
         }
 
-        const softLockedParam = 'hidden' + Espo.Utils.upperCaseFirst(softLockedType) + 'Locked'
+        const softLockedParam = 'hidden' + Utils.upperCaseFirst(softLockedType) + 'Locked'
 
         this.recordHelper.setPanelStateParam(name, softLockedParam, true);
 
@@ -1866,10 +1866,10 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         this.buttonList = this.options.buttonList || this.buttonList;
         this.dropdownItemList = this.options.dropdownItemList || this.dropdownItemList;
 
-        this.buttonList = Espo.Utils.cloneDeep(this.buttonList);
-        this.buttonEditList = Espo.Utils.cloneDeep(this.buttonEditList);
-        this.dropdownItemList = Espo.Utils.cloneDeep(this.dropdownItemList);
-        this.dropdownEditItemList = Espo.Utils.cloneDeep(this.dropdownEditItemList);
+        this.buttonList = Utils.cloneDeep(this.buttonList);
+        this.buttonEditList = Utils.cloneDeep(this.buttonEditList);
+        this.dropdownItemList = Utils.cloneDeep(this.dropdownItemList);
+        this.dropdownEditItemList = Utils.cloneDeep(this.dropdownEditItemList);
 
         this.returnAfterCreate = this.options.returnAfterCreate ?? false;
 
@@ -1879,7 +1879,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         this.exit = this.options.exit || this.exit;
 
         if (this.shortcutKeys) {
-            this.shortcutKeys = Espo.Utils.cloneDeep(this.shortcutKeys);
+            this.shortcutKeys = Utils.cloneDeep(this.shortcutKeys);
         }
     }
 
@@ -1971,7 +1971,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
             $(window).off('fetch-record.' + this.cid);
         });
 
-        this.id = Espo.Utils.toDom(this.entityType) + '-' + Espo.Utils.toDom(this.type) + '-' + this.numId;
+        this.id = Utils.toDom(this.entityType ?? '_') + '-' + Utils.toDom(this.type) + '-' + this.numId;
 
         this.isNew = this.model.isNew();
 
@@ -2116,7 +2116,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
                         continue;
                     }
 
-                    this.attributes[attribute] = Espo.Utils.cloneDeep(m.get(attribute));
+                    this.attributes[attribute] = Utils.cloneDeep(m.get(attribute));
                 }
 
                 return;
@@ -2565,9 +2565,9 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
 
     afterSave() {
         if (this.isNew) {
-            Espo.Ui.success(this.translate('Created'));
+            Ui.success(this.translate('Created'));
         } else {
-            Espo.Ui.success(this.translate('Saved'));
+            Ui.success(this.translate('Saved'));
         }
 
         this.enableActionItems();
@@ -2580,7 +2580,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
     }
 
     beforeSave() {
-        Espo.Ui.notify(this.translate('saving', 'messages'));
+        Ui.notify(this.translate('saving', 'messages'));
 
         this.blockUpdateWebSocket();
     }
@@ -2596,14 +2596,14 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
     afterNotModified() {
         const msg = this.translate('notModified', 'messages');
 
-        Espo.Ui.warning(msg);
+        Ui.warning(msg);
 
         this.enableActionItems();
         this.setIsNotChanged();
     }
 
     afterNotValid() {
-        Espo.Ui.error(this.translate('Not valid'))
+        Ui.error(this.translate('Not valid'))
 
         this.enableActionItems();
     }
@@ -3123,7 +3123,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
 
         this.getHelper().layoutManager.get(this.entityType, this.layoutName, (detailLayout: any) => {
             if (typeof this.modifyDetailLayout === 'function') {
-                detailLayout = Espo.Utils.cloneDeep(detailLayout);
+                detailLayout = Utils.cloneDeep(detailLayout);
 
                 this.modifyDetailLayout(detailLayout);
             }
@@ -3267,7 +3267,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
      */
     protected exit(after?: string | 'create' | 'save' | 'cancel' | 'delete') {
         if (after) {
-            const methodName = 'exitAfter' + Espo.Utils.upperCaseFirst(after);
+            const methodName = 'exitAfter' + Utils.upperCaseFirst(after);
 
             if (methodName in this) {
                 // @ts-ignore
@@ -3366,7 +3366,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
             await m.fetch();
 
             if (this.inlineEditModeIsOn || this.mode === this.MODE_EDIT) {
-                this.updatedAttributes = Espo.Utils.cloneDeep(m.attributes);
+                this.updatedAttributes = Utils.cloneDeep(m.attributes);
             }
 
             return;
@@ -3744,7 +3744,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
             document.activeElement.dispatchEvent(new Event('change', {bubbles: true}));
         }
 
-        const methodName = 'action' + Espo.Utils.upperCaseFirst(action);
+        const methodName = 'action' + Utils.upperCaseFirst(action);
 
         // @ts-ignore
         this[methodName]();
