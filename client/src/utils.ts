@@ -476,7 +476,7 @@ const Utils = {
      * @param a1 An argument 1.
      * @param a2 An argument 2.
      */
-    areEqual: function (a1: object, a2: object): boolean {
+    areEqual: function (a1: unknown, a2: unknown): boolean {
         return _.isEqual(a1, a2);
     },
 

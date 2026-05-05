@@ -1735,9 +1735,6 @@ class DetailRecordView extends BaseRecordView {
         return view || null;
     }
 
-    // @todo Remove.
-    handleDataBeforeRender(data) {}
-
     data() {
         let navigateButtonsEnabled = !this.navigateButtonsDisabled && !!this.model.collection;
 
@@ -1893,8 +1890,7 @@ class DetailRecordView extends BaseRecordView {
             throw new Error('Model has not been injected into record view.');
         }
 
-        this.recordHelper = this.options.recordHelper ||
-            new ViewRecordHelper(this.defaultFieldStates, this.defaultPanelStates);
+        this.recordHelper = this.options.recordHelper ?? new ViewRecordHelper();
 
         this._initInlineEditSave();
 

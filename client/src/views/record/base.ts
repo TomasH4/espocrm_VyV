@@ -26,111 +26,157 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module views/record/base */
-
 import View from 'view';
 import ViewRecordHelper from 'view-record-helper';
 import DynamicLogic from 'dynamic-logic';
 import _ from 'underscore';
-import $ from 'jquery';
+import Ui from 'ui';
+import Utils from 'utils';
+import Model from 'model';
+import BaseFieldView from 'views/fields/base';
+import {Xhr} from 'util/ajax';
+
+/**
+ * Save options.
+ */
+interface SaveOptions {
+    /**
+     * HTTP headers.
+     */
+    headers?: Record<string, string>;
+    /**
+     * Don't show a not-modified warning.
+     */
+    skipNotModifiedWarning?: boolean;
+    /**
+     * A callback called after validate.
+     */
+    afterValidate?: () => void;
+    /**
+     * Bypass closing. Only for inline-edit.
+     */
+    bypassClose?: boolean;
+}
+
+/**
+ * A panel soft-locked type.
+ */
+type PanelSoftLockedType = 'default' | 'acl' | 'delimiter' | 'dynamicLogic';
+
+export interface BaseRecordViewSchema {
+    model: Model;
+    options: Record<string, any> & BaseRecordViewOptions;
+}
+
+export interface BaseRecordViewOptions {
+    recordHelper?: ViewRecordHelper;
+}
 
 /**
  * A base record view. To be extended.
  */
-class BaseRecordView extends View {
+class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> extends View<S> {
 
     /**
      * A type.
      */
-    type = 'edit'
+    readonly type = 'edit'
 
     /**
      * An entity type.
-     *
-     * @type {string|null}
      */
-    entityType = null
+    entityType: string | null = null
 
     /**
      * A scope.
-     *
-     * @type {string|null}
      */
-    scope = null
+    scope: string | null = null
 
     /**
      * Is new. Is set automatically.
      */
-    isNew = false
+    isNew: boolean = false
 
     /**
      * @deprecated
-     * @protected
+     * @todo Remove in v10.2.
      */
-    dependencyDefs = {}
+    protected dependencyDefs: Record<string, any> = {}
 
     /**
      * Dynamic logic.
-     *
-     * @protected
-     * @type {Object}
      */
-    dynamicLogicDefs = {}
+    protected dynamicLogicDefs: Record<string, any> = {}
 
     /**
      * A field list.
-     *
-     * @protected
      */
-    fieldList = null
+    protected fieldList: string[] | null = null
 
     /**
      * A mode.
-     *
-     * @type {'detail'|'edit'|null}
      */
-    mode = null
+    mode: 'detail' | 'edit' | null = null
 
     /**
      * A last save cancel reason.
-     *
-     * @protected
-     * @type {string|null}
      */
-    lastSaveCancelReason = null
+    protected lastSaveCancelReason: string | null = null
 
     /**
      * Pre-save attribute values.
      *
-     * @type {Record.<string, *>|undefined}
+     * @todo Use null?
      */
-    attributes
+    protected attributes: Record<string, any> | undefined
 
     /**
      * A record-helper.
-     *
-     * @type {module:view-record-helper}
      */
-    recordHelper = null
+    protected recordHelper: ViewRecordHelper
 
-    /** @const */
-    MODE_DETAIL = 'detail'
-    /** @const */
-    MODE_EDIT = 'edit'
+    /**
+     * Read-only. Can be overridden by an option parameter.
+     */
+    readOnly = false
 
-    /** @const */
-    TYPE_DETAIL = 'detail'
-    // noinspection JSUnusedGlobalSymbols
-    /** @const  */
-    TYPE_EDIT = 'edit'
+    readonly MODE_DETAIL = 'detail'
+    readonly MODE_EDIT = 'edit'
+
+    readonly TYPE_DETAIL = 'detail'
+    readonly TYPE_EDIT = 'edit'
+
+    protected isChanged: boolean = false
+
+    /**
+     * @internal
+     */
+    protected numId: string
+
+    /**
+     * @internal
+     */
+    protected id: string
+
+    /**
+     * @internal
+     */
+    protected updatedAttributes: Record<string, any> | null = null
+
+    protected dynamicLogic: DynamicLogic;
+
+    /**
+     * @internal
+     */
+    protected forcePatchAttributeDependencyMap: Record<string, string[]>
 
     /**
      * Hide a field.
      *
-     * @param {string} name A field name.
-     * @param {boolean } [locked] To lock. Won't be able to un-hide.
+     * @param name A field name.
+     * @param [locked] To lock. Won't be able to un-hide.
      */
-    hideField(name, locked) {
+    hideField(name: string, locked: boolean = false) {
         this.recordHelper.setFieldStateParam(name, 'hidden', true);
 
         if (locked) {
@@ -157,8 +203,7 @@ class BaseRecordView extends View {
 
         if (this.isRendered()) {
             processHtml();
-        }
-        else {
+        } else {
             this.once('after:render', () => {
                 processHtml();
             });
@@ -174,9 +219,9 @@ class BaseRecordView extends View {
     /**
      * Show a field.
      *
-     * @param {string} name A field name.
+     * @param name A field name.
      */
-    showField(name) {
+    showField(name: string) {
         if (this.recordHelper.getFieldStateParam(name, 'hiddenLocked')) {
             return;
         }
@@ -205,8 +250,7 @@ class BaseRecordView extends View {
 
         if (this.isRendered()) {
             processHtml();
-        }
-        else {
+        } else {
             this.once('after:render', () => {
                 processHtml();
             });
@@ -214,20 +258,18 @@ class BaseRecordView extends View {
 
         const view = this.getFieldView(name);
 
-        if (view) {
-            if (!view.disabledLocked) {
-                view.setNotDisabled();
-            }
+        if (view && !view.disabledLocked) {
+            view.setNotDisabled();
         }
     }
 
     /**
      * Set a field as read-only.
      *
-     * @param {string} name A field name.
-     * @param {boolean } [locked] To lock. Won't be able to un-set.
+     * @param name A field name.
+     * @param [locked] To lock. Won't be able to un-set.
      */
-    setFieldReadOnly(name, locked) {
+    setFieldReadOnly(name: string, locked: boolean = false) {
         const previousValue = this.recordHelper.getFieldStateParam(name, 'readOnly');
 
         this.recordHelper.setFieldStateParam(name, 'readOnly', true);
@@ -272,9 +314,9 @@ class BaseRecordView extends View {
     /**
      * Set a field as not read-only.
      *
-     * @param {string} name A field name.
+     * @param name A field name.
      */
-    setFieldNotReadOnly(name) {
+    setFieldNotReadOnly(name: string) {
         const previousValue = this.recordHelper.getFieldStateParam(name, 'readOnly');
 
         this.recordHelper.setFieldStateParam(name, 'readOnly', false);
@@ -318,9 +360,9 @@ class BaseRecordView extends View {
     /**
      * Set a field as required.
      *
-     * @param {string} name A field name.
+     * @param name A field name.
      */
-    setFieldRequired(name) {
+    setFieldRequired(name: string) {
         const previousValue = this.recordHelper.getFieldStateParam(name, 'required');
 
         this.recordHelper.setFieldStateParam(name, 'required', true);
@@ -339,9 +381,9 @@ class BaseRecordView extends View {
     /**
      * Set a field as not required.
      *
-     * @param {string} name A field name.
+     * @param name A field name.
      */
-    setFieldNotRequired(name) {
+    setFieldNotRequired(name: string) {
         const previousValue = this.recordHelper.getFieldStateParam(name, 'required');
 
         this.recordHelper.setFieldStateParam(name, 'required', false);
@@ -360,10 +402,10 @@ class BaseRecordView extends View {
     /**
      * Set an option list for a field.
      *
-     * @param {string} name A field name.
-     * @param {string[]} list Options.
+     * @param name A field name.
+     * @param list Options.
      */
-    setFieldOptionList(name, list) {
+    setFieldOptionList(name: string, list: string[]) {
         const had = this.recordHelper.hasFieldOptionList(name);
         const previousList = this.recordHelper.getFieldOptionList(name);
 
@@ -371,10 +413,8 @@ class BaseRecordView extends View {
 
         const view = this.getFieldView(name);
 
-        if (view) {
-            if ('setOptionList' in view) {
-                view.setOptionList(list);
-            }
+        if (view && hasSetOptionList(view)) {
+            view.setOptionList(list);
         }
 
         if (!had || !_(previousList).isEqual(list)) {
@@ -385,19 +425,17 @@ class BaseRecordView extends View {
     /**
      * Reset field options (revert to default).
      *
-     * @param {string} name A field name.
+     * @param name A field name.
      */
-    resetFieldOptionList(name) {
+    resetFieldOptionList(name: string) {
         const had = this.recordHelper.hasFieldOptionList(name);
 
         this.recordHelper.clearFieldOptionList(name);
 
         const view = this.getFieldView(name);
 
-        if (view) {
-            if ('resetOptionList' in view) {
-                view.resetOptionList();
-            }
+        if (view && hasResetOptionList(view)) {
+            view.resetOptionList();
         }
 
         if (had) {
@@ -408,10 +446,13 @@ class BaseRecordView extends View {
     /**
      * Show a panel.
      *
-     * @param {string} name A panel name.
+     * @param name A panel name.
      * @param [softLockedType] Omitted.
      */
-    showPanel(name, softLockedType) {
+    showPanel(name: string, softLockedType?: PanelSoftLockedType) {
+        // noinspection BadExpressionStatementJS
+        softLockedType;
+
         this.recordHelper.setPanelStateParam(name, 'hidden', false);
 
         if (this.isRendered()) {
@@ -422,11 +463,16 @@ class BaseRecordView extends View {
     /**
      * Hide a panel.
      *
-     * @param {string} name A panel name.
-     * @param {boolean} [locked=false] Won't be able to un-hide.
-     * @param {module:views/record/detail~panelSoftLockedType} [softLockedType='default']
+     * @param name A panel name.
+     * @param [locked=false] Won't be able to un-hide.
+     * @param [softLockedType='default']
      */
-    hidePanel(name, locked, softLockedType) {
+    hidePanel(name: string, locked: boolean = false, softLockedType?: PanelSoftLockedType) {
+        // noinspection BadExpressionStatementJS
+        locked;
+        // noinspection BadExpressionStatementJS
+        softLockedType;
+
         this.recordHelper.setPanelStateParam(name, 'hidden', true);
 
         if (this.isRendered()) {
@@ -439,7 +485,7 @@ class BaseRecordView extends View {
      *
      * @param {string} name A panel name.
      */
-    stylePanel(name) {
+    stylePanel(name: string) {
         this.recordHelper.setPanelStateParam(name, 'styled', true);
 
         const process = () => {
@@ -473,9 +519,9 @@ class BaseRecordView extends View {
     /**
      * Un-style a panel.
      *
-     * @param {string} name A panel name.
+     * @param name A panel name.
      */
-    unstylePanel(name) {
+    unstylePanel(name: string) {
         this.recordHelper.setPanelStateParam(name, 'styled', false);
 
         const process = () => {
@@ -509,9 +555,9 @@ class BaseRecordView extends View {
     /**
      * Set/unset a confirmation upon leaving the form.
      *
-     * @param {boolean} value True sets a required confirmation.
+     * @param value True sets a required confirmation.
      */
-    setConfirmLeaveOut(value) {
+    setConfirmLeaveOut(value: boolean) {
         if (!this.getRouter()) {
             return;
         }
@@ -526,13 +572,15 @@ class BaseRecordView extends View {
     /**
      * Get field views.
      *
-     * @param {boolean} [withHidden] With hidden.
-     * @return {Object.<string, module:views/fields/base>}
+     * @param [withHidden] With hidden.
      */
-    getFieldViews(withHidden) {
-        const fields = {};
+    getFieldViews(withHidden: boolean = false): Record<string, BaseFieldView> {
+        // noinspection BadExpressionStatementJS
+        withHidden;
 
-        this.fieldList.forEach(item => {
+        const fields: Record<string, BaseFieldView> = {};
+
+        this.fieldList?.forEach(item => {
             const view = this.getFieldView(item);
 
             if (view) {
@@ -546,12 +594,10 @@ class BaseRecordView extends View {
     /**
      * Get a field view.
      *
-     * @param {string} name A field name.
-     * @return {module:views/fields/base|null}
+     * @param name A field name.
      */
-    getFieldView(name) {
-        /** @type {module:views/fields/base|null} */
-        let view =  this.getView(name + 'Field') || null;
+    getFieldView(name: string): BaseFieldView | null {
+        let view = this.getView<BaseFieldView>(`${name}Field`) || null;
 
         // @todo Remove.
         if (!view) {
@@ -563,36 +609,28 @@ class BaseRecordView extends View {
 
     /**
      * @deprecated Use `getFieldView`.
-     * @return {module:views/fields/base|null}
      */
-    getField(name) {
+    getField(name: string): BaseFieldView | null {
         return this.getFieldView(name);
     }
 
     /**
      * Get a field list.
-     *
-     * @return {string[]}
      */
-    getFieldList() {
+    getFieldList(): string[] {
         return Object.keys(this.getFieldViews());
     }
 
     /**
      * Get a field view list.
-     *
-     * @return {module:views/fields/base[]}
      */
-    getFieldViewList() {
+    getFieldViewList(): BaseFieldView[] {
         return this.getFieldList()
             .map(field => this.getFieldView(field))
             .filter(view => view !== null);
     }
 
-    /**
-     * @inheritDoc
-     */
-    data() {
+    protected data(): Record<string, any> {
         return {
             scope: this.scope,
             entityType: this.entityType,
@@ -603,9 +641,9 @@ class BaseRecordView extends View {
 
     /**
      * @todo Remove.
-     * @private
+     * @internal
      */
-    handleDataBeforeRender(data) {
+    protected handleDataBeforeRender(data: Record<string, any>) {
         this.getFieldList().forEach((field) => {
             const viewKey = field + 'Field';
 
@@ -614,15 +652,13 @@ class BaseRecordView extends View {
     }
 
     /**
-     * @inheritDoc
      * Warning. Is not called by record/detail.
      */
-    setup() {
+    protected setup() {
         if (typeof this.model === 'undefined') {
             throw new Error('Model has not been injected into record view.');
         }
 
-        /** @type {module:view-record-helper} */
         this.recordHelper = this.options.recordHelper || new ViewRecordHelper();
 
         this.dynamicLogicDefs = this.options.dynamicLogicDefs || this.dynamicLogicDefs;
@@ -640,10 +676,9 @@ class BaseRecordView extends View {
 
         this.fieldList = this.options.fieldList || this.fieldList || [];
 
-        this.numId = Math.floor((Math.random() * 10000) + 1);
+        this.numId = Math.floor((Math.random() * 10000) + 1).toString();
 
-        this.id = Espo.Utils.toDom(this.entityType) + '-' +
-            Espo.Utils.toDom(this.type) + '-' + this.numId;
+        this.id = Utils.toDom(this.entityType) + '-' + Utils.toDom(this.type) + '-' + this.numId;
 
         if (this.model.isNew()) {
             this.isNew = true;
@@ -654,10 +689,8 @@ class BaseRecordView extends View {
 
     /**
      * Set up before final.
-     *
-     * @protected
      */
-    setupBeforeFinal() {
+    protected setupBeforeFinal() {
         this.attributes = this.model.getClonedAttributes();
 
         this.listenTo(this.model, 'change', (m, o) => {
@@ -667,9 +700,9 @@ class BaseRecordView extends View {
                         continue;
                     }
 
-                    this.attributes[attribute] = Espo.Utils.cloneDeep(
-                        m.get(attribute)
-                    );
+                    if (this.attributes) {
+                        this.attributes[attribute] = Utils.cloneDeep(m.get(attribute));
+                    }
                 }
 
                 return;
@@ -681,7 +714,7 @@ class BaseRecordView extends View {
         });
 
         if (this.options.attributes) {
-            this.model.set(this.options.attributes);
+            this.model.setMultiple(this.options.attributes);
         }
 
         this.listenTo(this.model, 'sync', () => {
@@ -695,11 +728,14 @@ class BaseRecordView extends View {
     /**
      * Set an initial attribute value.
      *
-     * @protected
-     * @param {string} attribute An attribute name.
-     * @param {*} value
+     * @param attribute An attribute name.
+     * @param value A value.
      */
-    setInitialAttributeValue(attribute, value) {
+    protected setInitialAttributeValue(attribute: string, value: unknown) {
+        if (!this.attributes) {
+            this.attributes = {};
+        }
+
         this.attributes[attribute] = value;
     }
 
@@ -710,8 +746,8 @@ class BaseRecordView extends View {
      * @param {string} name An attribute name.
      * @return {boolean}
      */
-    checkAttributeIsChanged(name) {
-        return !_.isEqual(this.attributes[name], this.model.get(name));
+    protected checkAttributeIsChanged(name: string): boolean {
+        return !_.isEqual(this.attributes?.[name], this.model.get(name));
     }
 
     /**
@@ -726,28 +762,28 @@ class BaseRecordView extends View {
 
         const attributes = this.model.attributes;
 
+        const preSaveAttributes = this.attributes ?? {};
+
         for (const attr in attributes) {
-            if (!(attr in this.attributes)) {
+            if (!(attr in preSaveAttributes)) {
                 this.model.unset(attr);
             }
         }
 
-        this.model.set(this.attributes, {skipReRenderInEditMode: true});
+        this.model.setMultiple(preSaveAttributes, {skipReRenderInEditMode: true});
     }
 
     /**
      * Init dynamic logic.
-     *
-     * @protected
      */
-    initDynamicLogic() {
-        this.dynamicLogicDefs = Espo.Utils.clone(this.dynamicLogicDefs || {});
-        this.dynamicLogicDefs.fields = Espo.Utils.clone(this.dynamicLogicDefs.fields);
-        this.dynamicLogicDefs.panels = Espo.Utils.clone(this.dynamicLogicDefs.panels);
+    protected initDynamicLogic() {
+        this.dynamicLogicDefs = Utils.clone(this.dynamicLogicDefs || {});
+        this.dynamicLogicDefs.fields = Utils.clone(this.dynamicLogicDefs.fields);
+        this.dynamicLogicDefs.panels = Utils.clone(this.dynamicLogicDefs.panels);
 
         this.dynamicLogic = new DynamicLogic(this.dynamicLogicDefs, this);
 
-        this.listenTo(this.model, 'sync', (m, a, /** Record */o) => {
+        this.listenTo(this.model, 'sync', (_m, _a, o: Record<string, any>) => {
             if (o && o.action !== 'save' && o.action !== 'fetch') {
                 return;
             }
@@ -756,7 +792,7 @@ class BaseRecordView extends View {
             setTimeout(() => this.processDynamicLogic(), 0);
         });
 
-        this.listenTo(this.model, 'change', (m, /** Record */o) => {
+        this.listenTo(this.model, 'change', (_m, o: Record<string, any>) => {
             if (o.action === 'save' || o.action === 'fetch') {
                 // To be processed by the 'sync' handler.
                 return;
@@ -771,20 +807,21 @@ class BaseRecordView extends View {
     /**
      * Process dynamic logic.
      *
-     * @protected
-     * @param {{action?: string|'ui'}} [options] Options.
+     * @param [options] Options.
      */
-    processDynamicLogic(options = {}) {
+    protected processDynamicLogic(
+        options: {
+            action?: string | 'ui',
+        } = {}
+    ) {
         this.dynamicLogic.process(options);
     }
 
     /**
-     * @protected
      * @internal
      */
-    initDependency() {
-        // noinspection JSDeprecatedSymbols
-        Object.keys(this.dependencyDefs || {}).forEach((attr) => {
+    protected initDependency() {
+        Object.keys((this as any).dependencyDefs || {}).forEach((attr) => {
             this.listenTo(this.model, 'change:' + attr, () => {
                 this._handleDependencyAttribute(attr);
             });
@@ -795,48 +832,42 @@ class BaseRecordView extends View {
 
     /**
      * Set up a field level security.
-     *
-     * @protected
      */
-    setupFieldLevelSecurity() {
+    protected setupFieldLevelSecurity() {
+        if (!this.entityType) {
+            return;
+        }
+
         const forbiddenFieldList = this.getAcl().getScopeForbiddenFieldList(this.entityType, 'read');
 
-        forbiddenFieldList.forEach((field) => {
-            this.hideField(field, true);
-        });
+        forbiddenFieldList.forEach(field => this.hideField(field, true));
 
         const readOnlyFieldList = this.getAcl().getScopeForbiddenFieldList(this.entityType, 'edit');
 
-        readOnlyFieldList.forEach((field) => {
-            this.setFieldReadOnly(field, true);
-        });
+        readOnlyFieldList.forEach(field => this.setFieldReadOnly(field, true));
     }
 
     /**
      * Set is changed.
-     *
-     * @protected
      */
-    setIsChanged() {
+    protected setIsChanged() {
         this.isChanged = true;
     }
 
     /**
      * Set is not changed.
-     *
-     * @protected
      */
-    setIsNotChanged() {
+    protected setIsNotChanged() {
         this.isChanged = false;
     }
 
     /**
      * Validate.
      *
-     * @return {boolean} True if not valid.
+     * @return True if not valid.
      */
-    validate() {
-        const invalidFieldList = [];
+    validate(): boolean {
+        const invalidFieldList: string[] = [];
 
         this.getFieldList().forEach(field => {
             const fieldIsInvalid = this.validateField(field);
@@ -846,7 +877,7 @@ class BaseRecordView extends View {
             }
         });
 
-        if (!!invalidFieldList.length) {
+        if (invalidFieldList.length) {
             this.onInvalid(invalidFieldList);
         }
 
@@ -854,21 +885,23 @@ class BaseRecordView extends View {
     }
 
     /**
-     * @protected
-     * @param {string[]} invalidFieldList Invalid fields.
+     * @param invalidFieldList Invalid fields.
      */
-    onInvalid(invalidFieldList) {}
+    protected onInvalid(invalidFieldList: string[]) {
+        // noinspection BadExpressionStatementJS
+        invalidFieldList;
+    }
 
     /**
      * Validate a specific field.
      *
-     * @param {string} field A field name.
-     * @return {boolean} True if not valid.
+     * @param field A field name.
+     * @return True if not valid.
      */
-    validateField(field) {
-        const msg =
-            this.translate('fieldInvalid', 'messages')
-                .replace('{field}', this.translate(field, 'fields', this.entityType));
+    validateField(field: string): boolean {
+        const msg = this.translate('fieldInvalid', 'messages')
+            .replace('{field}', this.translate(field, 'fields', this.entityType));
+
         const fieldView = this.getFieldView(field);
 
         if (!fieldView) {
@@ -902,7 +935,7 @@ class BaseRecordView extends View {
                                 this.translate(field, 'fields', this.entityType)
                             );
 
-                        Espo.Ui.error(msg, true);
+                        Ui.error(msg, true);
                     }, 10);
                 }
             }
@@ -937,15 +970,12 @@ class BaseRecordView extends View {
 
     /**
      * Processed after save.
-     *
-     * @protected
      */
-    afterSave() {
+    protected afterSave() {
         if (this.isNew) {
-            Espo.Ui.success(this.translate('Created'));
-        }
-        else {
-            Espo.Ui.success(this.translate('Saved'));
+            Ui.success(this.translate('Created'));
+        } else {
+            Ui.success(this.translate('Saved'));
         }
 
         this.setIsNotChanged();
@@ -953,73 +983,60 @@ class BaseRecordView extends View {
 
     /**
      * Processed before before-save.
-     *
-     * @protected
      */
-    beforeBeforeSave() {}
+    protected beforeBeforeSave() {}
 
     /**
      * Processed before save.
-     *
-     * @protected
      */
-    beforeSave() {
-        Espo.Ui.notify(this.translate('saving', 'messages'));
+    protected beforeSave() {
+        Ui.notify(this.translate('saving', 'messages'));
     }
 
     /**
      * Processed after save error.
-     *
-     * @protected
      */
-    afterSaveError() {}
+    protected afterSaveError() {}
 
     /**
      * Processed after save a not modified record.
-     *
-     * @protected
      */
-    afterNotModified() {
-        Espo.Ui.warning(this.translate('notModified', 'messages'));
+    protected afterNotModified() {
+        Ui.warning(this.translate('notModified', 'messages'));
 
         this.setIsNotChanged();
     }
 
     /**
      * Processed after save not valid.
-     *
-     * @protected
      */
-    afterNotValid() {
-        Espo.Ui.error(this.translate('Not valid'));
+    protected afterNotValid() {
+        Ui.error(this.translate('Not valid'));
     }
 
     /**
      * Get changed attribute values. For new record, returns all attributes.
      *
-     * @protected
-     * @param {string[]} [attributeList]
-     * @return {Record}
+     * @param attributeList
      */
-    getChangedAttributes(attributeList = null) {
+    protected getChangedAttributes(attributeList: string[] | null = null): Record<string, unknown> {
         const attributes = this.model.getClonedAttributes();
 
         if (this.model.isNew()) {
             return attributes;
         }
 
-        const setAttributes = {};
+        const setAttributes = {} as Record<string, any>;
 
         for (const attr in attributes) {
-            if (Espo.Utils.areEqual(this.attributes[attr], attributes[attr])) {
+            if (Utils.areEqual(this.attributes?.[attr], attributes[attr])) {
                 continue;
             }
 
             setAttributes[attr] = attributes[attr];
         }
 
-        /** @type {Record.<string, string[]>} */
-        const map = this.forcePatchAttributeDependencyMap || {};
+        const map = this.forcePatchAttributeDependencyMap ?? {};
 
         for (const attr in map) {
             if (attr in setAttributes) {
@@ -1043,23 +1060,11 @@ class BaseRecordView extends View {
     }
 
     /**
-     * Save options.
-     *
-     * @typedef {Object} module:views/record/base~saveOptions
-     *
-     * @property {Object.<string,string>} [headers] HTTP headers.
-     * @property {boolean} [skipNotModifiedWarning] Don't show a not-modified warning.
-     * @property {function():void} [afterValidate] A callback called after validate.
-     * @property {boolean} [bypassClose] Bypass closing. Only for inline-edit.
-     */
-
-    /**
      * Save.
      *
-     * @param {module:views/record/base~saveOptions} [options] Options.
-     * @return {Promise}
+     * @param [options] Options.
      */
-    save(options) {
+    save(options?: SaveOptions): Promise<void> {
         options = options || {};
 
         const headers = options.headers || {};
@@ -1076,7 +1081,7 @@ class BaseRecordView extends View {
 
         const fetchedAttributes = this.fetch();
 
-        this.model.set(fetchedAttributes, {silent: true});
+        this.model.setMultiple(fetchedAttributes, {silent: true});
 
         const setAttributes = this.getChangedAttributes(Object.keys(fetchedAttributes));
 
@@ -1106,8 +1111,8 @@ class BaseRecordView extends View {
             options.afterValidate();
         }
 
-        const optimisticConcurrencyControl = this.getMetadata()
-            .get(['entityDefs', this.entityType, 'optimisticConcurrencyControl']);
+        const optimisticConcurrencyControl = this.entityType ?
+            this.getMetadata().get(['entityDefs', this.entityType, 'optimisticConcurrencyControl']) : null;
 
         if (optimisticConcurrencyControl && this.model.get('versionNumber') !== null) {
             headers['X-Version-Number'] = this.model.get('versionNumber');
@@ -1144,7 +1149,7 @@ class BaseRecordView extends View {
                     this.trigger('after:save');
                     model.trigger('after:save');
 
-                    if (ajaxPromise.xhr.getResponseHeader('X-Record-Link-Updated')) {
+                    if (ajaxPromise.xhr?.getResponseHeader('X-Record-Link-Updated')) {
                         model.trigger('update-all');
                     }
 
@@ -1173,18 +1178,21 @@ class BaseRecordView extends View {
     /**
      * Handle a save error.
      *
-     * @param {module:ajax.Xhr} xhr XHR.
-     * @param {module:views/record/base~saveOptions} [options] Options.
-     * @param {function} saveResolve Resolve the save promise.
-     * @param {function} saveReject Reject the same promise.
-     * @return {Promise<boolean>}
-     *
-     * @protected
+     * @param xhr XHR.
+     * @param [options] Options.
+     * @param saveResolve Resolve the save promise.
+     * @param saveReject Reject the same promise.
      */
-    handleSaveError(xhr, options, saveResolve, saveReject) {
-        let handlerData = null;
+    protected handleSaveError(
+        xhr: Xhr,
+        options?: SaveOptions,
+        saveResolve?: () => void,
+        saveReject?: () => void
+    ): Promise<boolean> {
 
-        if (~[409, 500].indexOf(xhr.status)) {
+        let handlerData: any = null;
+
+        if ([409, 500].includes(xhr.status)) {
             const statusReason = xhr.getResponseHeader('X-Status-Reason');
 
             if (!statusReason) {
@@ -1193,8 +1201,7 @@ class BaseRecordView extends View {
 
             try {
                 handlerData = JSON.parse(statusReason);
-            }
-            catch (e) {}
+            } catch (e) {}
 
             if (!handlerData) {
                 handlerData = {
@@ -1202,12 +1209,11 @@ class BaseRecordView extends View {
                 };
 
                 if (xhr.responseText) {
-                    let data;
+                    let data: any;
 
                     try {
                         data = JSON.parse(xhr.responseText);
-                    }
-                    catch (e) {
+                    } catch (e) {
                         console.error('Could not parse error response body.');
 
                         return Promise.resolve(false);
@@ -1245,11 +1251,12 @@ class BaseRecordView extends View {
                 return;
             }
 
-            const methodName = 'errorHandler' + Espo.Utils.upperCaseFirst(reason);
+            const methodName = 'errorHandler' + Utils.upperCaseFirst(reason);
 
             if (methodName in this) {
                 xhr.errorIsHandled = true;
 
+                // @ts-ignore
                 const skipReject = this[methodName](handlerData.data, options, saveResolve, saveReject);
 
                 resolve(skipReject || false);
@@ -1263,10 +1270,8 @@ class BaseRecordView extends View {
 
     /**
      * Fetch data from the form.
-     *
-     * @return {Object.<string, *>}
      */
-    fetch() {
+    fetch(): Record<string, unknown> {
         let data = {};
         const fieldViews = this.getFieldViews();
 
@@ -1287,13 +1292,11 @@ class BaseRecordView extends View {
 
     /**
      * Process fetch. Returns null if not valid.
-     *
-     * @return {Object<string, *>|null}
      */
-    processFetch() {
+    processFetch(): Record<string, unknown> | null {
         const data = this.fetch();
 
-        this.model.set(data);
+        this.model.setMultiple(data);
 
         if (this.validate()) {
             return null;
@@ -1303,40 +1306,33 @@ class BaseRecordView extends View {
     }
 
     /**
-     * @return {Promise|undefined}
-     *
      * @deprecated As of v9.3.0.
      * @todo Remove in v11.0.
      */
-    populateDefaults() {}
+    protected populateDefaults(): Promise<void> | undefined {
+        return undefined;
+    }
 
     // noinspection JSUnusedGlobalSymbols
-    /**
-     * @protected
-     * @param duplicates
-     */
-    errorHandlerDuplicate(duplicates) {}
+    protected errorHandlerDuplicate(duplicates: any) {
+        // noinspection BadExpressionStatementJS
+        duplicates;
+    }
 
-    /**
-     * @private
-     */
-    _handleDependencyAttributes() {
+    private _handleDependencyAttributes() {
         // noinspection JSDeprecatedSymbols
-        Object.keys(this.dependencyDefs || {}).forEach(attr => {
+        Object.keys((this as any).dependencyDefs || {}).forEach(attr => {
             this._handleDependencyAttribute(attr);
         });
     }
 
-    /**
-     * @private
-     */
-    _handleDependencyAttribute(attr) {
+    protected _handleDependencyAttribute(attr: string) {
         // noinspection JSDeprecatedSymbols
-        const data = this.dependencyDefs[attr];
+        const data = (this as any).dependencyDefs[attr];
         const value = this.model.get(attr);
 
         if (value in (data.map || {})) {
-            (data.map[value] || []).forEach((item) => {
+            (data.map[value] || []).forEach((item: any) => {
                 this._doDependencyAction(item);
             });
 
@@ -1344,28 +1340,30 @@ class BaseRecordView extends View {
         }
 
         if ('default' in data) {
-            (data.default || []).forEach((item) => {
+            (data.default || []).forEach((item: any) => {
                 this._doDependencyAction(item);
             });
         }
     }
 
     /**
-     * @private
+     * Legacy.
      */
-    _doDependencyAction(data) {
+    private _doDependencyAction(data: any) {
         const action = data.action;
 
-        const methodName = 'dependencyAction' + Espo.Utils.upperCaseFirst(action);
+        const methodName = 'dependencyAction' + Utils.upperCaseFirst(action);
 
+        // @ts-ignore
         if (methodName in this && typeof this.methodName === 'function') {
+            // @ts-ignore
             this.methodName(data);
 
             return;
         }
 
-        const fieldList = data.fieldList || data.fields || [];
-        const panelList = data.panelList || data.panels || [];
+        const fieldList: string[] = data.fieldList || data.fields || [];
+        const panelList: string[] = data.panelList || data.panels || [];
 
         switch (action) {
             case 'hide':
@@ -1424,14 +1422,23 @@ class BaseRecordView extends View {
      * Create a field view.
      *
      * @protected
-     * @param {string} name A field name.
-     * @param {string|null} [view] A view name/path.
-     * @param {Object<string,*>} [params] Field params.
-     * @param {'detail'|'edit'} [mode='edit'] A mode.
-     * @param {boolean} [readOnly] Read-only.
-     * @param {Object<string,*>} [options] View options.
+     * @param name A field name.
+     * @param [view] A view name/path.
+     * @param [params] Field params.
+     * @param [mode='edit'] A mode.
+     * @param [readOnly] Read-only.
+     * @param [options] View options.
+     *
+     * @internal
      */
-    createField(name, view, params, mode, readOnly, options) {
+    protected createField(
+        name: string,
+        view : string | null = null,
+        params: Record<string, any> | null = null,
+        mode: 'detail' | 'edit' = 'edit',
+        readOnly: boolean = false,
+        options: Record<string, any> | null = null,
+    ) {
         const o = {
             model: this.model,
             mode: mode || 'edit',
@@ -1440,7 +1447,7 @@ class BaseRecordView extends View {
                 name: name,
                 params: params || {},
             },
-        };
+        } as Record<string, any>;
 
         if (readOnly) {
             o.readOnly = true;
@@ -1479,30 +1486,28 @@ class BaseRecordView extends View {
 
         this.createView(viewKey, view, o);
 
-        if (!~this.fieldList.indexOf(name)) {
+        if (this.fieldList && !this.fieldList.includes(name)) {
             this.fieldList.push(name);
         }
     }
 
     /**
      * Get a currently focused field view.
-     *
-     * @return {module:views/fields/base|null}
      */
-    getFocusedFieldView() {
-        const $active = $(window.document.activeElement);
+    getFocusedFieldView(): BaseFieldView | null {
+        const activeElement = window.document.activeElement;
 
-        if (!$active.length) {
+        if (!activeElement) {
             return null;
         }
 
-        const $field = $active.closest('.field');
+        const fieldElement = activeElement.closest<HTMLElement>('.field');
 
-        if (!$field.length) {
+        if (!fieldElement) {
             return null;
         }
 
-        const name = $field.attr('data-name');
+        const name = fieldElement.dataset.name;
 
         if (!name) {
             return null;
@@ -1514,9 +1519,28 @@ class BaseRecordView extends View {
     /**
      * Process exit.
      *
-     * @param {string} [after] An exit parameter.
+     * @param [after] An exit parameter.
      */
-    exit(after) {}
+    protected exit(after?: string) {
+        // noinspection BadExpressionStatementJS
+        after;
+    }
 }
 
 export default BaseRecordView;
+
+type HasSetOptionList = {
+    setOptionList(list: string[]): void;
+};
+
+function hasSetOptionList(view: any): view is HasSetOptionList {
+    return typeof view?.setOptionList === 'function';
+}
+
+type HasResetOptionList = {
+    resetOptionList(): void;
+};
+
+function hasResetOptionList(view: any): view is HasResetOptionList {
+    return typeof view?.resetOptionList === 'function';
+}

@@ -30,7 +30,7 @@
 
 import $ from 'jquery';
 import Utils from 'utils';
-import {AjaxPromise} from 'util/ajax';
+import {AjaxPromise, Xhr} from 'util/ajax';
 
 let isConfigured: boolean = false;
 let defaultTimeout: number;
@@ -343,12 +343,6 @@ const Ajax = {
     },
 };
 
-class Xhr extends XMLHttpRequest {
-    /**
-     * To be set in an error handler to bypass default handling.
-     */
-    errorIsHandled = false
-}
 
 // @ts-ignore
 Espo.Ajax = Ajax;

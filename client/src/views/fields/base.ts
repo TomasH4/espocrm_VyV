@@ -345,7 +345,10 @@ export default class BaseFieldView<
 
     private _isInlineEditMode: boolean = false
 
-    private disabledLocked: boolean = false
+    /**
+     * @internal
+     */
+    disabledLocked: boolean = false
 
     protected searchData: Record<string, any>
 

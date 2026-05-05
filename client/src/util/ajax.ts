@@ -72,3 +72,10 @@ export class AjaxPromise<T = any> extends Promise<T> {
         return this.xhr.status;
     }
 }
+
+export class Xhr extends XMLHttpRequest {
+    /**
+     * To be set in an error handler to bypass default handling.
+     */
+    errorIsHandled = false
+}

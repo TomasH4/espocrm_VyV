@@ -431,7 +431,7 @@ export default class Model<T extends Record<string, unknown> = Record<string, an
      */
     unset(
         attribute: keyof T,
-        options: {silent?: boolean} & Record<string, any>,
+        options?: {silent?: boolean} & Record<string, any>,
     ): Model {
 
         options = {...options, unset: true};
