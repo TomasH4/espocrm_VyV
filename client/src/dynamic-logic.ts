@@ -26,38 +26,83 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module dynamic-logic */
+import type BaseRecordView from 'views/record/base';
 
 /**
- * @typedef {Record} module:dynamic-logic~defs
- * @property {Object.<string, module:dynamic-logic~fieldDefs>} [fields] Fields.
- * @property {Object.<string, module:dynamic-logic~panelDefs>} [panels] Panels.
- * @property {Object.<string, *>} [options] Options.
- * @property {Object.<string, module:dynamic-logic~cascadingFieldDefs>} [cascadingFields] Cascading fields.
+ * Definitions.
  */
+export interface Defs {
+    /**
+     * Fields.
+     */
+    fields?: Record<string, FieldDefs>;
+    /**
+     * Panels.
+     */
+    panels?: Record<string, PanelDefs>;
+    /**
+     * Options.
+     */
+    options?: Record<string, Record<string, any>[]>;
+    /**
+     * Cascading fields.
+     */
+    cascadingFields?: Record<string, CascadingFieldDefs>;
+}
 
 /**
- * @typedef {Record} module:dynamic-logic~fieldDefs
- * @property {{conditionGroup: module:dynamic-logic~conditionGroup}} [visible] Visibility conditions.
- * @property {{conditionGroup: module:dynamic-logic~conditionGroup}} [required] Requiring conditions.
- * @property {{conditionGroup: module:dynamic-logic~conditionGroup}} [readOnly] Read-only conditions.
- * @property {{conditionGroup: module:dynamic-logic~conditionGroup}} [readOnlySaved] Read-only saved conditions.
- * @property {{conditionGroup: module:dynamic-logic~conditionGroup}} [invalid] Invalidity conditions.
+ * Field definitions.
  */
+interface FieldDefs {
+    /**
+     * Visibility conditions.
+     */
+    visible?: { conditionGroup: ConditionGroup; };
+    /**
+     * Requiring conditions.
+     */
+    required?: { conditionGroup: ConditionGroup; };
+    /**
+     * Read-only conditions.
+     */
+    readOnly?: { conditionGroup: ConditionGroup; };
+    /**
+     * Read-only saved conditions.
+     */
+    readOnlySaved?: { conditionGroup: ConditionGroup; };
+    /**
+     * Invalidity conditions.
+     */
+    invalid?: { conditionGroup: ConditionGroup; };
+}
 
 /**
- * @typedef {Record} module:dynamic-logic~panelDefs
- * @property {{conditionGroup: module:dynamic-logic~conditionGroup}} [visible] Visibility conditions.
+ * Panel definitions.
  */
+interface PanelDefs {
+    /**
+     * Visibility conditions.
+     */
+    visible?: {
+        conditionGroup: ConditionGroup;
+    };
+    /**
+     * Style condition.
+     */
+    styled?: {
+        conditionGroup: ConditionGroup;
+    };
+}
 
-/**
- * @typedef {Record} module:dynamic-logic~cascadingFieldDefs
- * @property {{localField: string, foreignField: string, matchRequired: boolean}[]} [items] Visibility conditions.
- */
+interface CascadingFieldDefs {
+    items?: {
+        localField: string;
+        foreignField: string;
+        matchRequired: boolean;
+    }[];
+}
 
-/**
- * @typedef {Record[]} module:dynamic-logic~conditionGroup
- */
+type ConditionGroup = Record<string, unknown>[];
 
 import {inject} from 'di';
 import FieldManager from 'field-manager';
@@ -69,58 +114,32 @@ import FieldManager from 'field-manager';
  */
 class DynamicLogic {
 
-    /**
-     * @private
-     * @type {module:dynamic-logic~defs} defs Definitions.
-     */
-    defs
+    private defs: Defs
 
-    /**
-     * @private
-     * @type {import('views/record/base').default}
-     */
-    recordView
+    private recordView: BaseRecordView
 
-    /**
-     * @private
-     * @type {string[]}
-     * @const
-     */
-    fieldTypeList = [
+    private readonly fieldTypeList: ('visible' | 'required' | 'readOnlySaved' | 'readOnly')[] = [
         'visible',
         'required',
         'readOnlySaved',
         'readOnly',
     ]
 
-    /**
-     * @private
-     * @type {string[]}
-
-     */
-    panelTypeList = [
+    private readonly panelTypeList: ('visible' | 'styled')[] = [
         'visible',
         'styled',
     ]
 
-    /**
-     * @private
-     * @type {Object.<string, string[]>}
-     */
-    cascadingClearDefs
+    private readonly cascadingClearDefs: Record<string, string[]>
 
-    /**
-     * @private
-     * @type {FieldManager}
-     */
     @inject(FieldManager)
-    fieldManager
+    private fieldManager: FieldManager
 
     /**
-     * @param {module:dynamic-logic~defs} defs Definitions.
-     * @param {import('views/record/base').default} recordView A record view.
+     * @param  defs Definitions.
+     * @param  recordView A record view.
      */
-    constructor(defs, recordView) {
+    constructor(defs: Defs, recordView: BaseRecordView) {
         this.defs = defs ?? {};
         this.recordView = recordView;
 
@@ -130,13 +149,12 @@ class DynamicLogic {
     /**
      * Process.
      *
-     * @param {{action?: string|'ui'}} [options] Options.
+     * @param options Options.
      */
-    process(options = {}) {
+    process(options: {action?: string | 'ui'} = {}) {
         const fields = this.defs.fields ?? {};
 
         Object.keys(fields).forEach(field => {
-            /** @type {Record} */
             const item = fields[field] || {};
 
             let readOnlyIsProcessed = false;
@@ -146,8 +164,7 @@ class DynamicLogic {
                     return;
                 }
 
-                /** @type {Record} */
-                const typeItem = item[type] || {};
+                const typeItem = item[type] || {} as {conditionGroup?: ConditionGroup};
 
                 if (!typeItem.conditionGroup) {
                     return;
@@ -214,9 +231,7 @@ class DynamicLogic {
 
             let isMet = false;
 
-            for (const i in itemList) {
-                const item = itemList[i];
-
+            for (const item of itemList) {
                 if (this.checkConditionGroupInternal(item.conditionGroup)) {
                     this.setOptionList(field, item.optionList || []);
 
@@ -236,11 +251,7 @@ class DynamicLogic {
         }
     }
 
-    /**
-     * @private
-     * @return {Object.<string, string[]>}
-     */
-    buildCascadingClearDefs() {
+    private buildCascadingClearDefs(): Record<string, string[]> {
         const fields = this.defs.cascadingFields ?? null;
 
         if (!fields || Object.keys(fields).length === 0) {
@@ -249,8 +260,7 @@ class DynamicLogic {
 
         const model = this.recordView.model;
 
-        /** @type {Object.<string, string[]>} */
-        const map = {};
+        const map: Record<string, string[]> = {};
 
         for (const [field, defs] of Object.entries(fields)) {
             const items = defs.items;
@@ -270,7 +280,8 @@ class DynamicLogic {
 
                 map[idAttribute] ??= [];
 
-                const attributeList = this.fieldManager.getEntityTypeFieldAttributeList(model.entityType, field);
+                const attributeList = model.entityType ?
+                    this.fieldManager.getEntityTypeFieldAttributeList(model.entityType, field) : [];
 
                 map[idAttribute].push(...attributeList);
             }
@@ -283,10 +294,7 @@ class DynamicLogic {
         return map;
     }
 
-    /**
-     * @private
-     */
-    processCascadingClear() {
+    private processCascadingClear() {
         const attributeList = Object.keys(this.cascadingClearDefs);
         const model = this.recordView.model;
 
@@ -306,8 +314,7 @@ class DynamicLogic {
             p[it] = null;
 
             return p;
-        }, {})
-
+        }, {} as any)
 
         setTimeout(() => {
             model.setMultiple(map)
@@ -315,11 +322,10 @@ class DynamicLogic {
     }
 
     /**
-     * @param {string} panel A panel name.
-     * @param {string} type A type.
-     * @private
+     * @param panel A panel name.
+     * @param type A type.
      */
-    processPanel(panel, type) {
+    private processPanel(panel: string, type: 'visible' | 'styled') {
         const panels = this.defs.panels ?? {};
         const item = (panels[panel] || {});
 
@@ -327,7 +333,7 @@ class DynamicLogic {
             return;
         }
 
-        const typeItem = (item[type] || {});
+        const typeItem = (item[type] ?? {}) as {conditionGroup?: ConditionGroup};
 
         if (!typeItem.conditionGroup) {
             return;
@@ -349,43 +355,41 @@ class DynamicLogic {
     /**
      * Check a condition group.
      *
-     * @param {Object} data A condition group.
+     * @param data A condition group.
      * @returns {boolean}
      */
-    checkConditionGroup(data) {
+    checkConditionGroup(data: ConditionGroup): boolean {
         return this.checkConditionGroupInternal(data);
     }
 
-    /**
-     * @private
-     * @param {Object} data
-     * @param {'and'|'or'|'not'} [type='and']
-     * @param {boolean} [preSave]
-     * @returns {boolean}
-     */
-    checkConditionGroupInternal(data, type, preSave = false) {
+    private checkConditionGroupInternal(
+        data: ConditionGroup,
+        type: 'and' | 'or' | 'not' = 'and',
+        preSave: boolean = false,
+    ): boolean {
+
         type = type || 'and';
 
-        let list;
+        let list: Defs[];
         let result = false;
 
         if (type === 'and') {
-            list =  data || [];
+            list = data || [];
 
             result = true;
 
-            for (const i in list) {
-                if (!this.checkCondition(list[i], preSave)) {
+            for (const it of list) {
+                if (!this.checkCondition(it, preSave)) {
                     result = false;
 
                     break;
                 }
             }
         } else if (type === 'or') {
-            list =  data || [];
+            list = data || [];
 
-            for (const i in list) {
-                if (this.checkCondition(list[i], preSave)) {
+            for (const it of list) {
+                if (this.checkCondition(it, preSave)) {
                     result = true;
 
                     break;
@@ -400,13 +404,7 @@ class DynamicLogic {
         return result;
     }
 
-    /**
-     * @private
-     * @param {string} attribute
-     * @param {boolean} preSave
-     * @return {*}
-     */
-    getAttributeValue(attribute, preSave) {
+    private getAttributeValue(attribute: string, preSave: boolean): unknown | undefined {
         if (attribute.startsWith('$')) {
             if (attribute === '$user.id') {
                 return this.recordView.getUser().id;
@@ -418,7 +416,7 @@ class DynamicLogic {
         }
 
         if (preSave) {
-            return this.recordView.attributes[attribute];
+            return this.recordView.getPreSaveAttributes()[attribute];
         }
 
         if (!this.recordView.model.has(attribute)) {
@@ -428,19 +426,13 @@ class DynamicLogic {
         return this.recordView.model.get(attribute);
     }
 
-    /**
-     * @private
-     * @param {Object} defs
-     * @param {boolean} preSave
-     * @returns {boolean}
-     */
-    checkCondition(defs, preSave) {
+    private checkCondition(defs: Record<string, any>, preSave: boolean): boolean {
         defs = defs || {};
 
         const type = defs.type || 'equals';
 
         if (['or', 'and', 'not'].includes(type)) {
-            return this.checkConditionGroupInternal(defs.value, /** @type {'or'|'and'|'not'} */type, preSave);
+            return this.checkConditionGroupInternal(defs.value, type, preSave);
         }
 
         const attribute = defs.attribute;
@@ -450,7 +442,7 @@ class DynamicLogic {
             return false;
         }
 
-        const setValue = this.getAttributeValue(attribute, preSave);
+        const setValue = this.getAttributeValue(attribute, preSave) as any;
 
         if (type === 'equals') {
             return setValue === value;
@@ -485,23 +477,23 @@ class DynamicLogic {
         }
 
         if (type === 'contains' || type === 'has') {
-            if (!setValue) {
+            if (!setValue || !hasIncludes(setValue)) {
                 return false;
             }
 
-            return !!~setValue.indexOf(value);
+            return setValue.includes(value);
         }
 
         if (type === 'notContains' || type === 'notHas') {
-            if (!setValue) {
+            if (!setValue || !hasIncludes(setValue)) {
                 return true;
             }
 
-            return !~setValue.indexOf(value);
+            return !setValue.includes(value);
         }
 
         if (type === 'startsWith') {
-            if (!setValue) {
+            if (!setValue || !hasIndexOf(setValue)) {
                 return false;
             }
 
@@ -509,15 +501,15 @@ class DynamicLogic {
         }
 
         if (type === 'endsWith') {
-            if (!setValue) {
+            if (!setValue || !hasIndexOf(setValue)) {
                 return false;
             }
 
-            return setValue.indexOf(value) === setValue.length - value.length;
+            return setValue.indexOf(value) === (setValue as any).length - value.length;
         }
 
         if (type === 'matches') {
-            if (!setValue) {
+            if (!setValue || typeof setValue !== 'string') {
                 return false;
             }
 
@@ -557,7 +549,7 @@ class DynamicLogic {
         if (type === 'isToday') {
             const dateTime = this.recordView.getDateTime();
 
-            if (!setValue) {
+            if (!setValue || typeof setValue !== 'string') {
                 return false;
             }
 
@@ -571,7 +563,7 @@ class DynamicLogic {
         if (type === 'inFuture') {
             const dateTime = this.recordView.getDateTime();
 
-            if (!setValue) {
+            if (!setValue || typeof setValue !== 'string') {
                 return false;
             }
 
@@ -585,7 +577,7 @@ class DynamicLogic {
         if (type === 'inPast') {
             const dateTime = this.recordView.getDateTime();
 
-            if (!setValue) {
+            if (!setValue || typeof setValue !== 'string') {
                 return false;
             }
 
@@ -599,110 +591,61 @@ class DynamicLogic {
         return false;
     }
 
-    /**
-     * @param {string} field
-     * @param {string[]} optionList
-     * @private
-     */
-    setOptionList(field, optionList) {
+    private setOptionList(field: string, optionList: string[]) {
         this.recordView.setFieldOptionList(field, optionList);
     }
 
-    /**
-     * @param {string} field
-     * @private
-     */
-    resetOptionList(field) {
+    private resetOptionList(field: string) {
         this.recordView.resetFieldOptionList(field);
     }
 
-    /**
-     * @param {string} field
-     * @private
-     */
-    makeFieldVisibleTrue(field) {
+    private makeFieldVisibleTrue(field: string) {
         this.recordView.showField(field);
     }
 
-    /**
-     * @param {string} field
-     * @private
-     */
-    makeFieldVisibleFalse(field) {
+    private makeFieldVisibleFalse(field: string) {
         this.recordView.hideField(field);
     }
 
-    /**
-     * @param {string} field
-     * @private
-     */
-    makeFieldRequiredTrue(field) {
+    private makeFieldRequiredTrue(field: string) {
         this.recordView.setFieldRequired(field);
     }
 
-    /**
-     * @param {string} field
-     * @private
-     */
-    makeFieldRequiredFalse(field) {
+    private makeFieldRequiredFalse(field: string) {
         this.recordView.setFieldNotRequired(field);
     }
 
-    /**
-     * @param {string} field
-     * @private
-     */
-    makeFieldReadOnlyTrue(field) {
+    private makeFieldReadOnlyTrue(field: string) {
         this.recordView.setFieldReadOnly(field);
     }
 
-    /**
-     * @param {string} field
-     * @private
-     */
-    makeFieldReadOnlyFalse(field) {
+    private makeFieldReadOnlyFalse(field: string) {
         this.recordView.setFieldNotReadOnly(field);
     }
 
-    /**
-     * @param {string} panel
-     * @private
-     */
-    makePanelVisibleTrue(panel) {
+    private makePanelVisibleTrue(panel: string) {
         this.recordView.showPanel(panel, 'dynamicLogic');
     }
 
-    /**
-     * @param {string} panel
-     * @private
-     */
-    makePanelVisibleFalse(panel) {
+    private makePanelVisibleFalse(panel: string) {
         this.recordView.hidePanel(panel, false, 'dynamicLogic');
     }
 
-    /**
-     * @param {string} panel
-     * @private
-     */
-    makePanelStyledTrue(panel) {
+    private makePanelStyledTrue(panel: string) {
         this.recordView.stylePanel(panel);
     }
 
-    /**
-     * @param {string} panel
-     * @private
-     */
-    makePanelStyledFalse(panel) {
+    private makePanelStyledFalse(panel: string) {
         this.recordView.unstylePanel(panel);
     }
 
     /**
      * Add a panel-visible condition.
      *
-     * @param {string} name A panel name.
-     * @param {Object} item Condition definitions.
+     * @param name A panel name.
+     * @param item Condition definitions.
      */
-    addPanelVisibleCondition(name, item) {
+    addPanelVisibleCondition(name: string, item: {conditionGroup: ConditionGroup}) {
         this.defs.panels = this.defs.panels ?? {};
         this.defs.panels[name] = this.defs.panels[name] ?? {};
 
@@ -714,10 +657,10 @@ class DynamicLogic {
     /**
      * Add a panel-styled condition.
      *
-     * @param {string} name A panel name.
-     * @param {Object} item Condition definitions.
+     * @param name A panel name.
+     * @param item Condition definitions.
      */
-    addPanelStyledCondition(name, item) {
+    addPanelStyledCondition(name: string, item: {conditionGroup: ConditionGroup}) {
         this.defs.panels = this.defs.panels ?? {};
         this.defs.panels[name] = this.defs.panels[name] ?? {};
 
@@ -728,3 +671,19 @@ class DynamicLogic {
 }
 
 export default DynamicLogic;
+
+type HasIncludes = {
+    includes(value: any): boolean;
+};
+
+function hasIncludes(item: any): item is HasIncludes {
+    return typeof item?.includes === 'function';
+}
+
+type HasIndexOf = {
+    indexOf(value: any): number;
+};
+
+function hasIndexOf(item: any): item is HasIndexOf {
+    return typeof item?.indexOf === 'function';
+}

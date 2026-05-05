@@ -105,7 +105,7 @@ const Utils = {
      * @return True if handled.
      */
     handleAction: function (
-        view: View,
+        view: View<any>,
         event: MouseEvent,
         element: HTMLElement,
         actionData?: {

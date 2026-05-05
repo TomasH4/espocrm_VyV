@@ -65,10 +65,10 @@ class ActionItemSetupHelper {
     language
 
     /**
-     * @param {module:view} view
+     * @param {import('view').default<any>} view
      * @param {string} type
      * @param {function(Promise): void} waitFunc
-     * @param {function(Object): void} addFunc
+     * @param {(item: import('views/record/detail').DropdownItem) => void} addFunc
      * @param {function(string): void} showFunc
      * @param {function(string): void} hideFunc
      * @param {{listenToViewModelSync?: boolean}} [options]

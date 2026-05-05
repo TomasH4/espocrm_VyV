@@ -39,7 +39,7 @@ import {Xhr} from 'util/ajax';
 /**
  * Save options.
  */
-interface SaveOptions {
+export interface SaveOptions {
     /**
      * HTTP headers.
      */
@@ -74,13 +74,15 @@ export interface BaseRecordViewOptions {
 
 /**
  * A base record view. To be extended.
+ *
+ * @internal
  */
 class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> extends View<S> {
 
     /**
      * A type.
      */
-    readonly type = 'edit'
+    protected type: string = 'edit'
 
     /**
      * An entity type.
@@ -128,7 +130,7 @@ class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> exte
      *
      * @todo Use null?
      */
-    protected attributes: Record<string, any> | undefined
+    protected attributes: Record<string, any>
 
     /**
      * A record-helper.
@@ -169,6 +171,15 @@ class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> exte
      * @internal
      */
     protected forcePatchAttributeDependencyMap: Record<string, string[]>
+
+    /**
+     * Get pre-save attributes.
+     *
+     * @since 10.0.0
+     */
+    getPreSaveAttributes(): Record<string, unknown> {
+        return Utils.cloneDeep(this.attributes ?? {});
+    }
 
     /**
      * Hide a field.
@@ -753,7 +764,7 @@ class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> exte
     /**
      * Reset model changes.
      */
-    resetModelChanges() {
+    protected resetModelChanges() {
         if (this.updatedAttributes) {
             this.attributes = this.updatedAttributes;
 
@@ -1064,7 +1075,7 @@ class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> exte
      *
      * @param [options] Options.
      */
-    save(options?: SaveOptions): Promise<void> {
+    save(options?: Record<string, any> & SaveOptions): Promise<void> {
         options = options || {};
 
         const headers = options.headers || {};
@@ -1314,9 +1325,23 @@ class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> exte
     }
 
     // noinspection JSUnusedGlobalSymbols
-    protected errorHandlerDuplicate(duplicates: any) {
+    /**
+     * @internal
+     */
+    protected errorHandlerDuplicate(
+        duplicates: any[],
+        options: Record<string, any>,
+        resolve: () => void,
+        reject: (reason: 'error' | 'cancel') => void,
+    ) {
         // noinspection BadExpressionStatementJS
         duplicates;
+        // noinspection BadExpressionStatementJS
+        options;
+        // noinspection BadExpressionStatementJS
+        resolve;
+        // noinspection BadExpressionStatementJS
+        reject;
     }
 
     private _handleDependencyAttributes() {
