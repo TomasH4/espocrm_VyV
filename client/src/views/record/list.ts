@@ -27,6 +27,7 @@
  ************************************************************************/
 
 import ListBaseRecordView, {ListBaseRecordViewOptions, ListBaseRecordViewSchema} from 'views/record/list-base';
+import Model from 'model';
 
 /**
  * Mass-action definitions.
@@ -249,6 +250,89 @@ class ListRecordView<
 
     protected setup() {
         super.setup();
+    }
+
+    /**
+     * @internal
+     */
+    protected _convertLayout(listLayout: ColumnDefs[], model?: Model): any {
+        model = model || this.collection.prepareModel();
+
+        const layout = [];
+
+        if (this.checkboxes) {
+            layout.push({
+                name: 'r-checkboxField',
+                columnName: 'r-checkbox',
+                template: 'record/list-checkbox',
+            });
+        }
+
+        for (const col of listLayout) {
+            const type = col.type || model.getFieldType(col.name) || 'base';
+
+            if (!col.name) {
+                continue;
+            }
+
+            const item = {
+                columnName: col.name,
+                name: col.name + 'Field',
+                view: col.view ||
+                    model.getFieldParam(col.name, 'view') ||
+                    this.getFieldManager().getViewName(type),
+                options: {
+                    defs: {
+                        name: col.name,
+                        params: col.params || {}
+                    },
+                    mode: 'list',
+                },
+            } as any;
+
+            if (col.width) {
+                item.options.defs.width = col.width;
+            }
+
+            if (col.widthPx) {
+                item.options.defs.widthPx = col.widthPx;
+            }
+
+            if (col.link) {
+                item.options.mode = 'listLink';
+            }
+            if (col.align) {
+                item.options.defs.align = col.align;
+            }
+
+            if (col.options) {
+                for (const optionName in col.options) {
+                    if (typeof item.options[optionName] !== 'undefined') {
+                        continue;
+                    }
+
+                    item.options[optionName] = col.options[optionName];
+                }
+            }
+
+            if (col.name && this._listSettingsHelper) {
+                if (this._listSettingsHelper.isColumnHidden(col.name, col.hidden)) {
+                    continue;
+                }
+            }
+
+            if (!this._listSettingsHelper && col.hidden) {
+                continue;
+            }
+
+            layout.push(item);
+        }
+
+        if (this.rowActionsView && !this.rowActionsDisabled) {
+            layout.push(this.getRowActionsDefs());
+        }
+
+        return layout;
     }
 }
 

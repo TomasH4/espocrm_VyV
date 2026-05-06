@@ -562,11 +562,20 @@ abstract class ListBaseRecordView<
 
     private noRebuild: boolean | null
 
-    private layoutLoadCallbackList: ((layout: TLayout) => void)[]
+    /**
+     * @internal
+     */
+    protected layoutLoadCallbackList: ((layout: TLayout) => void)[]
 
-    private layoutIsBeingLoaded: boolean
+    /**
+     * @internal
+     */
+    protected layoutIsBeingLoaded: boolean
 
-    private _listSettingsHelper: ListSettingsHelper
+    /**
+     * @internal
+     */
+    protected _listSettingsHelper: ListSettingsHelper
 
     private _cachedFilteredListLayout: TLayout
     private _cachedScopeForbiddenFieldList: string[]
@@ -2781,85 +2790,7 @@ abstract class ListBaseRecordView<
     /**
      * @internal
      */
-    protected _convertLayout(listLayout: any, model?: Model) {
-        model = model || this.collection.prepareModel();
-
-        const layout = [];
-
-        if (this.checkboxes) {
-            layout.push({
-                name: 'r-checkboxField',
-                columnName: 'r-checkbox',
-                template: 'record/list-checkbox',
-            });
-        }
-
-        for (const col of listLayout) {
-            const type = col.type || model.getFieldType(col.name) || 'base';
-
-            if (!col.name) {
-                continue;
-            }
-
-            const item = {
-                columnName: col.name,
-                name: col.name + 'Field',
-                view: col.view ||
-                    model.getFieldParam(col.name, 'view') ||
-                    this.getFieldManager().getViewName(type),
-                options: {
-                    defs: {
-                        name: col.name,
-                        params: col.params || {}
-                    },
-                    mode: 'list',
-                },
-            } as any;
-
-            if (col.width) {
-                item.options.defs.width = col.width;
-            }
-
-            if (col.widthPx) {
-                item.options.defs.widthPx = col.widthPx;
-            }
-
-            if (col.link) {
-                item.options.mode = 'listLink';
-            }
-            if (col.align) {
-                item.options.defs.align = col.align;
-            }
-
-            if (col.options) {
-                for (const optionName in col.options) {
-                    if (typeof item.options[optionName] !== 'undefined') {
-                        continue;
-                    }
-
-                    item.options[optionName] = col.options[optionName];
-                }
-            }
-
-            if (col.name && this._listSettingsHelper) {
-                if (this._listSettingsHelper.isColumnHidden(col.name, col.hidden)) {
-                    continue;
-                }
-            }
-
-            if (!this._listSettingsHelper && col.hidden) {
-                continue;
-            }
-
-            layout.push(item);
-        }
-
-        if (this.rowActionsView && !this.rowActionsDisabled) {
-            layout.push(this.getRowActionsDefs());
-        }
-
-        return layout;
-    }
+    protected abstract _convertLayout(listLayout: TLayout, model?: Model): any;
 
     /**
      * Select a record.
@@ -3061,16 +2992,18 @@ abstract class ListBaseRecordView<
      * @param model A model.
      * @param item An item.
      */
-    protected getCellSelector(model: Model, item: {columnName: string}): string {
+    protected getCellSelector(
+        model: Model,
+        item: Record<string, any> & {columnName: string},
+    ): string {
         return `${this.getSelector()} ${this.getRowSelector(model.id!)} .cell[data-name="${item.columnName}"]`;
     }
 
     /**
-     * @protected
      * @internal
      */
-    protected prepareInternalLayout(internalLayout: any[], model: Model) {
-        internalLayout.forEach(item => {
+    protected prepareInternalLayout(internalLayout: any, model: Model) {
+        (internalLayout as any[]).forEach(item => {
             // @todo Revise whether has any effect.
             //     Has to be in options instead? item.options.fullSelector;
             item.fullSelector = this.getCellSelector(model, item);

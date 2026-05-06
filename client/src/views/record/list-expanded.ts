@@ -26,26 +26,65 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module module:views/record/list-expanded */
+import ListBaseRecordView, {ListBaseRecordViewOptions, ListBaseRecordViewSchema} from 'views/record/list-base';
+import type Model from 'model';
 
-import ListRecordView from 'views/record/list';
+type Cell = {
+    name: string,
+    view?: string,
+    soft?: boolean,
+    small?: boolean,
+    link?: boolean;
+    align?: 'left' | 'right',
+    type?: string;
+    params?: Record<string, any>;
+    options?: Record<string, any>;
+}
 
-class ListExpandedRecordView extends ListRecordView {
+type Row = Cell[];
+
+export interface ListExpandedLayout {
+    rows: Row[];
+    right: {
+        name?: string,
+        view?: string,
+        options?: Record<string, any>,
+        width?: string,
+    } | null;
+}
+
+export interface ListExpandedRecordViewOptions extends ListBaseRecordViewOptions<ListExpandedLayout> {}
+
+export interface ListExpandedRecordViewSchema extends ListBaseRecordViewSchema<ListExpandedLayout> {
+    options: ListExpandedRecordViewOptions;
+}
+
+class ListExpandedRecordView<
+    S extends ListExpandedRecordViewSchema = ListExpandedRecordViewSchema
+> extends ListBaseRecordView<ListExpandedLayout, S> {
 
     template = 'record/list-expanded'
 
-    checkboxes = false
-    selectable = false
-    rowActionsView = false
-    _internalLayoutType = 'list-row-expanded'
-    paginationDisabled = true
-    header = false
-    _internalLayout = null
-    checkedList = null
-    listContainerEl = '> .list > ul'
-    columnResize = false
+    protected checkboxes: boolean = false
 
-    init() {
+    protected selectable: boolean = false
+
+    protected rowActionsView: string | null = null
+
+    /**
+     * @internal
+     */
+    protected _internalLayoutType: string = 'list-row-expanded'
+
+    protected paginationDisabled: boolean = true
+
+    protected header: boolean = false
+
+    protected listContainerEl: string = '> .list > ul'
+
+    protected columnResize = false
+
+    protected init() {
         if (this.options.forcePagination) {
             this.paginationDisabled = false;
         }
@@ -53,7 +92,7 @@ class ListExpandedRecordView extends ListRecordView {
         super.init();
     }
 
-    setup() {
+    protected setup() {
         super.setup();
 
         this.on('after:save', model => {
@@ -70,7 +109,10 @@ class ListExpandedRecordView extends ListRecordView {
         this.displayTotalCount = false;
     }
 
-    _loadListLayout(callback) {
+    /**
+     * @internal
+     */
+    protected _loadListLayout(callback: (layout: ListExpandedLayout) => void) {
         const type = this.type + 'Expanded';
 
         this.layoutLoadCallbackList.push(callback);
@@ -81,9 +123,9 @@ class ListExpandedRecordView extends ListRecordView {
 
         this.layoutIsBeingLoaded = true;
 
-        this._helper.layoutManager.get(this.collection.entityType, type, listLayout => {
-            this.layoutLoadCallbackList.forEach(c => {
-                c(listLayout);
+        this.getHelper().layoutManager.get(this.collection.entityType, type, (listLayout: any) => {
+            this.layoutLoadCallbackList.forEach(callbackItem => {
+                callbackItem(listLayout);
 
                 this.layoutLoadCallbackList = [];
                 this.layoutIsBeingLoaded = false;
@@ -91,13 +133,16 @@ class ListExpandedRecordView extends ListRecordView {
         });
     }
 
-    _convertLayout(listLayout, model) {
+    /**
+     * @internal
+     */
+    protected _convertLayout(listLayout: ListExpandedLayout, model?: Model) {
         model = model || this.collection.prepareModel();
 
         const layout = {
             rows: [],
             right: false,
-        };
+        } as any;
 
         for (const i in listLayout.rows) {
             const row = listLayout.rows[i];
@@ -123,7 +168,7 @@ class ListExpandedRecordView extends ListRecordView {
                     align: rowItem.align,
                     small: rowItem.small,
                     soft: rowItem.soft,
-                };
+                } as any;
 
                 if (rowItem.options) {
                     for (const optionName in rowItem.options) {
@@ -163,77 +208,86 @@ class ListExpandedRecordView extends ListRecordView {
                     },
                 };
             }
-        }
-        else if (this.rowActionsView) {
+        } else if (this.rowActionsView) {
             layout.right = this.getRowActionsDefs();
         }
 
         return layout;
     }
 
-    getRowSelector(id) {
-        return 'li[data-id="' + id + '"]';
+    protected getRowSelector(id: string): string {
+        return `li[data-id="${id}"]`;
     }
 
-    getCellSelector(model, item) {
+    protected getCellSelector(
+        model: Model,
+        item: Record<string, any> & {columnName: string},
+    ): string {
+
         const name = item.field || item.columnName;
 
-        return `${this.getSelector()} ${this.getRowSelector(model.id)} .cell[data-name="${name}"]`;
+        if (!model.id) {
+            console.warn(`No record ID.`);
+        }
+
+        return `${this.getSelector()} ${this.getRowSelector(model.id!)} .cell[data-name="${name}"]`;
     }
 
-    getRowContainerHtml(id) {
-        return $('<li>')
-            .attr('data-id', id)
-            .addClass('list-group-item list-row')
-            .get(0).outerHTML;
+    protected getRowContainerHtml(id: string): string {
+        const li = document.createElement('li');
+        li.dataset.id = id;
+        li.className = 'list-group-item list-row';
+
+        return li.outerHTML;
     }
 
-    prepareInternalLayout(internalLayout, model) {
-        const rows = internalLayout.rows || [];
+    /**
+     * @internal
+     */
+    protected prepareInternalLayout(internalLayout: any, model: Model) {
+        const rows = (internalLayout.rows ?? []) as any[][];
 
         rows.forEach(row => {
             row.forEach(cell => {
-                //cell.fullSelector = this.getCellSelector(model, cell);
-
                 cell.options ??= {};
                 cell.options.fullSelector = this.getCellSelector(model, cell)
             });
         });
 
         if (internalLayout.right) {
-            //internalLayout.right.fullSelector = this.getCellSelector(model, internalLayout.right);
-
             internalLayout.right.options ??= {};
             internalLayout.right.options.fullSelector = this.getCellSelector(model, internalLayout.right);
         }
     }
 
-    fetchAttributeListFromLayout() {
-        const list = [];
+    protected fetchAttributeListFromLayout(): string[] {
+        const entityType = this.entityType;
 
-        if (this.listLayout.rows) {
-            this.listLayout.rows.forEach((row) => {
-                row.forEach(item => {
-                    if (!item.name) {
-                        return;
-                    }
-
-                    const field = item.name;
-
-                    const fieldType = this.getMetadata().get(['entityDefs', this.scope, 'fields', field, 'type']);
-
-                    if (!fieldType) {
-                        return;
-                    }
-
-                    this.getFieldManager()
-                        .getEntityTypeFieldAttributeList(this.scope, field)
-                        .forEach((attribute) => {
-                            list.push(attribute);
-                        });
-                });
-            });
+        if (!this.listLayout?.rows || !entityType) {
+            return [];
         }
+
+        const list: string[] = [];
+
+        this.listLayout.rows.forEach(row => {
+            row.forEach(item => {
+                if (!item.name) {
+                    return;
+                }
+
+                const field = item.name;
+
+                const fieldType = this.getMetadata().get(['entityDefs', entityType, 'fields', field, 'type']);
+
+                if (!fieldType) {
+                    return;
+                }
+
+                this.getFieldManager()
+                    .getEntityTypeFieldAttributeList(entityType, field)
+                    .forEach((attribute) => list.push(attribute));
+            });
+        });
 
         return list;
     }
