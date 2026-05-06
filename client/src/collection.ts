@@ -95,13 +95,13 @@ export interface CollectionOptions {
      * A model.
      */
     model?: typeof Model;
-    defs: import('model').ModelDefs;
+    defs?: import('model').ModelDefs;
     maxSize?: number;
     entityType?: string | null;
     urlRoot?: string;
     url?: string;
-    orderBy: string | null;
-    order: 'asc' | 'desc' | boolean;
+    orderBy?: string | null;
+    order?: 'asc' | 'desc' | boolean;
 }
 
 export default class Collection<TModel extends Model = Model> {
@@ -228,20 +228,11 @@ export default class Collection<TModel extends Model = Model> {
 
     /**
      * @param {Model[]|Record<string, *>[]|null} [models] Models.
-     * @param {{
-     *     entityType?: string,
-     *     model?: Model.prototype,
-     *     defs?: import('model').ModelDefs,
-     *     order?: 'asc'|'desc'|boolean|null,
-     *     orderBy?: string|null,
-     *     urlRoot?: string,
-     *     url?: string,
-     *     maxSize?: number,
-     * }} [options] Options.
+     * @param [options] Options.
      */
     constructor(
-        models?: TModel[] | Record<string, any>[] | null,
-        options?: CollectionOptions,
+        models: TModel[] | Record<string, any>[] | null = null,
+        options: CollectionOptions = {},
     ) {
         options = {...options};
 

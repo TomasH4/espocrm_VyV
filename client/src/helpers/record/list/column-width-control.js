@@ -38,7 +38,7 @@ export default class ListColumnWidthControlHelper {
 
     /**
      * @param {{
-     *     view?: import('views/record/list').default,
+     *     view?: import('views/record/list-base').default,
      *     helper: import('helpers/list/settings').default,
      *     layoutProvider?: function(): {
      *          name: string,

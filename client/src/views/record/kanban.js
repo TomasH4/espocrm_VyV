@@ -82,7 +82,7 @@ class KanbanRecordView extends ListRecordView {
      * A button list.
      *
      * @protected
-     * @type {module:views/record/list~button[]}
+     * @inheritDoc
      */
     buttonList = []
 
