@@ -28,6 +28,12 @@
 
 import View from 'view';
 
+/**
+ * @typedef {Object} RecordListSettingsViewOnChangeOptions
+ * @property {'resetToDefault'|'toggleColumn'|'toggleColumnResize'} action An action.
+ * @property {string} [column] A column.
+ */
+
 class RecordListSettingsView extends View {
 
     // language=Handlebars
@@ -101,14 +107,8 @@ class RecordListSettingsView extends View {
     }
 
     /**
-     * @typedef {Object} RecordListSettingsView~onChangeOptions
-     * @property {'resetToDefault'|'toggleColumn'|'toggleColumnResize'} action An action.
-     * @property {string} [column] A column.
-     */
-
-    /**
      * @param {{
-     *     layoutProvider: function(): {
+     *     layoutProvider: function(): ({
      *         name: string,
      *         width?: number,
      *         widthPx?: number,
@@ -116,10 +116,10 @@ class RecordListSettingsView extends View {
      *         customLabel?: string,
      *         noLabel?: boolean,
      *         hidden?: boolean,
-     *     }[],
+     *     }[]) | null,
      *     helper: import('helpers/list/settings').default,
      *     entityType: string,
-     *     onChange: function(RecordListSettingsView~onChangeOptions),
+     *     onChange: function(RecordListSettingsViewOnChangeOptions),
      *     columnResize?: boolean,
      * }} options
      */

@@ -81,7 +81,7 @@ class RecordModalHelper {
      * @param {{
      *   id: string,
      *   entityType: string,
-     *   model?: import('model').default,
+     *   model?: import('model').default | null,
      *   editDisabled?: boolean,
      *   removeDisabled?: boolean,
      *   fullFormDisabled?: boolean,
@@ -183,7 +183,7 @@ class RecordModalHelper {
      * @param {{
      *   entityType: string,
      *   id?: string,
-     *   model?: import('model').default,
+     *   model?: import('model').default | null,
      *   rootUrl?: string,
      *   fullFormDisabled?: boolean,
      *   fullFormUrl?: string,

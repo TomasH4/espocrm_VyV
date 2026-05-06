@@ -249,7 +249,7 @@ class EmailListRecordView extends ListRecordView {
         ids.forEach(id => {
             this.collection.trigger('moving-to-trash', id);
 
-            this.uncheckRecord(id, null, true);
+            this.uncheckRecord(id, true);
         });
     }
 
@@ -274,7 +274,7 @@ class EmailListRecordView extends ListRecordView {
         ids.forEach(id => {
             this.collection.trigger('retrieving-from-trash', id);
 
-            this.uncheckRecord(id, null, true);
+            this.uncheckRecord(id, true);
         });
     }
 
@@ -321,7 +321,7 @@ class EmailListRecordView extends ListRecordView {
             [...this.checkedList].forEach(id => {
                 this.collection.trigger('moving-to-archive', id);
 
-                this.uncheckRecord(id, null, true);
+                this.uncheckRecord(id, true);
             });
 
             Espo.Ui.info(this.translate('Moved to Archive', 'labels', 'Email'));
@@ -609,7 +609,7 @@ class EmailListRecordView extends ListRecordView {
 
                     if (this.rootData.selectedFolderId === 'drafts') {
                         this.removeRecordFromList(id);
-                        this.uncheckRecord(id, null, true);
+                        this.uncheckRecord(id, true);
                         this.collection.trigger('draft-sent');
                     }
                 }

@@ -64,7 +64,7 @@ export interface AccessDefs {
     isAdminOnly?: boolean;
 }
 
-interface ActionAvailabilityDefs {
+export interface ActionAvailabilityDefs {
     /**
      * A config path to check. Path items are separated
      * by the dot. If a config value is not empty, then the action is allowed.
@@ -73,7 +73,7 @@ interface ActionAvailabilityDefs {
     configCheck?: string | null;
 }
 
-interface ActionAccessDefs {
+export interface ActionAccessDefs {
     /**
      * An ACL action to check.
      */
@@ -268,7 +268,7 @@ const Utils = {
      * @param acl An ACL manager.
      * @param [obj] A scope or a model.
      * @param item Definitions.
-     * @param[isPrecise=false] To return `null` if not enough data is set in a model.
+     * @param [isPrecise=false] To return `null` if not enough data is set in a model.
      *   E.g. the `teams` field is not yet loaded.
      */
     checkActionAccess: function (

@@ -38,7 +38,6 @@ class ListExpandedRecordView extends ListRecordView {
     selectable = false
     rowActionsView = false
     _internalLayoutType = 'list-row-expanded'
-    presentationType = 'expanded'
     paginationDisabled = true
     header = false
     _internalLayout = null

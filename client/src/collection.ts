@@ -240,8 +240,8 @@ export default class Collection<TModel extends Model = Model> {
      * }} [options] Options.
      */
     constructor(
-        models: TModel[] | Record<string, any>[] | null,
-        options: CollectionOptions,
+        models?: TModel[] | Record<string, any>[] | null,
+        options?: CollectionOptions,
     ) {
         options = {...options};
 

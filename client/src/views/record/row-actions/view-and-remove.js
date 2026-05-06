@@ -31,7 +31,7 @@ import DefaultRowActionsView from 'views/record/row-actions/default';
 class ViewAndRemoveRowActionsView extends DefaultRowActionsView {
 
     getActionList() {
-        /** @type module:views/record/list~rowAction[] */
+        /** @type {import('views/record/list').RowAction[]} */
         const actionList = [{
             action: 'quickView',
             label: 'View',

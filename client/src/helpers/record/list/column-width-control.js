@@ -41,11 +41,11 @@ export default class ListColumnWidthControlHelper {
      *     view?: import('views/record/list').default,
      *     helper: import('helpers/list/settings').default,
      *     layoutProvider?: function(): {
-     *     name: string,
-     *     width?: number,
-     *     widthPx?: number,
-     *     hidden?: boolean,
-     * }[]
+     *          name: string,
+     *          width?: number,
+     *          widthPx?: number,
+     *          hidden?: boolean,
+     *     }[]
      * }} options
      */
     constructor(options) {

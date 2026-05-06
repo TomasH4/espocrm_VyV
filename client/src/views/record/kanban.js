@@ -182,6 +182,7 @@ class KanbanRecordView extends ListRecordView {
         this.groupChangeSaveHandler = options.groupChangeSaveHandler;
     }
 
+    // @todo Move to `setupEventHandlers`.
     events = {
         /** @this KanbanRecordView */
         'click a.link': function (e) {
@@ -322,7 +323,7 @@ class KanbanRecordView extends ListRecordView {
     }
 
     init() {
-        /** @type {module:views/record/list~columnDefs[]|null} */
+        /** @type {import('views/record/detail').ColumnDefs[]|null} */
         this.listLayout = this.options.listLayout || this.listLayout;
         this.type = this.options.type || this.type;
 
@@ -348,11 +349,12 @@ class KanbanRecordView extends ListRecordView {
         return this.scope;
     }
 
-    /** @inheritDoc */
     setup() {
         if (typeof this.collection === 'undefined') {
             throw new Error('Collection has not been injected into Record.List view.');
         }
+
+        this.setupEventHandlers();
 
         this.collection.onSync({
             owner: this,
@@ -479,6 +481,11 @@ class KanbanRecordView extends ListRecordView {
          */
         this.hasStars = this.getMetadata().get(`scopes.${this.entityType}.stars`) || false;
     }
+
+    /**
+     * @protected
+     */
+    setupEventHandlers() {}
 
     /**
      * @private
@@ -1350,8 +1357,13 @@ class KanbanRecordView extends ListRecordView {
         });
     }
 
+    /**
+     * @protected
+     * @param {string}id
+     * @return {HTMLElement | null}
+     */
     getDomRowItem(id) {
-        return this.$el.find('.item[data-id="'+id+'"]');
+        return this.element.querySelector(`.item[data-id="${id}"]`);
     }
 
     getRowContainerHtml(id) {

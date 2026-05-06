@@ -168,10 +168,10 @@ class DefaultRowActionsView extends View {
     /**
      * Get an action list.
      *
-     * @return {module:views/record/list~rowAction[]}
+     * @return {import('views/record/list').RowAction[]}
      */
     getActionList() {
-        /** @type {module:views/record/list~rowAction[]} */
+        /** @type {import('views/record/list').RowAction[]} */
         const list = [{
             action: 'quickView',
             label: 'View',
@@ -214,7 +214,7 @@ class DefaultRowActionsView extends View {
      * Not to be overridden.
      *
      * @protected
-     * @return {module:views/record/list~rowAction[]}
+     * @return {import('views/record/list').RowAction[]}
      */
     getAdditionalActionList() {
         const list = [];

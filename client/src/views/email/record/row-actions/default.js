@@ -39,7 +39,7 @@ class EmailDefaultRowActionView extends DefaultRowActionsView {
     }
 
     getActionList() {
-        /** @type {module:views/record/list~rowAction[]} */
+        /** @type {import('views/record/list').RowAction[]} */
         let list = [{
             action: 'quickView',
             label: 'View',
