@@ -32,6 +32,7 @@ import ListRecordView from 'views/record/list';
 import RecordModal from 'helpers/record-modal';
 import KanbanPipelineDropdownView from 'views/record/kanban/pipeline-dropdown';
 import PipelinesHelper from 'helpers/misc/pipelines';
+import _ from 'underscore';
 
 /**
  * A kanban record view.

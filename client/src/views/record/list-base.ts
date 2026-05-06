@@ -523,7 +523,10 @@ abstract class ListBaseRecordView<
      */
     protected rootData: Record<string, unknown>
 
-    private _additionalRowActionList: any[]
+    /**
+     * @internal
+     */
+    protected _additionalRowActionList: any[]
 
     private _columnResizeHelper: import('helpers/record/list/column-resize').default
 
@@ -580,7 +583,10 @@ abstract class ListBaseRecordView<
     private _cachedFilteredListLayout: TLayout
     private _cachedScopeForbiddenFieldList: string[]
 
-    private _rowActionHandlers: Record<string, any>
+    /**
+     * @internal
+     */
+    protected _rowActionHandlers: Record<string, any>
 
     focusOnList() {
         const element = this.element.querySelector<HTMLElement>('.list');

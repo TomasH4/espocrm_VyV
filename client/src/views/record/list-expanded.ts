@@ -53,7 +53,12 @@ export interface ListExpandedLayout {
     } | null;
 }
 
-export interface ListExpandedRecordViewOptions extends ListBaseRecordViewOptions<ListExpandedLayout> {}
+export interface ListExpandedRecordViewOptions extends ListBaseRecordViewOptions<ListExpandedLayout> {
+    /**
+     * Force pagination.
+     */
+    forcePagination?: boolean;
+}
 
 export interface ListExpandedRecordViewSchema extends ListBaseRecordViewSchema<ListExpandedLayout> {
     options: ListExpandedRecordViewOptions;
