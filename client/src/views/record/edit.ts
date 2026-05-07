@@ -26,30 +26,44 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module views/record/edit */
+import DetailRecordView, {
+    Button,
+    DetailRecordViewOptions,
+    DetailRecordViewSchema,
+    DropdownItem,
+} from 'views/record/detail';
+import {SaveOptions} from 'views/record/base';
 
-import DetailRecordView from 'views/record/detail';
+export interface EditRecordViewSchema extends DetailRecordViewSchema {
+    options: EditRecordViewOptions;
+}
+
+export interface EditRecordViewOptions extends DetailRecordViewOptions {
+    /**
+     * A duplicate record source ID.
+     */
+    duplicateSourceId?: string;
+
+    /**
+     * Fields to highlight after render.
+     */
+    highlightFieldList?: string[];
+}
 
 /**
  * An edit-record view. Used for create and edit.
  */
-class EditRecordView extends DetailRecordView {
+class EditRecordView<S extends EditRecordViewSchema = EditRecordViewSchema> extends DetailRecordView<S> {
 
-    /** @inheritDoc */
-    template = 'record/edit'
+    protected template: string = 'record/edit'
 
-    /** @inheritDoc */
-    type = 'edit'
-    /** @inheritDoc */
-    fieldsMode = 'edit'
-    /** @inheritDoc */
-    mode = 'edit'
+    protected type: string = 'edit'
 
-    /**
-     * @inheritDoc
-     * @type {module:views/record/detail~button[]}
-     */
-    buttonList = [
+    protected override fieldsMode: DetailRecordView['fieldsMode'] = 'edit'
+
+    override mode: DetailRecordView['mode'] = 'edit'
+
+    protected buttonList: Button[] = [
         {
             name: 'save',
             label: 'Save',
@@ -60,68 +74,52 @@ class EditRecordView extends DetailRecordView {
             name: 'cancel',
             label: 'Cancel',
             title: 'Esc',
-        }
+        },
     ]
-    /**
-     * @inheritDoc
-     * @type {Array<module:views/record/detail~dropdownItem>}
-     */
-    dropdownItemList = []
 
-    /** @inheritDoc */
-    sideView = 'views/record/edit-side'
-    /** @inheritDoc */
-    bottomView = 'views/record/edit-bottom'
-    /** @inheritDoc */
-    duplicateAction = false
-    /** @inheritDoc */
-    saveAndContinueEditingAction = true
-    /** @inheritDoc */
-    saveAndNewAction = true
-    /** @inheritDoc */
-    setupHandlerType = 'record/edit'
+    protected dropdownItemList: DropdownItem[] = []
 
-    /**
-     * @param {
-     *     module:views/record/detail~options |
-     *     {
-     *         duplicateSourceId?: string,
-     *         focusForCreate?: boolean,
-     *     }
-     * } options Options.
-     */
-    constructor(options) {
-        super(options);
-    }
+    protected sideView: string = 'views/record/edit-side'
 
-    /** @inheritDoc */
-    actionSave(data) {
+    protected bottomView: string = 'views/record/edit-bottom'
+
+    protected duplicateAction: boolean = false
+
+    protected saveAndContinueEditingAction: boolean = true
+
+    protected saveAndNewAction: boolean = true
+
+    protected setupHandlerType: string = 'record/edit'
+
+    protected async actionSave(data?: {options?: SaveOptions}): Promise<void> {
         data = data || {};
 
         const isNew = this.isNew;
 
-        return this.save(data.options)
-            .then(() => {
-                if (this.options.duplicateSourceId) {
-                    this.returnUrl = null;
-                }
+        try {
+            await this.save(data.options);
+        } catch (reason) {
+            return await Promise.reject(reason);
+        }
 
-                this.exit(isNew ? 'create' : 'save');
-            })
-            .catch(reason => Promise.reject(reason));
+        if (this.options.duplicateSourceId) {
+            this.returnUrl = null;
+        }
+
+        this.exit(isNew ? 'create' : 'save');
     }
 
     /**
      * A `cancel` action.
      */
-    actionCancel() {
+    protected actionCancel() {
         this.cancel();
     }
 
     /**
      * Cancel.
      */
-    cancel() {
+    protected cancel() {
         if (this.isChanged) {
             this.resetModelChanges();
         }
@@ -130,10 +128,8 @@ class EditRecordView extends DetailRecordView {
         this.exit('cancel');
     }
 
-    /** @inheritDoc */
-    setupBeforeFinal() {
-        /** @type {Promise|undefined} */
-        let promise = undefined;
+    protected setupBeforeFinal() {
+        let promise: Promise<any> | undefined = undefined;
 
         if (this.model.isNew()) {
             promise = this.populateDefaults();
@@ -157,7 +153,7 @@ class EditRecordView extends DetailRecordView {
 
         if (this.model.isNew()) {
             this.once('after:render', () => {
-                this.model.set(this.fetch(), {silent: true});
+                this.model.setMultiple(this.fetch(), {silent: true});
             })
         }
 
@@ -176,12 +172,12 @@ class EditRecordView extends DetailRecordView {
         this.setupHighlight();
     }
 
-    /** @inheritDoc */
-    setupActionItems() {
+    protected setupActionItems() {
         super.setupActionItems();
 
         if (
             this.saveAndContinueEditingAction &&
+            this.entityType &&
             this.getAcl().checkScope(this.entityType, 'edit')
         ) {
             this.dropdownItemList.push({
@@ -195,6 +191,7 @@ class EditRecordView extends DetailRecordView {
         if (
             this.isNew &&
             this.saveAndNewAction &&
+            this.entityType &&
             this.getAcl().checkScope(this.entityType, 'create')
         ) {
             this.dropdownItemList.push({
@@ -209,7 +206,7 @@ class EditRecordView extends DetailRecordView {
     /**
      * A `save-and-create-new` action.
      */
-    actionSaveAndNew(data) {
+    protected actionSaveAndNew(data?: {focusForCreate?: boolean, options?: SaveOptions}) {
         data = data || {};
 
         const proceedCallback = () => {
@@ -220,7 +217,7 @@ class EditRecordView extends DetailRecordView {
                 focusForCreate: !!data.focusForCreate,
             });
 
-            this.getRouter().navigate('#' + this.scope + '/create', {trigger: false});
+            this.getRouter().navigate(`#${this.scope}/create`, {trigger: false});
         };
 
         this.save(data.options)
@@ -232,11 +229,7 @@ class EditRecordView extends DetailRecordView {
         }
     }
 
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyEscape(e) {
+    protected handleShortcutKeyEscape(event: KeyboardEvent) {
         if (this.buttonsDisabled) {
             return;
         }
@@ -245,17 +238,17 @@ class EditRecordView extends DetailRecordView {
             return;
         }
 
-        e.preventDefault();
-        e.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
         const focusedFieldView = this.getFocusedFieldView();
 
         if (focusedFieldView) {
-            this.model.set(focusedFieldView.fetch());
+            this.model.setMultiple(focusedFieldView.fetch());
         }
 
         if (this.isChanged) {
-            this.confirm(this.translate('confirmLeaveOutMessage', 'messages'))
+            this.confirm({message: this.translate('confirmLeaveOutMessage', 'messages')})
                 .then(() => this.actionCancel());
 
             return;
@@ -264,17 +257,13 @@ class EditRecordView extends DetailRecordView {
         this.actionCancel();
     }
 
-    /**
-     * @protected
-     * @param {KeyboardEvent} e
-     */
-    handleShortcutKeyCtrlAltEnter(e) {
+    protected handleShortcutKeyCtrlAltEnter(event: KeyboardEvent) {
         if (this.buttonsDisabled) {
             return;
         }
 
-        e.preventDefault();
-        e.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
         if (!this.saveAndNewAction) {
             return;
@@ -287,18 +276,17 @@ class EditRecordView extends DetailRecordView {
         this.actionSaveAndNew({focusForCreate: true});
     }
 
-    /** @private */
-    setupHighlight() {
+    private setupHighlight() {
         if (!this.options.highlightFieldList) {
             return;
         }
 
         this.on('after:render', () => {
-            const fieldList = /** @type {string[]} */this.options.highlightFieldList;
+            const fieldList = this.options.highlightFieldList!;
 
             fieldList
                 .map(it => this.getFieldView(it))
-                .filter(view => view)
+                .filter(view => view != null)
                 .forEach(view => view.highlight());
         });
     }

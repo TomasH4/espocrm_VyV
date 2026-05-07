@@ -162,7 +162,7 @@ interface CellDefs {
     /**
      * An overridden field view name or a view instance.
      */
-    view?: string | BaseFieldView;
+    view?: string | BaseFieldView<any, any, any>;
     /**
      * An overridden field type.
      */
@@ -252,7 +252,6 @@ export interface PanelDefs {
      */
     noteStyle?: 'success' | 'danger' | 'warning' | 'info';
 }
-
 
 export interface DetailRecordViewSchema extends BaseRecordViewSchema {
     model: Model;
@@ -355,6 +354,10 @@ export interface DetailRecordViewOptions extends BaseRecordViewOptions {
      * Enable shortcut keys.
      */
     shortcutKeysEnabled?: boolean;
+    /**
+     * Focus on create.
+     */
+    focusForCreate?: boolean
     /**
      * Disable WebSocket.
      *
