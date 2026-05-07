@@ -42,7 +42,6 @@ import Ui from 'ui';
 import type Collection from 'collection';
 import type {WhereItem} from 'collection';
 import type Model from 'model';
-import {BaseRecordViewSchema} from 'views/record/base';
 import Ajax from 'ajax';
 import type MassUpdateModalView from 'views/modals/mass-update';
 
@@ -54,6 +53,10 @@ import type {Button, DropdownItem, MassActionItem} from 'views/record/list';
  * @internal
  */
 export interface ListBaseRecordViewOptions<TLayout = any> {
+    /**
+     * A collection.
+     */
+    collection?: Collection;
     /**
      * A layout.
      */
@@ -217,9 +220,21 @@ export interface ListBaseRecordViewOptions<TLayout = any> {
 /**
  * @internal
  */
-export interface ListBaseRecordViewSchema<TLayout> extends BaseRecordViewSchema {
+export interface ListBaseRecordViewSchema<TLayout> {
+    /**
+     * A collection.
+     */
     collection: Collection;
+    /**
+     * Options.
+     */
     options: ListBaseRecordViewOptions<TLayout>;
+    /**
+     * A model for related lists.
+     *
+     * @internal
+     */
+    model?: Model;
 }
 
 /**
@@ -229,6 +244,10 @@ abstract class ListBaseRecordView<
     TLayout extends any,
     S extends ListBaseRecordViewSchema<TLayout>,
 > extends View<S> {
+
+    constructor(options: S['options'] & {collection: S['collection']}) {
+        super(options);
+    }
 
     protected template: string = 'record/list'
 
@@ -1627,7 +1646,7 @@ abstract class ListBaseRecordView<
         Ui.success(this.translate('Unlinked'));
 
         this.collection.fetch();
-        this.model.trigger('after:unrelate');
+        (this.model ?? this.collection.parentModel)?.trigger('after:unrelate');
     }
 
     // noinspection JSUnusedGlobalSymbols

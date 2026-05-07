@@ -69,6 +69,7 @@ export interface BaseRecordViewSchema {
 }
 
 export interface BaseRecordViewOptions {
+    model: Model;
     recordHelper?: ViewRecordHelper;
 }
 
@@ -174,7 +175,7 @@ class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> exte
 
     options: S['options']
 
-    constructor(options: {model: S['model']} & S['options']) {
+    constructor(options: S['options'] & {model: S['model']}) {
         super(options);
     }
 
