@@ -37,7 +37,7 @@ import Collection, {WhereItem} from 'collection';
  * Search data.
  */
 interface Data {
-    presetName?: string;
+    presetName?: string | null;
     textFilter?: string;
     primary?: string | null;
     bool?: Record<string, boolean>;
@@ -80,12 +80,19 @@ class SearchManager {
     private storage: Storage
 
     private timeZone: string | null = null
+
     private readonly defaultData: InternalData
+
     private readonly scope: string | null
+
     private readonly storageKey: string | null
+
     private readonly useStorage: boolean
+
     private readonly emptyOnReset: boolean
+
     private readonly emptyData: InternalData
+
     private data: InternalData
 
     /**
@@ -310,7 +317,7 @@ class SearchManager {
     /**
      * Get data.
      */
-    get(): Data {
+    get(): InternalData {
         return this.data;
     }
 
@@ -361,7 +368,7 @@ class SearchManager {
      *
      * @param data Data.
      */
-    set(data: Data) {
+    set(data: InternalData) {
         this.data = data;
 
         if (this.useStorage && this.scope) {

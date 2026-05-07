@@ -492,7 +492,7 @@ class LinkParentFieldView<
                     triggerSelectOnValidInput: false,
                     forceHide: true,
                     minChars: this.autocompleteOnEmpty ? 0 : 1,
-                    onSelect: async (item: {attributes: any}) => {
+                    onSelect: async (item: any & {attributes: any}) => {
                         const entityType = this.foreignScope;
 
                         if (!entityType) {

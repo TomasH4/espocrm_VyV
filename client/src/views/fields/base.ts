@@ -1685,4 +1685,12 @@ export default class BaseFieldView<
     protected toSkipReRenderOnChange(): boolean {
         return false;
     }
+
+    /**
+     * @internal
+     * @since 10.0.0
+     */
+    setSearchParams(params: Record<string, any>) {
+        this.searchParams = params;
+    }
 }

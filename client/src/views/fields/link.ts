@@ -705,7 +705,7 @@ class LinkFieldView<
                         autoSelectFirst: true,
                         triggerSelectOnValidInput: false,
                         forceHide: true,
-                        onSelect: async (item: {attributes: Record<string, any>}) => {
+                        onSelect: async (item: any & {attributes: Record<string, any>}) => {
                            const model = await this.getModelFactory().create(this.foreignScope);
 
                             model.setMultiple(item.attributes);
@@ -761,8 +761,8 @@ class LinkFieldView<
         }
     }
 
-    private _transformAutocompleteResult(response: {list: Record<string, any>[]}): Record<string, any[]> {
-        const list: Record<string, any> = [];
+    private _transformAutocompleteResult(response: {list: Record<string, any>[]}): Record<string, any>[] {
+        const list: Record<string, any>[] = [];
 
         response.list.forEach(item => {
             const name = item[this.foreignNameAttribute] || item.name || item.id;

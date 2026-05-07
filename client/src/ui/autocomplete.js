@@ -37,31 +37,31 @@ import Handlebars from 'handlebars';
  */
 
 /**
+ * @typedef {{
+ *     name?: string,
+ *     forceHide?: boolean,
+ *     lookup?: string[],
+ *     lookupFunction?: function (string): Promise<Array<AutocompleteItem & Record>>,
+ *     minChars?: Number,
+ *     formatResult?: function (AutocompleteItem & Record<string, any>): string,
+ *     onSelect?: function (AutocompleteItem & Record<string, any>): void,
+ *     beforeRender?: function (HTMLElement): void,
+ *     triggerSelectOnValidInput?: boolean,
+ *     autoSelectFirst?: boolean,
+ *     handleFocusMode?: 1|2|3,
+ *     focusOnSelect?: boolean,
+ *     catchFastEnter?: boolean,
+ * }} AutocompleteOptions
+ */
+
+/**
  * An autocomplete.
  */
 class Autocomplete {
 
     /**
-     * @typedef {{
-     *     name?: string,
-     *     forceHide?: boolean,
-     *     lookup?: string[],
-     *     lookupFunction?: function (string): Promise<Array<AutocompleteItem & Record>>,
-     *     minChars?: Number,
-     *     formatResult?: function (AutocompleteItem & Record<string, any>): string,
-     *     onSelect?: function (AutocompleteItem & Record<string, any>): void,
-     *     beforeRender?: function (HTMLElement): void,
-     *     triggerSelectOnValidInput?: boolean,
-     *     autoSelectFirst?: boolean,
-     *     handleFocusMode?: 1|2|3,
-     *     focusOnSelect?: boolean,
-     *     catchFastEnter?: boolean,
-     * }} module:ui/autocomplete~options
-     */
-
-    /**
      * @param {HTMLInputElement} element
-     * @param {module:ui/autocomplete~options} options
+     * @param {AutocompleteOptions} options
      */
     constructor(element, options) {
         /** @private */
@@ -201,7 +201,7 @@ class Autocomplete {
 
     /**
      * @private
-     * @param {module:ui/autocomplete~options} options
+     * @param {AutocompleteOptions} options
      */
     initHandleFocus(options) {
         this.$element.off('focus.autocomplete');

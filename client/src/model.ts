@@ -474,7 +474,7 @@ export default class Model<T extends Record<string, unknown> = Record<string, an
      * @param {{silent?: boolean} & Object.<string, *>} [options] Options.
      */
     clear(
-        options: {silent?: boolean} & Record<string, any>,
+        options?: {silent?: boolean} & Record<string, any>,
     ): this {
 
         const attributes = {} as Partial<T>;
