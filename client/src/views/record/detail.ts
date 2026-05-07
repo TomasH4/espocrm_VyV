@@ -45,6 +45,12 @@ import Ui from 'ui';
 import DynamicHandler from 'dynamic-handler';
 import type Collection from 'collection';
 
+type ReturnDispatchParams = Record<string, unknown> & {
+    controller?: string;
+    action?: string;
+    options?: Record<string, unknown>;
+};
+
 /**
  * A panel soft-locked type.
  */
@@ -364,6 +370,44 @@ export interface DetailRecordViewOptions extends BaseRecordViewOptions {
      * @since 9.2.0
      */
     webSocketDisabled?: boolean;
+    /**
+     * Disable the bottom view.
+     */
+    bottomDisabled?: boolean;
+    /**
+     * Disable the side view.
+     */
+    sideDisabled?: boolean;
+    /**
+     * The index of the record in the collection.
+     *
+     * @internal
+     */
+    indexOfRecord?: number
+    /**
+     * Return dispatch parameters.
+     *
+     * @internal
+     */
+    returnDispatchParams?: ReturnDispatchParams;
+    /**
+     * Is return.
+     *
+     * @internal
+     */
+    isReturn?: boolean;
+    /**
+     * A type.
+     *
+     * @internal
+     */
+    type?: string;
+    /**
+     * An exist function.
+     *
+     * @internal
+     */
+    exit?: (action: string) => {};
 }
 
 /**
@@ -477,11 +521,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
     /**
      * A return dispatch params. Can be overridden by an option parameter.
      */
-    protected returnDispatchParams: Record<string, unknown> & {
-        controller?: string;
-        action?: string;
-        options?: Record<string, unknown>;
-    } | null = null
+    protected returnDispatchParams: ReturnDispatchParams | null = null
 
     /**
      * A middle view name.
@@ -1940,8 +1980,8 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
                 collection.trigger('sync', collection, {}, {});
             });
 
-            if ('indexOfRecord' in this.options) {
-                this.indexOfRecord = this.options.indexOfRecord;
+            if (this.options.indexOfRecord != null) {
+                this.indexOfRecord = this.options.indexOfRecord!;
             } else {
                 this.indexOfRecord = collection.indexOf(this.model);
             }
@@ -2031,10 +2071,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
 
         this.inlineEditDisabled = this.options.inlineEditDisabled || this.inlineEditDisabled;
         this.navigateButtonsDisabled = this.options.navigateButtonsDisabled || this.navigateButtonsDisabled;
-        this.portalLayoutDisabled = this.options.portalLayoutDisabled || this.portalLayoutDisabled;
         this.dynamicLogicDefs = this.options.dynamicLogicDefs ?? this.dynamicLogicDefs;
-
-        this.accessControlDisabled = this.options.accessControlDisabled || this.accessControlDisabled;
 
         this.dataObject = this.options.dataObject || {};
         this.rootData = this.options.rootData || {};

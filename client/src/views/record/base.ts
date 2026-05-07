@@ -172,6 +172,12 @@ class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> exte
      */
     protected forcePatchAttributeDependencyMap: Record<string, string[]>
 
+    options: S['options']
+
+    constructor(options: {model: S['model']} & S['options']) {
+        super(options);
+    }
+
     /**
      * Get pre-save attributes.
      *
