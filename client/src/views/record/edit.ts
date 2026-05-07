@@ -33,6 +33,7 @@ import DetailRecordView, {
     DropdownItem,
 } from 'views/record/detail';
 import {SaveOptions} from 'views/record/base';
+import Ui from 'ui';
 
 export interface EditRecordViewSchema extends DetailRecordViewSchema {
     options: EditRecordViewOptions;
@@ -210,7 +211,7 @@ class EditRecordView<S extends EditRecordViewSchema = EditRecordViewSchema> exte
         data = data || {};
 
         const proceedCallback = () => {
-            Espo.Ui.success(this.translate('Created'));
+            Ui.success(this.translate('Created'));
 
             this.getRouter().dispatch(this.scope, 'create', {
                 rootUrl: this.options.rootUrl,
