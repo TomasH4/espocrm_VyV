@@ -531,12 +531,12 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
     /**
      * A side view name.
      */
-    protected sideView: string = 'views/record/detail-side'
+    protected sideView: string | null = 'views/record/detail-side'
 
     /**
      * A bottom view name.
      */
-    protected bottomView: string = 'views/record/detail-bottom'
+    protected bottomView: string | null = 'views/record/detail-bottom'
 
     /**
      * Disable a side view. Can be overridden by an option parameter.
@@ -3185,7 +3185,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
     protected createSideView() {
         const el = this.getSelector() || '#' + (this.id);
 
-        this.createView('side', this.sideView, {
+        this.createView('side', this.sideView!, {
             model: this.model,
             scope: this.scope,
             fullSelector: el + ' .side',
@@ -3236,12 +3236,11 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
     /**
      * Create a bottom view.
      *
-     * @protected
      */
-    createBottomView() {
+    protected createBottomView() {
         const el = this.getSelector() || '#' + (this.id);
 
-        this.createView('bottom', this.bottomView, {
+        this.createView('bottom', this.bottomView!, {
             model: this.model,
             scope: this.scope,
             fullSelector: el + ' .bottom',

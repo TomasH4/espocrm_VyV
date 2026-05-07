@@ -80,9 +80,9 @@ class EditRecordView<S extends EditRecordViewSchema = EditRecordViewSchema> exte
 
     protected dropdownItemList: DropdownItem[] = []
 
-    protected sideView: string = 'views/record/edit-side'
+    protected sideView: DetailRecordView['sideView'] = 'views/record/edit-side'
 
-    protected bottomView: string = 'views/record/edit-bottom'
+    protected bottomView: DetailRecordView['bottomView'] = 'views/record/edit-bottom'
 
     protected duplicateAction: boolean = false
 

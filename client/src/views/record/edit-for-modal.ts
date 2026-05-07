@@ -26,21 +26,24 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module views/record/edit-for-modal */
-
-import EditRecordView from 'views/record/edit';
+import EditRecordView, {EditRecordViewSchema} from 'views/record/edit';
 
 /**
  * An edit-record view to used for custom forms.
  */
-class EditForModalRecordView extends EditRecordView {
+class EditForModalRecordView<S extends EditRecordViewSchema = EditRecordViewSchema> extends EditRecordView<S> {
 
-    bottomView = null
-    sideView = null
-    buttonsDisabled = true
-    isWide = true
-    accessControlDisabled = true
-    confirmLeaveDisabled = true
+    protected bottomView: EditRecordView['bottomView'] = null
+
+    protected sideView: EditRecordView['sideView'] = null
+
+    protected buttonsDisabled: boolean = true
+
+    protected isWide: boolean = true
+
+    protected accessControlDisabled: boolean = true
+
+    protected confirmLeaveDisabled: boolean = true
 }
 
 export default EditForModalRecordView;
