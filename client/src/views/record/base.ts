@@ -607,8 +607,8 @@ class BaseRecordView<S extends BaseRecordViewSchema = BaseRecordViewSchema> exte
      *
      * @param name A field name.
      */
-    getFieldView(name: string): BaseFieldView | null {
-        let view = this.getView<BaseFieldView>(`${name}Field`) || null;
+    getFieldView(name: string): BaseFieldView<any, any> | null {
+        let view = this.getView<BaseFieldView<any, any>>(`${name}Field`) || null;
 
         // @todo Remove.
         if (!view) {
