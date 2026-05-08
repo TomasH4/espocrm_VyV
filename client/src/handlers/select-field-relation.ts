@@ -33,7 +33,10 @@ import type Model from 'model';
 /**
  * @since 10.0.0
  */
-abstract class SelectFieldRelationHandler<M extends Model = Model> implements SelectFieldHandler<M> {
+abstract class SelectFieldRelationHandler<
+    M extends Model = Model,
+    P extends Model = Model,
+> implements SelectFieldHandler<M> {
 
     /**
      * @internal
@@ -42,14 +45,13 @@ abstract class SelectFieldRelationHandler<M extends Model = Model> implements Se
 
     /**
      * A parent model.
-     *
      */
-    protected readonly model: Model;
+    protected readonly model: P
 
     /**
      * @internal
      */
-    constructor(viewHelper: ViewHelper, model: Model) {
+    constructor(viewHelper: ViewHelper, model: P) {
         this.viewHelper = viewHelper;
         this.model = model;
     }
