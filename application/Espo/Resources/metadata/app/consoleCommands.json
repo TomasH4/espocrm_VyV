@@ -64,6 +64,18 @@
         "listed": true,
         "noSystemUser": true
     },
+    "config:get": {
+        "className": "Espo\\Classes\\ConsoleCommands\\GetConfigParam",
+        "listed": true,
+        "allowedFlags": ["json"],
+        "noSystemUser": true
+    },
+    "config:set": {
+        "className": "Espo\\Classes\\ConsoleCommands\\SetConfigParam",
+        "listed": true,
+        "allowedOptions": ["type"],
+        "noSystemUser": true
+    },
     "migrate": {
         "listed": true,
         "noSystemUser": true
