@@ -482,15 +482,15 @@
                     },
                     "selectHandler": {
                         "type": "string",
-                        "description": "A select handler for providing filters when selecting related records. Should have a method *getFilters* returning a promise.  Optionally, extend from `handlers/select-related`. \n\nPromise value:\n```{bool?: string[], primary?: string, orderBy?: string, order?: 'asc'|'desc', advanced: Record}```"
+                        "description": "A select handler for providing filters when selecting related records. Should implement `contracts/relation.SelectRelatedHandler`  Optionally, extend from `handlers/select-related`."
                     },
                     "createHandler": {
                         "type": "string",
-                        "description": "A create handler. Provides attributes when creating a new related record. Should have a method *getAttributes* returning a promise. Optionally, extend from `handlers/create-related`."
+                        "description": "A create handler. Provides attributes when creating a new related record. Should implement `contracts/relation.CreateRelatedHandler`. Optionally, extend from `handlers/create-related`."
                     },
                     "selectFieldHandler": {
                         "type": "string",
-                        "description": "A handler called when change a link field. Only for belongs-to and has-one relations. Should have *getAttributes* and *getClearAttributes* methods."
+                        "description": "A handler called when change a link field. Only for belongs-to and has-one relations. Should implement `contracts/relation.SelectFieldHandler`."
                     },
                     "layout": {
                         "type": "string",

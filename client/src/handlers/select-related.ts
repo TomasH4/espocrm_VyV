@@ -26,32 +26,40 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
+import type {SelectRelatedFilters, SelectRelatedHandler as SelectRelatedHandlerInterface} from 'contracts/relation';
+import type ViewHelper from 'view-helper';
+import type Model from 'model';
+
 /**
- * Prepares attributes for a related record that is being created.
- *
- * @abstract
+ * Prepares filters for selecting records to relate.
+ * Use the interface directly rather than extending this class.
  */
-class CreateRelatedHandler {
+abstract class SelectRelatedHandler<M extends Model = Model> implements SelectRelatedHandlerInterface<M> {
 
     /**
-     * @param {module:view-helper} viewHelper
+     * @internal
      */
-    constructor(viewHelper) {
-        // noinspection JSUnusedGlobalSymbols
+    protected readonly viewHelper: ViewHelper
+
+    /**
+     * @internal
+     */
+    constructor(viewHelper: ViewHelper) {
         this.viewHelper = viewHelper;
     }
 
     /**
-     * Get attributes for a new record.
+     * @inheritDoc
      *
-     * @abstract
-     * @param {module:model} model A model.
-     * @param {string} link A link name. As of v9.2.0.
-     * @return {Promise<Object.<string, *>>} Attributes.
+     * @param model A model.
+     * @return {Promise<SelectRelatedFilters>} Filters.
      */
-    getAttributes(model, link) {
-        return Promise.resolve({});
+    async getFilters(model: M): Promise<SelectRelatedFilters> {
+        // noinspection BadExpressionStatementJS
+        model;
+
+        return {};
     }
 }
 
-export default CreateRelatedHandler;
+export default SelectRelatedHandler;

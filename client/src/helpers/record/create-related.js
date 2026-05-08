@@ -75,8 +75,8 @@ class CreateRelatedHelper {
 
         if (handler) {
             const Handler = await Espo.loader.requirePromise(handler);
-            /** @type {import('handlers/create-related').default} */
-            const handlerObj = new Handler(this.view.getHelper());
+            /** @type {import('contracts/relation').CreateRelatedHandler} */
+            const handlerObj = new Handler(this.view.getHelper(), {link: link});
 
             const additionalAttributes = await handlerObj.getAttributes(model, link);
 

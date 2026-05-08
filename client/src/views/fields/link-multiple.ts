@@ -35,6 +35,8 @@ import Model from 'model';
 import {AjaxPromise} from 'util/ajax';
 import Ajax from 'ajax';
 import Ui from 'ui';
+import {SelectRelatedHandler} from 'contracts/relation';
+import CreateRelatedHandler from 'handlers/create-related';
 
 
 interface LinkMultipleParams extends BaseParams{
@@ -1042,17 +1044,18 @@ class LinkMultipleFieldView<
                 return Promise.resolve(attributes);
             }
 
-            return new Promise(resolve => {
-                Espo.loader.requirePromise(this.panelDefs.createHandler)
-                    .then((Handler: any) => new Handler(this.getHelper()))
-                    .then(async /** import('handlers/create-related').default */handler => {
-                        const additionalAttributes = await handler.getAttributes(this.model, this.name);
+            return new Promise(async resolve => {
+                const handler = this.panelDefs.createHandler;
 
-                        resolve({
-                            ...attributes,
-                            ...additionalAttributes,
-                        });
-                    });
+                const Handler = await Espo.loader.requirePromise<new (...args: any[]) => CreateRelatedHandler>(handler);
+                const handlerInstance = new Handler(this.getHelper());
+
+                const additionalAttributes = await handlerInstance.getAttributes(this.model, this.name);
+
+                resolve({
+                    ...attributes,
+                    ...additionalAttributes,
+                });
             });
         };
     }
@@ -1068,7 +1071,7 @@ class LinkMultipleFieldView<
         });
     }
 
-    private _getSelectFilters(): Promise<SelectFilters>  {
+    private _getSelectFilters(): Promise<SelectFilters> {
         const handler = this.panelDefs.selectHandler;
 
         const localBoolFilterList = this.getSelectBoolFilterList();
@@ -1094,36 +1097,32 @@ class LinkMultipleFieldView<
         }
 
         return new Promise(async resolve => {
-            Espo.loader.requirePromise(handler)
-                .then((Handler: any) => new Handler(this.getHelper()))
-                .then(/** module:handlers/select-related */handler => {
-                    return handler.getFilters(this.model);
-                })
-                .then(filters => {
-                    const advanced = {
-                        ...(this.getSelectFilters() || {}),
-                        ...(filters.advanced || {}),
-                        ...this._getCascadingFilters(),
-                    };
+            const Handler = await Espo.loader.requirePromise<new (...args: any[]) => SelectRelatedHandler>(handler);
+            const filters = await new Handler(this.getHelper()).getFilters(this.model);
 
-                    const primaryFilter = this.getSelectPrimaryFilterName() ||
-                        filters.primary || this.panelDefs.selectPrimaryFilterName;
+            const advanced = {
+                ...(this.getSelectFilters() || {}),
+                ...(filters.advanced || {}),
+                ...this._getCascadingFilters(),
+            };
 
-                    const boolFilterList =
-                        (localBoolFilterList || filters.bool || this.panelDefs.selectBoolFilterList) ?
-                        [
-                            ...(localBoolFilterList ?? []),
-                            ...(filters.bool ?? []),
-                            ...(this.panelDefs.selectBoolFilterList ?? []),
-                        ] :
-                        undefined;
+            const primaryFilter = this.getSelectPrimaryFilterName() || filters.primary ||
+                this.panelDefs.selectPrimaryFilterName;
 
-                    resolve({
-                        bool: boolFilterList,
-                        primary: primaryFilter,
-                        advanced: advanced,
-                    });
-                });
+            const boolFilterList =
+                (localBoolFilterList || filters.bool || this.panelDefs.selectBoolFilterList) ?
+                [
+                    ...(localBoolFilterList ?? []),
+                    ...(filters.bool ?? []),
+                    ...(this.panelDefs.selectBoolFilterList ?? []),
+                ] :
+                undefined;
+
+            resolve({
+                bool: boolFilterList,
+                primary: primaryFilter,
+                advanced: advanced,
+            });
         });
     }
 

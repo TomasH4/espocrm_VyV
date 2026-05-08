@@ -26,48 +26,43 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-/** @module handlers/select-related */
+import type {SelectFieldHandler} from 'contracts/relation';
+import type ViewHelper from 'view-helper';
+import type Model from 'model';
 
 /**
- * @typedef {Object} module:handlers/select-related~filters
- * @property {Object.<string, import('search-manager').AdvancedFilter>} [advanced]
- *  Advanced filters map. A field name as a key.
- * @property {string[]} [bool] Bool filters.
- * @property {string} [primary] A primary filter.
- * @property {string} [orderBy] A field to order by.
- * @property {'asc'|'desc'} [order] An order direction.
+ * @since 10.0.0
  */
-
-/**
- * Prepares filters for selecting records to relate.
- *
- * @abstract
- */
-class SelectRelatedHandler {
+abstract class SelectFieldRelationHandler<M extends Model = Model> implements SelectFieldHandler<M> {
 
     /**
-     * @protected
-     * @type {import('view-helper').default}
+     * @internal
      */
-    viewHelper
+    protected viewHelper: ViewHelper
 
     /**
-     * @param {import('view-helper').default} viewHelper
-     */
-    constructor(viewHelper) {
-        this.viewHelper = viewHelper;
-    }
-
-    /**
-     * Get filters for selecting records to relate.
+     * A parent model.
      *
-     * @abstract
-     * @param {module:model} model A model.
-     * @return {Promise<module:handlers/select-related~filters>} Filters.
      */
-    getFilters(model) {
-        return Promise.resolve({});
+    protected readonly model: Model;
+
+    /**
+     * @internal
+     */
+    constructor(viewHelper: ViewHelper, model: Model) {
+        this.viewHelper = viewHelper;
+        this.model = model;
     }
+
+    /**
+     * @inheritDoc
+     */
+    abstract getAttributes(model: M): Promise<Record<string, unknown>>
+
+    /**
+     * @inheritDoc
+     */
+    abstract getClearAttributes(): Promise<Record<string, unknown>>
 }
 
-export default SelectRelatedHandler;
+export default SelectFieldRelationHandler;

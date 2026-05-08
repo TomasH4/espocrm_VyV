@@ -18,7 +18,7 @@ declare global {
         // noinspection ES6ConvertVarToLetConst
         var loader: {
             require: (id: string, callback: RequireCallback, errorCallback?: RequireErrorCallback) => void;
-            requirePromise: (id: string) => Promise<unknown>;
+            requirePromise: <T = unknown>(id: string) => Promise<T>;
         }
 
         // noinspection ES6ConvertVarToLetConst

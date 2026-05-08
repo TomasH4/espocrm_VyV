@@ -35,6 +35,8 @@ import Ui from 'ui';
 import {AdvancedFilter} from 'search-manager';
 import Model from 'model';
 import {AjaxPromise} from 'util/ajax';
+import {SelectRelatedHandler, SelectFieldHandler} from 'contracts/relation';
+import CreateRelatedHandler from 'handlers/create-related';
 
 /**
  * Parameters.
@@ -86,11 +88,6 @@ interface CascadingLogic {
         foreignField: string,
         matchRequired: boolean,
     }[]
-}
-
-interface SelectFieldHandler {
-    getAttributes: (model: Model) => Promise<Record<string, unknown>>;
-    getClearAttributes: () => Promise<Record<string, unknown>>;
 }
 
 interface SelectFilters {
@@ -468,19 +465,20 @@ class LinkFieldView<
     private getSelectFieldHandler(): Promise<SelectFieldHandler> {
         if (!this.panelDefs.selectFieldHandler) {
             return Promise.resolve({
+                getAttributes: (_: Model) => Promise.resolve({}),
                 getClearAttributes: () => Promise.resolve({}),
-                getAttributes: () => Promise.resolve({}),
             });
         }
 
-        return new Promise(resolve => {
-            Espo.loader.requirePromise(this.panelDefs.selectFieldHandler)
-                .then((Handler: any) => {
-                    // Model is passed as of v8.2.
-                    const handler = new Handler(this.getHelper(), this.model);
+        return new Promise(async resolve => {
+            const handler = this.panelDefs.selectFieldHandler;
 
-                    resolve(handler);
-                });
+            const Handler = await Espo.loader.requirePromise<new (...args: any[]) => SelectFieldHandler>(handler);
+
+            // Model is passed as of v8.2.
+            const handlerImplementation = new Handler(this.getHelper(), this.model);
+
+            resolve(handlerImplementation);
         });
     }
 
@@ -1065,17 +1063,18 @@ class LinkFieldView<
                 return Promise.resolve(attributes);
             }
 
-            return new Promise(resolve => {
-                Espo.loader.requirePromise(this.panelDefs.createHandler)
-                    .then((Handler: any) => new Handler(this.getHelper()))
-                    .then(async /** import('handlers/create-related').default */handler => {
-                        const additionalAttributes = await handler.getAttributes(this.model, this.name);
+            return new Promise(async resolve => {
+                const handler = this.panelDefs.createHandler;
 
-                        resolve({
-                            ...attributes,
-                            ...additionalAttributes,
-                        });
-                    });
+                const Handler = await Espo.loader.requirePromise<new (...args: any[]) => CreateRelatedHandler>(handler);
+                const handlerInstance = new Handler(this.getHelper());
+
+                const additionalAttributes = await handlerInstance.getAttributes(this.model, this.name);
+
+                resolve({
+                    ...attributes,
+                    ...additionalAttributes,
+                });
             });
         };
     }
@@ -1188,43 +1187,40 @@ class LinkFieldView<
             });
         }
 
-        return new Promise(resolve => {
-            Espo.loader.requirePromise(handler)
-                .then((Handler: any) => new Handler(this.getHelper()))
-                .then(/** module:handlers/select-related */handler => {
-                    return handler.getFilters(this.model);
-                })
-                .then(filters => {
-                    const advanced = {
-                        ...(this.getSelectFilters() ?? {}),
-                        ...(filters.advanced ?? {}),
-                        ...this._getCascadingFilters(),
-                    };
+        return new Promise(async resolve => {
+            const Handler = await Espo.loader.requirePromise<new (...args: any[]) => SelectRelatedHandler>(handler);
 
-                    const primaryFilter = this.getSelectPrimaryFilterName() ||
-                        filters.primary || this.panelDefs.selectPrimaryFilterName;
+            const filters = await new Handler(this.getHelper()).getFilters(this.model);
 
-                    const boolFilterList = (localBoolFilterList || filters.bool || this.panelDefs.selectBoolFilterList) ?
-                        [
-                            ...(localBoolFilterList || []),
-                            ...(filters.bool || []),
-                            ...(this.panelDefs.selectBoolFilterList || []),
-                        ] :
-                        undefined;
+            const advanced = {
+                ...(this.getSelectFilters() ?? {}),
+                ...(filters.advanced ?? {}),
+                ...this._getCascadingFilters(),
+            };
 
-                    this._applyAdditionalFilter(advanced);
+            const primaryFilter = this.getSelectPrimaryFilterName() || filters.primary ||
+                this.panelDefs.selectPrimaryFilterName;
 
-                    const orderBy = filters.orderBy;
-                    const order = orderBy ? filters.order : undefined;
+            const boolFilterList = (localBoolFilterList || filters.bool || this.panelDefs.selectBoolFilterList) ?
+                [
+                    ...(localBoolFilterList || []),
+                    ...(filters.bool || []),
+                    ...(this.panelDefs.selectBoolFilterList || []),
+                ] :
+                undefined;
 
-                    resolve({
-                        bool: boolFilterList,
-                        primary: primaryFilter,
-                        advanced: advanced,
-                        orderBy: orderBy,
-                        order: order,
-                    });
-                });
+            this._applyAdditionalFilter(advanced);
+
+            const orderBy = filters.orderBy;
+            const order = orderBy ? filters.order : undefined;
+
+            resolve({
+                bool: boolFilterList,
+                primary: primaryFilter,
+                advanced: advanced,
+                orderBy: orderBy,
+                order: order,
+            });
         });
     }
 
