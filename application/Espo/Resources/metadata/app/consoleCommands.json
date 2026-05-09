@@ -76,6 +76,11 @@
         "allowedOptions": ["type"],
         "noSystemUser": true
     },
+    "db:check": {
+        "className": "Espo\\Classes\\ConsoleCommands\\DbCheck",
+        "listed": true,
+        "noSystemUser": true
+    },
     "migrate": {
         "listed": true,
         "noSystemUser": true
