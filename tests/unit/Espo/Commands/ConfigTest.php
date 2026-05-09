@@ -29,7 +29,9 @@
 
 namespace tests\unit\Espo\Commands;
 
+use Closure;
 use Espo\Classes\ConsoleCommands\GetConfigParam;
+use Espo\Classes\ConsoleCommands\SetConfigParam;
 use Espo\Core\Console\Command\Params;
 use Espo\Core\Console\IO;
 use Espo\Core\Utils\Config;
@@ -97,10 +99,7 @@ class ConfigTest extends TestCase
             ->willReturn('hello');
 
         $this->expectIoNoError($io);
-
-        $io->expects($this->once())
-            ->method('writeLine')
-            ->with('hello');
+        $this->expectWriteLine($io, 'hello');
 
         (new GetConfigParam($config))->run($params, $io);
     }
@@ -127,10 +126,7 @@ class ConfigTest extends TestCase
             ->willReturn('hello');
 
         $this->expectIoNoError($io);
-
-        $io->expects($this->once())
-            ->method('writeLine')
-            ->with('"hello"');
+        $this->expectWriteLine($io, '"hello"');
 
         (new GetConfigParam($config))->run($params, $io);
     }
@@ -157,10 +153,7 @@ class ConfigTest extends TestCase
             ->willReturn(true);
 
         $this->expectIoNoError($io);
-
-        $io->expects($this->once())
-            ->method('writeLine')
-            ->with('true');
+        $this->expectWriteLine($io, 'true');
 
         (new GetConfigParam($config))->run($params, $io);
     }
@@ -187,10 +180,7 @@ class ConfigTest extends TestCase
             ->willReturn(false);
 
         $this->expectIoNoError($io);
-
-        $io->expects($this->once())
-            ->method('writeLine')
-            ->with('false');
+        $this->expectWriteLine($io, 'false');
 
         (new GetConfigParam($config))->run($params, $io);
     }
@@ -217,14 +207,10 @@ class ConfigTest extends TestCase
             ->willReturn(null);
 
         $this->expectIoNoError($io);
-
-        $io->expects($this->once())
-            ->method('writeLine')
-            ->with('null');
+        $this->expectWriteLine($io, 'null');
 
         (new GetConfigParam($config))->run($params, $io);
     }
-
 
     private function expectIoError(IO & MockObject $io): void
     {
@@ -237,5 +223,195 @@ class ConfigTest extends TestCase
     {
         $io->expects($this->never())
             ->method('setExitStatus');
+    }
+
+    private function expectWriteLine(IO & MockObject $io, string $value): void
+    {
+        $io->expects($this->once())
+            ->method('writeLine')
+            ->with($value);
+    }
+
+    public function testSetConfigNoParam(): void
+    {
+        $params = new Params(
+            options: [],
+            flagList: [],
+            argumentList: [],
+        );
+
+        $io = $this->createMock(IO::class);
+        $config = $this->createMock(Config::class);
+        $configWriter = $this->createMock(Config\ConfigWriter::class);
+
+        $this->expectIoError($io);
+
+        (new SetConfigParam($config, $configWriter))->run($params, $io);
+    }
+
+    public function testSetConfigNoValue(): void
+    {
+        $params = new Params(
+            options: [],
+            flagList: [],
+            argumentList: ['test'],
+        );
+
+        $io = $this->createMock(IO::class);
+        $config = $this->createMock(Config::class);
+        $configWriter = $this->createMock(Config\ConfigWriter::class);
+
+        $this->expectIoError($io);
+
+        (new SetConfigParam($config, $configWriter))->run($params, $io);
+    }
+
+    public function testSetConfigValueString1(): void
+    {
+        $this->internalTestSet(
+            type: null,
+            paramName: 'test',
+            value: 'hello',
+            valueExpected: 'hello',
+        );
+    }
+
+    public function testSetConfigValueString2(): void
+    {
+        $this->internalTestSet(
+            type: 'string',
+            paramName: 'test',
+            value: 'hello',
+            valueExpected: 'hello',
+        );
+    }
+
+    public function testSetConfigValueBool1(): void
+    {
+        $this->internalTestSet(
+            type: 'bool',
+            paramName: 'test',
+            value: '1',
+            valueExpected: true,
+        );
+    }
+
+    public function testSetConfigValueBool2(): void
+    {
+        $this->internalTestSet(
+            type: 'bool',
+            paramName: 'test',
+            value: '0',
+            valueExpected: false,
+        );
+    }
+
+    public function testSetConfigValueBool3(): void
+    {
+        $this->internalTestSet(
+            type: 'bool',
+            paramName: 'test',
+            value: 'true',
+            valueExpected: true,
+        );
+    }
+
+    public function testSetConfigValueBool4(): void
+    {
+        $this->internalTestSet(
+            type: 'bool',
+            paramName: 'test',
+            value: 'false',
+            valueExpected: false,
+        );
+    }
+
+    public function testSetConfigValueBoolBad(): void
+    {
+        $this->internalTestSet(
+            type: 'bool',
+            paramName: 'test',
+            value: 'yes',
+            error: true,
+        );
+    }
+
+    public function testSetConfigValueJson(): void
+    {
+        $this->internalTestSet(
+            type: 'json',
+            paramName: 'test',
+            value: '"true"',
+            valueExpected: "true",
+        );
+    }
+
+    public function testSetConfigValueObject1(): void
+    {
+        $this->internalTestSet(
+            type: null,
+            paramName: 'database.host',
+            value: 'hello',
+            valueExpected: ['host' => 'hello', 'port' => 0],
+            hook: function (Config & MockObject $config) {
+                $config
+                    ->expects($this->once())
+                    ->method('get')
+                    ->with('database')
+                    ->willReturn(['host' => 'localhost', 'port' => 0]);
+            },
+            setParamNameExpected: 'database',
+        );
+    }
+
+    /**
+     * @param (Closure(Config & MockObject): void)|null $hook
+     */
+    private function internalTestSet(
+        ?string $type,
+        string $paramName,
+        string $value,
+        mixed $valueExpected = null,
+        bool $error = false,
+        ?Closure $hook = null,
+        ?string $setParamNameExpected = null,
+    ): void {
+
+        $options = [];
+
+        if ($type !== null) {
+            $options = ['type' => $type];
+        }
+
+        $params = new Params(
+            options: $options,
+            flagList: [],
+            argumentList: [$paramName, $value],
+        );
+
+        $io = $this->createMock(IO::class);
+        $config = $this->createMock(Config::class);
+        $configWriter = $this->createMock(Config\ConfigWriter::class);
+
+        if ($hook) {
+            $hook($config);
+        }
+
+        if (!$error) {
+            $this->expectIoNoError($io);
+
+            $configWriter
+                ->expects($this->once())
+                ->method('save');
+
+            $configWriter
+                ->expects($this->once())
+                ->method('set')
+                ->with($setParamNameExpected ?? $paramName, $valueExpected);
+        } else {
+            $this->expectIoError($io);
+        }
+
+        (new SetConfigParam($config, $configWriter))->run($params, $io);
     }
 }
