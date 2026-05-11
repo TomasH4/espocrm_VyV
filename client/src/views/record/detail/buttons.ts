@@ -260,8 +260,6 @@ export default class DetailRecordButtonsView extends View<{
     }
 }
 
-// @todo No html?
-
 class ButtonComponent {
 
     @inject(Language)
@@ -281,6 +279,7 @@ class ButtonComponent {
             text?: string | null,
             disabled?: boolean,
             hidden?: boolean,
+            html?: string | null,
         },
     ) {}
 
@@ -317,22 +316,32 @@ class ButtonComponent {
             attrs.title = this.options.title;
         }
 
-        const label = this.options.label ?? this.options.name;
+        let content = null;
 
-        const text = this.options.text ??
-            (
-                this.options.labelTranslation ?
-                    this.language.translatePath(this.options.labelTranslation) :
-                    this.language.translate(label, 'labels', this.options.scope)
-            );
+        const props: any = {};
 
-        const content = this.options.iconClass ?
-            fragment([
-                h('span', {class: {[this.options.iconClass]: true}}),
-                ' ',
-                h('span', text),
-            ]) :
-            text;
+        if (this.options.html) {
+            props.innerHTML = this.options.html;
+        } else {
+            const label = this.options.label ?? this.options.name;
+
+            const text = this.options.text ??
+                (
+                    this.options.labelTranslation ?
+                        this.language.translatePath(this.options.labelTranslation) :
+                        this.language.translate(label, 'labels', this.options.scope)
+                );
+
+
+            content = this.options.iconClass ?
+                fragment([
+                    h('span', {class: {[this.options.iconClass]: true}}),
+                    ' ',
+                    h('span', text),
+                ]) :
+                text;
+        }
+
 
         return h(tag, {
             key: this.options.name ?? null,
@@ -342,6 +351,7 @@ class ButtonComponent {
                 name: this.options.name,
                 action: this.options.name,
             },
+            props,
         }, content);
     }
 }
@@ -364,6 +374,7 @@ class DropdownItemComponent {
             text?: string | null,
             disabled?: boolean,
             hidden?: boolean,
+            html?: string | null,
         },
     ) {}
 
@@ -393,22 +404,30 @@ class DropdownItemComponent {
             attrs.title = this.options.title;
         }
 
-        const label = this.options.label ?? this.options.name;
+        let content = null;
 
-        const text = this.options.text ??
-            (
-                this.options.labelTranslation ?
-                    this.language.translatePath(this.options.labelTranslation) :
-                    this.language.translate(label, 'labels', this.options.scope)
-            );
+        const props: any = {};
 
-        const content = this.options.iconClass ?
-            fragment([
-                h('span', {class: {[this.options.iconClass]: true}}),
-                ' ',
-                h('span', text),
-            ]) :
-            text;
+        if (this.options.html) {
+            props.innerHTML = this.options.html;
+        } else {
+            const label = this.options.label ?? this.options.name;
+
+            const text = this.options.text ??
+                (
+                    this.options.labelTranslation ?
+                        this.language.translatePath(this.options.labelTranslation) :
+                        this.language.translate(label, 'labels', this.options.scope)
+                );
+
+            content = this.options.iconClass ?
+                fragment([
+                    h('span', {class: {[this.options.iconClass]: true}}),
+                    ' ',
+                    h('span', text),
+                ]) :
+                text;
+        }
 
         const dataset = {
             name: this.options.name,
@@ -423,6 +442,7 @@ class DropdownItemComponent {
             class: classes,
             attrs: attrs,
             dataset: dataset,
+            props: props,
         }, content);
 
         return h('li', {
