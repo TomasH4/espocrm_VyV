@@ -3829,11 +3829,11 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         }
     }
 
-    private getButtonsView(): DetailRecordButtonsView {
+    private getButtonsView(): DetailRecordButtonsView | null {
         return this.getView<DetailRecordButtonsView>('buttons');
     }
 
-    private getEditButtonsView(): DetailRecordButtonsView {
+    private getEditButtonsView(): DetailRecordButtonsView | null {
         return this.getView<DetailRecordButtonsView>('editButtons');
     }
 }

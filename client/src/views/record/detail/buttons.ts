@@ -30,7 +30,7 @@ import View from 'view';
 import type {Button, DropdownItem} from 'views/record/detail';
 import Language from 'language';
 import {inject} from 'di';
-import {h, fragment} from 'bullbone';
+import {h, fragment, VNode} from 'bullbone';
 
 export default class DetailRecordButtonsView extends View<{
     options: {
@@ -40,7 +40,7 @@ export default class DetailRecordButtonsView extends View<{
             allDisabled: boolean,
         },
         actionClassName: string,
-        entityType: string,
+        entityType: string | null,
     },
 }> {
 
@@ -49,7 +49,7 @@ export default class DetailRecordButtonsView extends View<{
     content(): any {
         const data = this.data();
 
-        const buttons = [];
+        const buttons: any[] = [];
 
         data.buttonList.forEach(it => {
             buttons.push(
@@ -68,7 +68,7 @@ export default class DetailRecordButtonsView extends View<{
             );
         });
 
-        const elements = [...buttons];
+        const elements: any[] = [...buttons];
 
         if (data.dropdownItemList.length) {
             const icon = h('span', {class: {'fas': true, 'fa-ellipsis-h': true}});
@@ -87,7 +87,7 @@ export default class DetailRecordButtonsView extends View<{
                 }, icon)
             );
 
-            const dropdownItems = [];
+            const dropdownItems: VNode[] = [];
 
             data.dropdownItemList.forEach((it, i) => {
                 if (it === false) {
@@ -285,7 +285,7 @@ class ButtonComponent {
     ) {}
 
     node(): any {
-        const classes = {
+        const classes: any = {
             'btn': true,
             'disabled': this.options.disabled === true,
             'hidden': this.options.hidden === true,
@@ -368,7 +368,7 @@ class DropdownItemComponent {
     ) {}
 
     node(): any {
-        const classes = {
+        const classes: any = {
             'disabled': this.options.disabled === true,
             'hidden': this.options.hidden === true,
             'action': true,
