@@ -335,6 +335,8 @@ class MainView<S extends MainViewSchema = MainViewSchema> extends View<S> {
 
         if (this.shortcutKeys) {
             this.shortcutKeys = Utils.cloneDeep(this.shortcutKeys);
+        } else {
+            this.shortcutKeys = {};
         }
 
         this.addHandler('click', '.action', (event, target) => {
