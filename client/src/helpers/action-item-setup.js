@@ -111,7 +111,7 @@ class ActionItemSetupHelper {
             const name = item.name;
 
             if (!item.label) {
-                item.html = this.language.translate(name, 'actions', scope);
+                item.text = this.language.translate(name, 'actions', scope);
             }
 
             item.data = item.data || {};

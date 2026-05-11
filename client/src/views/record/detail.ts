@@ -44,6 +44,7 @@ import type {Defs} from 'dynamic-logic';
 import Ui from 'ui';
 import DynamicHandler from 'dynamic-handler';
 import type Collection from 'collection';
+import DetailRecordButtonsView from 'views/record/detail/buttons';
 
 type ReturnDispatchParams = Record<string, unknown> & {
     controller?: string;
@@ -637,9 +638,6 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
 
     private $middle: JQuery
     private $bottom: JQuery
-    private $detailButtonContainer: JQuery
-    private $dropdownItemListButton: JQuery;
-    private $dropdownEditItemListButton: JQuery;
 
     private blockUpdateWebSocketPeriod: number = 500
 
@@ -1049,14 +1047,14 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
      * Disable action items.
      */
     disableActionItems() {
-        (this as any).disableButtons();
+        this.disableButtons();
     }
 
     /**
      * Enable action items.
      */
     enableActionItems() {
-        (this as any).enableButtons();
+        this.enableButtons();
     }
 
     /**
@@ -1098,24 +1096,8 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         }
 
         if (this.isRendered()) {
-            this.$detailButtonContainer
-                .find('li > .action[data-action="'+name+'"]')
-                .parent()
-                .addClass('hidden');
-
-            this.$detailButtonContainer
-                .find('button.action[data-action="'+name+'"]')
-                .addClass('hidden');
-
-            if (this.isDropdownItemListEmpty()) {
-                this.$dropdownItemListButton.addClass('hidden');
-            }
-
-            if (this.isDropdownEditItemListEmpty()) {
-                this.$dropdownEditItemListButton.addClass('hidden');
-            }
-
-            this.adjustButtons();
+            this.getButtonsView()?.reRender();
+            this.getEditButtonsView()?.reRender();
         }
     }
 
@@ -1158,24 +1140,8 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         }
 
         if (this.isRendered()) {
-            this.$detailButtonContainer
-                .find('li > .action[data-action="'+name+'"]')
-                .parent()
-                .removeClass('hidden');
-
-            this.$detailButtonContainer
-                .find('button.action[data-action="'+name+'"]')
-                .removeClass('hidden');
-
-            if (!this.isDropdownItemListEmpty()) {
-                this.$dropdownItemListButton.removeClass('hidden');
-            }
-
-            if (!this.isDropdownEditItemListEmpty()) {
-                this.$dropdownEditItemListButton.removeClass('hidden');
-            }
-
-            this.adjustButtons();
+            this.getButtonsView()?.reRender();
+            this.getEditButtonsView()?.reRender();
         }
     }
 
@@ -1219,16 +1185,8 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         }
 
         if (this.isRendered()) {
-            this.$detailButtonContainer
-                .find('li > .action[data-action="'+name+'"]')
-                .parent()
-                .addClass('disabled')
-                .attr('disabled', 'disabled');
-
-            this.$detailButtonContainer
-                .find('button.action[data-action="'+name+'"]')
-                .addClass('disabled')
-                .attr('disabled', 'disabled');
+            this.getButtonsView()?.disableItemElement(name);
+            this.getEditButtonsView()?.disableItemElement(name);
         }
     }
 
@@ -1272,16 +1230,8 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         }
 
         if (this.isRendered()) {
-            this.$detailButtonContainer
-                .find(`li > .action[data-action="${name}"]`)
-                .parent()
-                .removeClass('disabled')
-                .removeAttr('disabled');
-
-            this.$detailButtonContainer
-                .find(`button.action[data-action="${name}"]`)
-                .removeClass('disabled')
-                .removeAttr('disabled');
+            this.getButtonsView()?.enableItemElement(name);
+            this.getEditButtonsView()?.enableItemElement(name);
         }
     }
 
@@ -1523,10 +1473,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
             this.$bottom = this.$el.find('.bottom').first();
         }
 
-        this.initElementReferences();
-
         this.adjustMiddlePanels();
-        this.adjustButtons();
 
         this.initStickableButtonsContainer();
         this.initFieldsControlBehaviour();
@@ -1850,12 +1797,6 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         return {
             scope: this.scope,
             entityType: this.entityType,
-            buttonList: this.buttonList,
-            buttonEditList: this.buttonEditList,
-            dropdownItemList: this.getDropdownItemDataList(),
-            dropdownEditItemList: this.dropdownEditItemList,
-            dropdownItemListEmpty: this.isDropdownItemListEmpty(),
-            dropdownEditItemListEmpty: this.isDropdownEditItemListEmpty(),
             buttonsDisabled: this.buttonsDisabled,
             id: this.id,
             isWide: this.isWide,
@@ -1926,44 +1867,14 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         }
     }
 
-    private isDropdownItemListEmpty(): boolean {
-        if (this.dropdownItemList.length === 0) {
-            return true;
-        }
-
-        let isEmpty = true;
-
-        this.dropdownItemList.forEach(item => {
-            if (!item.hidden) {
-                isEmpty = false;
-            }
-        });
-
-        return isEmpty;
-    }
-
-    private isDropdownEditItemListEmpty(): boolean {
-        if (this.dropdownEditItemList.length === 0) {
-            return true;
-        }
-
-        let isEmpty = true;
-
-        this.dropdownEditItemList.forEach(item => {
-            if (!item.hidden) {
-                isEmpty = false;
-            }
-        });
-
-        return isEmpty;
-    }
-
     protected setup() {
         this.setupEventHandlers();
 
         if (typeof this.model === 'undefined') {
             throw new Error('Model has not been injected into record view.');
         }
+
+        this.setupButtons();
 
         this.recordHelper = this.options.recordHelper ?? new ViewRecordHelper();
 
@@ -2079,10 +1990,6 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         this.setupActionItems();
         this.setupBeforeFinal();
         this.setupDynamicBehavior();
-
-        this.on('after:render', () => {
-            this.initElementReferences();
-        });
 
         this._webSocketDebounceHelper = new DebounceHelper({
             interval: this._webSocketDebounceInterval,
@@ -2995,51 +2902,8 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
     enableButtons() {
         this.allActionItemsDisabled = false;
 
-        this.$el.find(".button-container .actions-btn-group .action")
-            .removeAttr('disabled')
-            .removeClass('disabled');
-
-        this.$el.find(".button-container .actions-btn-group .dropdown-toggle")
-            .removeAttr('disabled')
-            .removeClass('disabled');
-
-        this.buttonList
-            .filter(item => item.disabled)
-            .forEach(item => {
-                this.$detailButtonContainer
-                    .find(`button.action[data-action="${item.name}"]`)
-                    .addClass('disabled')
-                    .attr('disabled', 'disabled');
-            });
-
-        this.buttonEditList
-            .filter(item => item.disabled)
-            .forEach(item => {
-                this.$detailButtonContainer
-                    .find(`button.action[data-action="${item.name}"]`)
-                    .addClass('disabled')
-                    .attr('disabled', 'disabled');
-            });
-
-        this.dropdownItemList
-            .filter(item => item.disabled)
-            .forEach(item => {
-                this.$detailButtonContainer
-                    .find(`li > .action[data-action="${item.name}"]`)
-                    .parent()
-                    .addClass('disabled')
-                    .attr('disabled', 'disabled');
-            });
-
-        this.dropdownEditItemList
-            .filter(item => item.disabled)
-            .forEach(item => {
-                this.$detailButtonContainer
-                    .find(`li > .action[data-action="${item.name}"]`)
-                    .parent()
-                    .addClass('disabled')
-                    .attr('disabled', 'disabled');
-            });
+        this.getButtonsView()?.reRender();
+        this.getEditButtonsView()?.reRender();
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -3049,13 +2913,8 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
     disableButtons() {
         this.allActionItemsDisabled = true;
 
-        this.$el.find(".button-container .actions-btn-group .action")
-            .attr('disabled', 'disabled')
-            .addClass('disabled');
-
-        this.$el.find(".button-container .actions-btn-group .dropdown-toggle")
-            .attr('disabled', 'disabled')
-            .addClass('disabled');
+        this.getButtonsView()?.reRender();
+        this.getEditButtonsView()?.reRender();
     }
 
     /**
@@ -3093,23 +2952,7 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
             return;
         }
 
-        const $container = this.$el.find('.detail-button-container');
-
-        const $action = $container.find(`ul > li > a.action[data-action="${name}"]`);
-
-        if ($action.length) {
-            $action.parent().remove();
-
-            $container.find(`ul > .divider:last-child`).remove();
-
-            return;
-        }
-
-        const $button = $container.find(`button.action[data-action="${name}"]`);
-
-        if ($button.length) {
-            $button.remove();
-        }
+        this.getButtonsView()?.reRender();
     }
 
     /**
@@ -3704,48 +3547,6 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
         });
     }
 
-    private adjustButtons() {
-        const $buttons = this.$detailButtonContainer.filter('.record-buttons').find('button.btn');
-
-        $buttons
-            .removeClass('radius-left')
-            .removeClass('radius-right');
-
-        const $buttonsVisible = $buttons.filter('button:not(.hidden)');
-
-        $buttonsVisible.first().addClass('radius-left');
-        $buttonsVisible.last().addClass('radius-right');
-
-        this.adjustEditButtons();
-    }
-
-    private adjustEditButtons() {
-        const $buttons = this.$detailButtonContainer.filter('.edit-buttons').find('button.btn');
-
-        $buttons
-            .removeClass('radius-left')
-            .removeClass('radius-right');
-
-        const $buttonsVisible = $buttons.filter('button:not(.hidden)');
-
-        $buttonsVisible.first().addClass('radius-left');
-        $buttonsVisible.last().addClass('radius-right');
-    }
-
-    private initElementReferences() {
-        if (this.$detailButtonContainer && this.$detailButtonContainer.length) {
-            return;
-        }
-
-        this.$detailButtonContainer = this.$el.find('.detail-button-container');
-
-        this.$dropdownItemListButton = this.$detailButtonContainer
-            .find('.dropdown-item-list-button');
-
-        this.$dropdownEditItemListButton = this.$detailButtonContainer
-            .find('.dropdown-edit-item-list-button');
-    }
-
     protected focusForEdit() {
         this.$el
             .find('.field:not(.hidden) .form-control:not([disabled])')
@@ -3990,6 +3791,50 @@ class DetailRecordView<S extends DetailRecordViewSchema = DetailRecordViewSchema
      */
     setupReuse() {
         this.initShortcuts();
+    }
+
+    protected setupButtons() {
+        if (this.buttonsDisabled) {
+            return;
+        }
+
+        const buttonsView = new DetailRecordButtonsView({
+            entityType: this.entityType,
+            dataProvider: () => {
+                return {
+                    buttonList: this.buttonList,
+                    dropdownItemList: this.getDropdownItemDataList(),
+                    allDisabled: this.allActionItemsDisabled,
+                };
+            },
+            actionClassName: 'detail-action-item',
+        });
+
+        this.assignView('buttons', buttonsView);
+
+        if (this.type === 'detail') {
+            const editButtonsView = new DetailRecordButtonsView({
+                entityType: this.entityType,
+                dataProvider: () => {
+                    return {
+                        buttonList: this.buttonEditList,
+                        dropdownItemList: this.dropdownEditItemList,
+                        allDisabled: this.allActionItemsDisabled,
+                    };
+                },
+                actionClassName: 'edit-action-item',
+            });
+
+            this.assignView('editButtons', editButtonsView);
+        }
+    }
+
+    private getButtonsView(): DetailRecordButtonsView {
+        return this.getView<DetailRecordButtonsView>('buttons');
+    }
+
+    private getEditButtonsView(): DetailRecordButtonsView {
+        return this.getView<DetailRecordButtonsView>('editButtons');
     }
 }
 
