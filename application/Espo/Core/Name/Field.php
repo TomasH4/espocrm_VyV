@@ -54,6 +54,11 @@ class Field
     /**
      * @since 10.0.0
      */
+    public const string ACCOUNT = 'account';
+
+    /**
+     * @since 10.0.0
+     */
     public const string PIPELINE = 'pipeline';
 
     /**
