@@ -265,6 +265,13 @@ class Binding implements BindingProcessor
             'Espo\\Core\\Job\\JobScheduler\\Creator',
             'Espo\\Core\\Job\\JobScheduler\\Creators\\EntityCreator',
         );
+
+        $binder->inContext('Espo\\Core\\Job\\JobManager', function ($binder) {
+            $binder->bindImplementation(
+                'Espo\\Core\\Job\\QueueProcessor',
+                'Espo\\Core\\Job\\QueueProcessor\\QueueProcessors\\DefaultQueueProcessor',
+            );
+        });
     }
 
     private function bindMisc(Binder $binder): void

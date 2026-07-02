@@ -120,7 +120,7 @@ class JobTest extends BaseTestCase
             'group' => 'group-1',
         ]);
 
-        $this->jobManager->process();
+        $this->jobManager->processMainQueue();
 
         $job1Reloaded = $this->entityManager->getEntityById('Job', $job1->getId());
         $job2Reloaded = $this->entityManager->getEntityById('Job', $job2->getId());

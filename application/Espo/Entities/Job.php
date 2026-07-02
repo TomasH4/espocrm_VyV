@@ -43,11 +43,16 @@ class Job extends Entity
     public const ENTITY_TYPE = 'Job';
 
     /**
+     * @since v10.1.0
+     */
+    public const string FIELD_STATUS = 'status';
+
+    /**
      * Get a status.
      */
     public function getStatus(): string
     {
-        return $this->get('status');
+        return $this->get(self::FIELD_STATUS);
     }
 
     /**
@@ -171,7 +176,7 @@ class Job extends Entity
      */
     public function setStatus(string $status): self
     {
-        return $this->set('status', $status);
+        return $this->set(self::FIELD_STATUS, $status);
     }
 
     /**

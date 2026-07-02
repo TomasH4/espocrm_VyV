@@ -29,7 +29,9 @@
 
 namespace Espo\Core\ApplicationRunners;
 
+use Espo\Core\Application\Exceptions\RunnerException;
 use Espo\Core\Application\Runner;
+use Espo\Core\Job\Exceptions\TooFrequentRun;
 use Espo\Core\Job\JobManager;
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\Log;
@@ -56,6 +58,12 @@ class Cron implements Runner
             return;
         }
 
-        $this->jobManager->process();
+        try {
+            $this->jobManager->prepare();
+        } catch (TooFrequentRun $e) {
+            throw new RunnerException('Too frequent run.', previous: $e);
+        }
+
+        $this->jobManager->processMainQueue();
     }
 }
