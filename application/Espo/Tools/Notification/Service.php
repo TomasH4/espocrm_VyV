@@ -69,10 +69,15 @@ class Service
 
     /**
      * @param string[] $userIdList
-     * @param ?Params $params Parameters. As of v9.2.0.
+     * @param ?Params $params Hook parameters. As of v9.2.0.
+     * @param ?NoteNotifyParams $notifyParams Parameters. As of v10.0.1.
      */
-    public function notifyAboutNote(array $userIdList, Note $note, ?Params $params = null): void
-    {
+    public function notifyAboutNote(
+        array $userIdList,
+        Note $note,
+        ?Params $params = null,
+        ?NoteNotifyParams $notifyParams = null,
+    ): void {
         $related = null;
 
         if ($note->getRelatedType() === Email::ENTITY_TYPE) {
@@ -134,6 +139,14 @@ class Service
                 $actionId = null;
             }
 
+            $relatedParent = $note->getParentType() && $note->getParentId() ?
+                LinkParent::create($note->getParentType(), $note->getParentId()) : null;
+
+            if ($notifyParams?->isSuper) {
+                $relatedParent = $note->getSuperParentType() && $note->getSuperParentId() ?
+                    LinkParent::create($note->getSuperParentType(), $note->getSuperParentId()) : null;
+            }
+
             $notification = $this->entityManager->getRDBRepositoryByClass(Notification::class)->getNew();
 
             $notification
@@ -143,10 +156,7 @@ class Service
                 ->setType(Notification::TYPE_NOTE)
                 ->setUserId($user->getId())
                 ->setRelated(LinkParent::fromEntity($note))
-                ->setRelatedParent(
-                    $note->getParentType() && $note->getParentId() ?
-                        LinkParent::create($note->getParentType(), $note->getParentId()) : null
-                )
+                ->setRelatedParent($relatedParent)
                 ->setActionId($actionId)
                 ->setIsFeatured($isFeatured);
 
