@@ -103,6 +103,9 @@ class JobTest extends BaseTestCase
         $this->assertEquals(Status::SUCCESS, $jobReloaded->getStatus());
     }
 
+    /**
+     * @noinspection PhpUnhandledExceptionInspection
+     */
     public function testProcessQueueGroupAll(): void
     {
         $job1 = $this->entityManager->createEntity('Job', [
@@ -120,6 +123,8 @@ class JobTest extends BaseTestCase
             'group' => 'group-1',
         ]);
 
+
+        $this->jobManager->prepare();
         $this->jobManager->processMainQueue();
 
         $job1Reloaded = $this->entityManager->getEntityById('Job', $job1->getId());
