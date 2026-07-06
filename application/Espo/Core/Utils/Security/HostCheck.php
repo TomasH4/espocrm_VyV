@@ -134,7 +134,6 @@ class HostCheck
 
     /**
      * @internal
-     * @noinspection SpellCheckingInspection
      */
     public function ipAddressIsNotInternal(string $ipAddress): bool
     {
