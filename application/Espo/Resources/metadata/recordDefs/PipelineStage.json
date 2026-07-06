@@ -1,4 +1,7 @@
 {
+    "beforeDeleteHookClassNameList": [
+        "Espo\\Classes\\Record\\Hooks\\PipelineStage\\BeforeDelete"
+    ],
     "afterCreateHookClassNameList": [
         "Espo\\Classes\\Record\\Hooks\\PipelineStage\\AfterSave"
     ],
