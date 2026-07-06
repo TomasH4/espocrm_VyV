@@ -35,7 +35,7 @@ use PHPUnit\Framework\TestCase;
 
 class UrlCheckTest extends TestCase
 {
-    public function testGetCurlResolve(): void
+    public function testGetCurlResolveDual(): void
     {
         $hostCheck = $this->createMock(HostCheck::class);
 
@@ -51,11 +51,35 @@ class UrlCheckTest extends TestCase
             ->with('test.com')
             ->willReturn([
                 '10.0.0.1',
+                '10.0.0.2',
                 '2001:0db8:85a3:0000:0000:8a2e:0370:7334',
             ]);
 
         $this->assertEquals([
             'test.com:443:10.0.0.1',
+            'test.com:443:10.0.0.2',
+        ], $urlCheck->getCurlResolve($url));
+    }
+
+    public function testGetCurlResolveIpV6Only(): void
+    {
+        $hostCheck = $this->createMock(HostCheck::class);
+
+        $urlCheck = new UrlCheck($hostCheck);
+
+        $url = 'https://test.com';
+
+        $hostCheck->method('isDomainHost')
+            ->with('test.com')
+            ->willReturn(true);
+
+        $hostCheck->method('getHostIpAddresses')
+            ->with('test.com')
+            ->willReturn([
+                '2001:0db8:85a3:0000:0000:8a2e:0370:7334',
+            ]);
+
+        $this->assertEquals([
             'test.com:443:[2001:0db8:85a3:0000:0000:8a2e:0370:7334]',
         ], $urlCheck->getCurlResolve($url));
     }
