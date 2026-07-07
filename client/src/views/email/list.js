@@ -60,13 +60,16 @@ class EmailListView extends ListView {
         'drafts',
     ]
 
-    /** @inheritDoc */
-    createListRecordView(fetch) {
-        return super.createListRecordView(fetch)
-            .then(view => {
-                this.listenTo(view, 'after:render', () => this.initDraggable(null));
-                this.listenTo(view, 'after:show-more', fromIndex => this.initDraggable(fromIndex));
-            });
+    /**
+     * @inheritDoc
+     */
+    async createListRecordView(fetch) {
+        const view = await super.createListRecordView(fetch);
+
+        this.listenTo(view, 'after:render', () => this.initDraggable(null));
+        this.listenTo(view, 'after:show-more', fromIndex_1 => this.initDraggable(fromIndex_1));
+
+        return view;
     }
 
     /**
@@ -154,17 +157,17 @@ class EmailListView extends ListView {
 
                     if (
                         recordView.isIdChecked(m.id) &&
-                        !recordView.allResultIsChecked &&
-                        recordView.checkedList.length > 1
+                        !recordView.isAllResultChecked() &&
+                        recordView.getCheckedIds().length > 1
                     ) {
-                        text += ' · ' + recordView.checkedList.length;
+                        text += ' · ' + recordView.getCheckedIds().length;
                     }
 
                     let draggedId = m.id;
 
                     if (
                         recordView.isIdChecked(m.id) &&
-                        !recordView.allResultIsChecked
+                        !recordView.isAllResultChecked()
                     ) {
                         draggedId = '';
                     }
@@ -184,12 +187,12 @@ class EmailListView extends ListView {
                     left: 0,
                 },
                 drag: () => {
-                    if (recordView.allResultIsChecked) {
+                    if (recordView.isAllResultChecked()) {
                         return false;
                     }
                 },
                 start: (e) => {
-                    if (recordView.allResultIsChecked) {
+                    if (recordView.isAllResultChecked()) {
                         return;
                     }
 
