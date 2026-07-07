@@ -320,7 +320,6 @@ class EmailListView extends ListView {
 
     /** @inheritDoc */
     createSearchView() {
-        /** @type {Promise<module:view>} */
         const promise = super.createSearchView();
 
         promise.then(view => {
@@ -413,7 +412,7 @@ class EmailListView extends ListView {
     hasSelectedRecords() {
         const recordView = this.getEmailRecordView();
 
-        return recordView.getCheckedIds() && !recordView.isAllResultChecked();
+        return recordView.getCheckedIds().length && !recordView.isAllResultChecked();
     }
 
     /** @inheritDoc */
@@ -694,7 +693,7 @@ class EmailListView extends ListView {
         const bottomSpaceHeight = parseInt(window.getComputedStyle($('#content').get(0)).paddingBottom, 10);
 
         const getOffsetTop = (/** JQuery */$element) => {
-            let element = /** @type {HTMLElement} */$element.get(0);
+            let element = $element.get(0);
 
             let value = 0;
 
