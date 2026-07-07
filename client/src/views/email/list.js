@@ -406,12 +406,14 @@ class EmailListView extends ListView {
         };
     }
 
+    /**
+     * @private
+     * @return {boolean}
+     */
     hasSelectedRecords() {
         const recordView = this.getEmailRecordView();
 
-        return recordView.checkedList &&
-            recordView.checkedList.length &&
-            !recordView.allResultIsChecked;
+        return recordView.getCheckedIds() && !recordView.isAllResultChecked();
     }
 
     /** @inheritDoc */
