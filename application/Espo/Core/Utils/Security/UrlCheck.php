@@ -106,10 +106,24 @@ class UrlCheck
 
         $output = [];
 
+        $hasIpV4 = false;
+
+        foreach ($ipAddresses as $ipAddress) {
+            if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                $hasIpV4 = true;
+
+                break;
+            }
+        }
+
         foreach ($ipAddresses as $ipAddress) {
             $ipPart = $ipAddress;
 
             if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                if ($hasIpV4) {
+                    continue;
+                }
+
                 $ipPart = "[$ipPart]";
             }
 

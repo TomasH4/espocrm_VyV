@@ -284,7 +284,7 @@ class Helper
     private function getAddedLinkMultipleIds(CoreEntity $entity, string $field): array
     {
         /** @var string[] $previousIds */
-        $previousIds = $entity->getFetched(self::FIELD_COLLABORATORS . 'Ids') ?? [];
+        $previousIds = $entity->getFetched($field . 'Ids') ?? [];
 
         return array_values(array_diff($entity->getLinkMultipleIdList($field), $previousIds));
     }

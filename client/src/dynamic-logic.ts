@@ -263,7 +263,7 @@ class DynamicLogic {
         const map: Record<string, string[]> = {};
 
         for (const [field, defs] of Object.entries(fields)) {
-            const items = defs.items;
+            const items = defs?.items;
 
             if (!items || !items.length) {
                 continue;

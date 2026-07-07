@@ -107,7 +107,7 @@ class Client
         $options = [
             'protocols' => array_map(
                 fn (Protocol $protocol) => $protocol->value,
-                $this->options->redirect->protocols
+                $this->options->protocols
             ),
             'allow_redirects' => false,
             'http_errors' => false,
