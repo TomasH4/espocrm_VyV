@@ -693,6 +693,8 @@ class ListView<S extends ListViewSchema = ListViewSchema> extends MainView<S> {
             await this.collection.fetch({main: true});
 
             Ui.notify();
+
+            return view;
         });
 
         return promise as Promise<ListRecordView>;
