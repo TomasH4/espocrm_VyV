@@ -32,7 +32,7 @@ class EnumIntFieldView extends EnumFieldView {
 
     type = 'enumInt'
 
-    listTemplate = 'fields/enum/detail'
+    listTemplate = 'fields/enum/list'
     detailTemplate = 'fields/enum/detail'
     editTemplate = 'fields/enum/edit'
     searchTemplate = 'fields/enum/search'
@@ -45,6 +45,9 @@ class EnumIntFieldView extends EnumFieldView {
         this.setupNumericTranslatedOptionsFallback();
     }
 
+    /**
+     * @private
+     */
     setupNumericTranslatedOptionsFallback() {
         if (this.translatedOptions !== null) {
             return;
@@ -54,8 +57,7 @@ class EnumIntFieldView extends EnumFieldView {
 
         (this.params.options || []).forEach(value => {
             if (
-                value === undefined ||
-                value === null ||
+                value == null ||
                 value === ''
             ) {
                 return;
