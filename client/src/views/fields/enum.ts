@@ -176,7 +176,7 @@ class EnumFieldView<
             }
         }
 
-        const translationKey = value || '';
+        const translationKey = value ?? '';
 
         if (
             typeof value !== 'undefined' && value !== null && value !== ''
@@ -196,7 +196,6 @@ class EnumFieldView<
                 this.translatedOptions ?
                     (this.translatedOptions[translationKey] || value) :
                     this.getLanguage().translateOption(translationKey, this.name, this.entityType);
-
         }
 
         if (this.isEditMode()) {
@@ -261,7 +260,7 @@ class EnumFieldView<
         this.setupTranslation();
 
         if (this.translatedOptions === null) {
-            const translations = (this.getLanguage().translate(this.name, 'options', this.model.name) ?? {}) as any;
+            const translations = (this.getLanguage().translate(this.name, 'options', this.model.entityType) ?? {}) as any;
 
             if (translations === this.name) {
                 this.translatedOptions = null;
