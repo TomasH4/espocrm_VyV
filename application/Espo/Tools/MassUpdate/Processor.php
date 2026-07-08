@@ -31,7 +31,6 @@ namespace Espo\Tools\MassUpdate;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\FieldProcessing\LinkMultiple\ListLoader as LinkMultipleLoader;
-use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
 use Espo\Core\MassAction\QueryBuilder;
 use Espo\Core\MassAction\Params;
 use Espo\Core\MassAction\Result;
