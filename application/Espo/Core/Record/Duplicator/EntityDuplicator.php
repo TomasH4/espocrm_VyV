@@ -48,7 +48,7 @@ class EntityDuplicator
         private Defs $defs,
         private FieldDuplicatorFactory $fieldDuplicatorFactory,
         private FieldUtil $fieldUtil,
-        private Metadata $metadata
+        private Metadata $metadata,
     ) {}
 
     public function duplicate(Entity $entity): stdClass

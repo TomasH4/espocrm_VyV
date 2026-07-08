@@ -1473,7 +1473,7 @@ class Service implements Crud,
 
     private function createEntityDuplicator(): EntityDuplicator
     {
-        return $this->injectableFactory->create(EntityDuplicator::class);
+        return $this->injectableFactory->createWithBinding(EntityDuplicator::class, $this->createBinding());
     }
 
     /**
