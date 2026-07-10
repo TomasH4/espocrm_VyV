@@ -342,7 +342,7 @@ const Utils = {
                 let inTeam = false;
 
                 user.getLinkMultipleIdList('teams').forEach(teamId => {
-                    if (item.teamIdList?.indexOf(teamId)) {
+                    if (item.teamIdList?.includes(teamId)) {
                         inTeam = true;
                     }
                 });
