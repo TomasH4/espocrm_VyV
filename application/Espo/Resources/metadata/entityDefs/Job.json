@@ -75,7 +75,8 @@
             "hasSeconds": true
         },
         "pid": {
-            "type": "int"
+            "type": "int",
+            "disableFormatting": true
         },
         "attempts": {
             "type": "int"
