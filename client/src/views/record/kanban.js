@@ -529,7 +529,7 @@ class KanbanRecordView extends ListRecordView {
         };
 
 
-        this.once('remove', (/** Record */o) => {
+        this.on('remove', (/** Record */o) => {
             if (o?.ignoreCleaning) {
                 return;
             }
