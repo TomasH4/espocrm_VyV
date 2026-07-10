@@ -527,6 +527,15 @@ class KanbanRecordView extends ListRecordView {
                 }
             ];
         };
+
+
+        this.once('remove', (/** Record */o) => {
+            if (o?.ignoreCleaning) {
+                return;
+            }
+
+            this.collection.whereFunction = null;
+        });
     }
 
     /**
