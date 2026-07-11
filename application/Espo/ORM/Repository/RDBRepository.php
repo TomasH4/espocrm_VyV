@@ -293,9 +293,9 @@ class RDBRepository implements Repository
     /**
      * Find records.
      *
-     * @return EntityCollection<TEntity>|SthCollection<TEntity>
+     * @return EntityCollection<TEntity>
      */
-    public function find(): EntityCollection|SthCollection
+    public function find(): EntityCollection
     {
         return $this->createBuilder()->find();
     }
@@ -372,7 +372,7 @@ class RDBRepository implements Repository
     /**
      * Clone an existing query for a further modification and usage by 'find' or 'count' methods.
      *
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function clone(Select $query): RDBSelectBuilder
     {
@@ -380,7 +380,7 @@ class RDBRepository implements Repository
             throw new RuntimeException("Can't clone a query of a different entity type.");
         }
 
-        /** @var RDBSelectBuilder<TEntity> $builder */
+        /** @var RDBSelectBuilder<TEntity, EntityCollection<TEntity>> $builder */
         $builder = new RDBSelectBuilder($this->entityManager, $this->entityType, $query);
 
         return $builder;
@@ -393,7 +393,7 @@ class RDBRepository implements Repository
      * A relation name or table. A relation name should be in camelCase, a table in CamelCase.
      * @param string|null $alias An alias.
      * @param WhereItem|array<scalar, mixed>|null $conditions Join conditions.
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function join($target, ?string $alias = null, $conditions = null): RDBSelectBuilder
     {
@@ -407,7 +407,7 @@ class RDBRepository implements Repository
      * A relation name or table. A relation name should be in camelCase, a table in CamelCase.
      * @param string|null $alias An alias.
      * @param WhereItem|array<scalar, mixed>|null $conditions Join conditions.
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function leftJoin($target, ?string $alias = null, $conditions = null): RDBSelectBuilder
     {
@@ -417,7 +417,7 @@ class RDBRepository implements Repository
     /**
      * Set DISTINCT parameter.
      *
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function distinct(): RDBSelectBuilder
     {
@@ -427,7 +427,7 @@ class RDBRepository implements Repository
     /**
      * Lock selected rows. To be used within a transaction.
      *
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function forUpdate(): RDBSelectBuilder
     {
@@ -437,7 +437,7 @@ class RDBRepository implements Repository
     /**
      * Set to return STH collection. Recommended fetching large number of records.
      *
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, SthCollection<TEntity>>
      */
     public function sth(): RDBSelectBuilder
     {
@@ -454,7 +454,7 @@ class RDBRepository implements Repository
      *
      * @param WhereItem|array<scalar, mixed>|string $clause A key or where clause.
      * @param mixed[]|scalar|null $value A value. Should be omitted if the first argument is not string.
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function where($clause = [], $value = null): RDBSelectBuilder
     {
@@ -471,7 +471,7 @@ class RDBRepository implements Repository
      *
      * @param WhereItem|array<scalar, mixed>|string $clause A key or where clause.
      * @param mixed[]|scalar|null $value A value. Should be omitted if the first argument is not string.
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function having($clause = [], $value = null): RDBSelectBuilder
     {
@@ -491,7 +491,7 @@ class RDBRepository implements Repository
      *   An attribute to order by or an array or order items.
      *   Passing an array will reset a previously set order.
      * @param (Order::ASC|Order::DESC)|bool|null $direction A direction.
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function order($orderBy = Attribute::ID, $direction = null): RDBSelectBuilder
     {
@@ -501,7 +501,7 @@ class RDBRepository implements Repository
     /**
      * Apply OFFSET and LIMIT.
      *
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function limit(?int $offset = null, ?int $limit = null): RDBSelectBuilder
     {
@@ -521,7 +521,7 @@ class RDBRepository implements Repository
      * @param Selection|Selection[]|Expression|Expression[]|string[]|string|array<int, string[]|string> $select
      *   An array of expressions or one expression.
      * @param string|null $alias An alias. Actual if the first parameter is not an array.
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function select($select = [], ?string $alias = null): RDBSelectBuilder
     {
@@ -538,7 +538,7 @@ class RDBRepository implements Repository
      * * `groupBy([$expr1, $expr2, ...])`
      *
      * @param Expression|Expression[]|string|string[] $groupBy
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function group($groupBy): RDBSelectBuilder
     {
@@ -548,13 +548,13 @@ class RDBRepository implements Repository
     /**
      * Create a select builder.
      *
-     * @return RDBSelectBuilder<TEntity>
+     * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      *
      * @since 9.2.5
      */
     public function createBuilder(): RDBSelectBuilder
     {
-        /** @var RDBSelectBuilder<TEntity> $builder */
+        /** @var RDBSelectBuilder<TEntity, EntityCollection<TEntity>> $builder */
         $builder = new RDBSelectBuilder($this->entityManager, $this->entityType);
 
         return $builder;
