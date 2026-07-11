@@ -105,7 +105,7 @@ class Merger
 
         $service->filterUpdateInput($clonedData);
 
-        $entity->set($clonedData);
+        $entity->setMultiple($clonedData);
 
         $this->unsetNotActualAttributes($entity);
 

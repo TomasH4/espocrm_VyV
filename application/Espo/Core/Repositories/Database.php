@@ -366,7 +366,7 @@ class Database extends RDBRepository
     protected function afterSave(Entity $entity, array $options = [])
     {
         if (!empty($this->restoreData)) {
-            $entity->set($this->restoreData);
+            $entity->setMultiple($this->restoreData);
 
             $this->restoreData = null;
         }

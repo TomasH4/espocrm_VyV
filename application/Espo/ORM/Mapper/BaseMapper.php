@@ -1583,7 +1583,7 @@ class BaseMapper implements RDBMapper
      */
     private function populateEntityFromRow(Entity $entity, $data): void
     {
-        $entity->set($data);
+        $entity->setMultiple($data);
     }
 
     /**

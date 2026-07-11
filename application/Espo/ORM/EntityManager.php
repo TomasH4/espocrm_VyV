@@ -303,7 +303,7 @@ class EntityManager
             }
         }
 
-        $entity->set($fetchedMap);
+        $entity->setMultiple($fetchedMap);
         $entity->setAsFetched();
     }
 
@@ -316,7 +316,7 @@ class EntityManager
     public function createEntity(string $entityType, $data = [], array $options = []): Entity
     {
         $entity = $this->getNewEntity($entityType);
-        $entity->set($data);
+        $entity->setMultiple($data);
         $this->saveEntity($entity, $options);
 
         return $entity;
