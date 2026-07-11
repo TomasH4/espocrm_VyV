@@ -496,12 +496,12 @@ class KanbanRecordView extends ListRecordView {
 
         this.currentPipelineId = this.getStorage().get('state', this.buildPipelineIdStorageKey());
 
-        if (!this.currentPipelineId) {
-            this.currentPipelineId = this.pipelines[0]?.id ?? null;
-        }
-
         if (this.currentPipelineId && !this.pipelines.find(it => it.id === this.currentPipelineId)) {
             this.currentPipelineId = null;
+        }
+
+        if (!this.currentPipelineId) {
+            this.currentPipelineId = this.pipelines[0]?.id ?? null;
         }
 
         this.setPipelineWhere();
