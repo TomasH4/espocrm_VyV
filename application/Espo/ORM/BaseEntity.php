@@ -35,6 +35,7 @@ use Espo\ORM\DataLoader\Loader;
 use Espo\ORM\Defs\Params\AttributeParam;
 use Espo\ORM\Defs\Params\EntityParam;
 use Espo\ORM\Defs\Params\RelationParam;
+use Espo\ORM\Entity\EmptyValue;
 use Espo\ORM\Name\Attribute;
 use Espo\ORM\Relation\EmptyRelations;
 use Espo\ORM\Relation\Relations;
@@ -162,7 +163,7 @@ class BaseEntity implements Entity
      * @param string|stdClass|array<string, mixed> $attribute
      * @param mixed $value
      */
-    public function set($attribute, $value = null): static
+    public function set($attribute, $value = new EmptyValue()): static
     {
         $arg = $attribute;
 
@@ -182,6 +183,10 @@ class BaseEntity implements Entity
 
         if (is_string($arg)) {
             $name = $arg;
+
+            if ($value instanceof EmptyValue) {
+                $value = null;
+            }
 
             if ($name == Attribute::ID) {
                 $this->id = $value;

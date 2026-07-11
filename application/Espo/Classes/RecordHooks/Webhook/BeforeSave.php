@@ -167,7 +167,6 @@ class BeforeSave implements SaveHook
             return;
         }
 
-        /** @noinspection PhpRedundantOptionalArgumentInspection */
         $entity->set('field', null);
     }
 

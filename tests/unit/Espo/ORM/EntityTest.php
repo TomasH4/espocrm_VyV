@@ -99,7 +99,6 @@ class EntityTest extends TestCase
         $this->assertTrue($job->isAttributeChanged('string'));
 
         $job = $this->createEntity('Job', Job::class);
-        /** @noinspection PhpRedundantOptionalArgumentInspection */
         $job->set('string', null);
         $this->assertTrue($job->isAttributeChanged('string'));
 
@@ -165,7 +164,6 @@ class EntityTest extends TestCase
         $this->assertTrue($job->isAttributeChanged('array'));
 
         $job = $this->createEntity('Job', Job::class);
-        /** @noinspection PhpRedundantOptionalArgumentInspection */
         $job->set('array', null);
         $this->assertTrue($job->isAttributeChanged('array'));
 
@@ -190,7 +188,6 @@ class EntityTest extends TestCase
 
         $job = $this->createEntity('Job', Job::class);
         $job->setFetched('arrayUnordered', ['1', '2']);
-        /** @noinspection PhpRedundantOptionalArgumentInspection */
         $job->set('arrayUnordered', null);
         $this->assertTrue($job->isAttributeChanged('arrayUnordered'));
 

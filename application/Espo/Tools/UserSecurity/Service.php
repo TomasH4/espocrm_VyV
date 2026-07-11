@@ -172,7 +172,6 @@ class Service
             }
 
             $userData->set('auth2FA', false);
-            /** @noinspection PhpRedundantOptionalArgumentInspection */
             $userData->set('auth2FAMethod', null);
 
             $this->entityManager->saveEntity($userData);
@@ -233,7 +232,6 @@ class Service
         }
 
         if (!$userData->get('auth2FA')) {
-            /** @noinspection PhpRedundantOptionalArgumentInspection */
             $userData->set('auth2FAMethod', null);
         }
 
