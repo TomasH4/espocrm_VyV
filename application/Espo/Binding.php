@@ -247,6 +247,11 @@ class Binding implements BindingProcessor
             'Espo\\Core\\Session\\Session',
             'session'
         );
+
+        $binder->bindService(
+            'Espo\\Core\\Job\\JobManager',
+            'jobManager'
+        );
     }
 
     private function bindCore(Binder $binder): void
