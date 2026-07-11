@@ -39,7 +39,6 @@ use Espo\ORM\Name\Attribute;
 use Espo\ORM\Relation\EmptyRelations;
 use Espo\ORM\Relation\Relations;
 use Espo\ORM\Type\AttributeType;
-use Espo\ORM\Type\RelationType;
 use Espo\ORM\Value\ValueAccessorFactory;
 use Espo\ORM\Value\ValueAccessor;
 
@@ -47,7 +46,6 @@ use stdClass;
 use InvalidArgumentException;
 use RuntimeException;
 
-use const E_USER_DEPRECATED;
 use const JSON_THROW_ON_ERROR;
 
 class BaseEntity implements Entity
