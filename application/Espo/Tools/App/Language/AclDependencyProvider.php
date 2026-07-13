@@ -30,7 +30,6 @@
 namespace Espo\Tools\App\Language;
 
 use Espo\Core\ORM\Type\FieldType;
-use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\DataCache;
 use Espo\Core\Utils\Metadata;
@@ -38,7 +37,7 @@ use Espo\ORM\Defs;
 
 class AclDependencyProvider
 {
-    private const CACHE_KEY = 'languageAclDependency';
+    private const string CACHE_KEY = 'languageAclDependency';
 
     /** @var string[] */
     private array $enumFieldTypeList = [

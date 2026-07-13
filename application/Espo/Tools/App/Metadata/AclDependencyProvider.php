@@ -37,7 +37,7 @@ use Espo\ORM\Defs;
 
 class AclDependencyProvider
 {
-    private const CACHE_KEY = 'metadataAclDependency';
+    private const string CACHE_KEY = 'metadataAclDependency';
 
     /** @var string[] */
     private array $enumFieldTypeList = [
