@@ -51,7 +51,7 @@ use Espo\Core\Utils\Util;
  */
 class HookManager
 {
-    private const DEFAULT_ORDER = 9;
+    private const int DEFAULT_ORDER = 9;
 
     /** @var ?array<string, array<string, mixed>> */
     private $data = null;
@@ -91,7 +91,7 @@ class HookManager
         string $hookName,
         mixed $injection = null,
         array $options = [],
-        array $hookData = []
+        array $hookData = [],
     ): void {
 
         if ($this->isDisabled) {
@@ -116,11 +116,11 @@ class HookManager
             $hook = $this->hooks[$className];
 
             $this->generalInvoker->invoke(
-                $hook,
-                $hookName,
-                $injection,
-                $options,
-                $hookData
+                hook: $hook,
+                name: $hookName,
+                subject: $injection,
+                options: $options,
+                hookData: $hookData,
             );
         }
     }
