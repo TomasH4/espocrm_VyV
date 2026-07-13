@@ -159,7 +159,7 @@ class SendingProcessor
         $emailData = $this->templateProcessor->process(
             $emailTemplate,
             TemplateParams::create()
-                ->withApplyAcl(false) // @todo Revise.
+                ->withApplyAcl(false) // Has access to all fields.
                 ->withCopyAttachments(false), // @todo Revise.
             TemplateData::create()
                 ->withParent($target)
