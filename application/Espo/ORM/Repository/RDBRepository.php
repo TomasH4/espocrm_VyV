@@ -453,7 +453,7 @@ class RDBRepository implements Repository
      * * `where(string $key, string $value)`
      *
      * @param WhereItem|array<scalar, mixed>|string $clause A key or where clause.
-     * @param mixed[]|scalar|null $value A value. Should be omitted if the first argument is not string.
+     * @param array<int, mixed>|scalar|null $value A value. Should be omitted if the first argument is not string.
      * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function where($clause = [], $value = null): RDBSelectBuilder
@@ -470,7 +470,7 @@ class RDBRepository implements Repository
      * * `having(string $key, string $value)`
      *
      * @param WhereItem|array<scalar, mixed>|string $clause A key or where clause.
-     * @param mixed[]|scalar|null $value A value. Should be omitted if the first argument is not string.
+     * @param array<int, mixed>|scalar|null $value A value. Should be omitted if the first argument is not string.
      * @return RDBSelectBuilder<TEntity, EntityCollection<TEntity>>
      */
     public function having($clause = [], $value = null): RDBSelectBuilder
@@ -561,7 +561,8 @@ class RDBRepository implements Repository
     }
 
     /**
-     * Use hooks instead.
+     * @deprecated Use hooks instead.
+     * @todo Change signature in v11.0. Add void.
      *
      * @param array<string, mixed> $options
      * @return void
@@ -573,6 +574,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated Use hooks instead.
+     * @todo Change signature in v11.0. Add void.
      *
      * @param array<string, mixed> $options
      * @return void
@@ -584,6 +586,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated Use hooks instead.
+     * @todo Change signature in v11.0. Add void.
      *
      * @param array<string, mixed> $options
      * @return void
@@ -595,6 +598,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated Use hooks instead.
+     * @todo Change signature in v11.0. Add void.
      *
      * @param array<string, mixed> $options
      * @return void
@@ -617,6 +621,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated As of v6.0. Use hooks instead.
+     * @todo Remove in v11.0.
      * @phpstan-ignore-next-line
      */
     protected function beforeRelate(Entity $entity, $relationName, $foreign, $data = null, array $options = [])
@@ -624,6 +629,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated As of v6.0. Use hooks instead.
+     * @todo Change signature in v11.0. Add void.
      * @phpstan-ignore-next-line
      */
     protected function afterRelate(Entity $entity, $relationName, $foreign, $data = null, array $options = [])
@@ -631,6 +637,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated As of v6.0. Use hooks instead.
+     * @todo Remove in v11.0.
      * @phpstan-ignore-next-line
      */
     protected function beforeUnrelate(Entity $entity, $relationName, $foreign, array $options = [])
@@ -638,6 +645,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated As of v6.0. Use hooks instead.
+     * @todo Change signature in v11.0. Add void.
      * @phpstan-ignore-next-line
      */
     protected function afterUnrelate(Entity $entity, $relationName, $foreign, array $options = [])
@@ -645,6 +653,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated As of v6.0. Use hooks instead.
+     * @todo Remove in v11.0.
      * @phpstan-ignore-next-line
      */
     protected function beforeMassRelate(Entity $entity, $relationName, array $params = [], array $options = [])
@@ -652,6 +661,7 @@ class RDBRepository implements Repository
 
     /**
      * @deprecated As of v6.0. Use hooks instead.
+     * @todo Change signature in v11.0. Add void.
      * @phpstan-ignore-next-line
      */
     protected function afterMassRelate(Entity $entity, $relationName, array $params = [], array $options = [])
@@ -718,7 +728,7 @@ class RDBRepository implements Repository
             ->findOne();
 
         if (!$entity->isNew()) {
-            $entity->setFetched($idAttribute, $previous ? $previous->getId() : null);
+            $entity->setFetched($idAttribute, $previous?->getId());
         }
 
         if ($previous) {
