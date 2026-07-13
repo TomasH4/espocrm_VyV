@@ -67,8 +67,8 @@ use Exception;
 
 class SendingProcessor
 {
-    private const MAX_ATTEMPT_COUNT = 3;
-    private const MAX_PER_HOUR_COUNT = 10000;
+    private const int MAX_ATTEMPT_COUNT = 3;
+    private const int MAX_PER_HOUR_COUNT = 10000;
 
     public function __construct(
         private Config $config,

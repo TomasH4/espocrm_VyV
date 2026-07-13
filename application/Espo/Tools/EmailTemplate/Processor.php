@@ -53,7 +53,7 @@ use Exception;
 
 class Processor
 {
-    private const KEY_PARENT = 'Parent';
+    private const string KEY_PARENT = 'Parent';
 
     public function __construct(
         private Formatter $formatter,
