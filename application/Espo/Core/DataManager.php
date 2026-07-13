@@ -30,6 +30,7 @@
 namespace Espo\Core;
 
 use Espo\Core\Exceptions\Error;
+use Espo\Core\Hook\Control;
 use Espo\Core\ORM\EntityManagerProxy;
 use Espo\Core\Utils\Database\Helper as DatabaseHelper;
 use Espo\Core\Utils\Database\Schema\RebuildMode;
@@ -61,7 +62,6 @@ class DataManager
         private ConfigWriter $configWriter,
         private Metadata $metadata,
         private OrmMetadataData $ormMetadataData,
-        private HookManager $hookManager,
         private SchemaManagerProxy $schemaManager,
         private Log $log,
         private Module $module,
@@ -69,7 +69,8 @@ class DataManager
         private ConfigMissingDefaultParamsSaver $configMissingDefaultParamsSaver,
         private FileManager $fileManager,
         private DatabaseParamsFactory $databaseParamsFactory,
-        private InjectableFactory $injectableFactory
+        private InjectableFactory $injectableFactory,
+        private Control $hookControl,
     ) {}
 
     /**
@@ -237,12 +238,12 @@ class DataManager
 
     private function disableHooks(): void
     {
-        $this->hookManager->disable();
+        $this->hookControl->disable();
     }
 
     private function enableHooks(): void
     {
-        $this->hookManager->enable();
+        $this->hookControl->enable();
     }
 
     /**

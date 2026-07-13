@@ -144,6 +144,11 @@ class Binding implements BindingProcessor
         );
 
         $binder->bindService(
+            'Espo\\Core\\Hook\\DataProvider',
+            'hookDataProvider'
+        );
+
+        $binder->bindService(
             'Espo\\Core\\HookManager',
             'hookManager'
         );

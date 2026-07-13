@@ -27,30 +27,25 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace tests\unit\Espo\Core;
+namespace tests\unit\Espo\Core\Hook;
 
+use Espo\Core\Hook\DataProvider;
 use PHPUnit\Framework\TestCase;
 use tests\unit\ReflectionHelper;
-
-use Espo\Core\Hook\GeneralInvoker;
-use Espo\Core\HookManager;
-use Espo\Core\InjectableFactory;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\DataCache;
 use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Core\Utils\Log;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Module\PathProvider;
 
-class HookManagerTest extends TestCase
+class DataProviderTest extends TestCase
 {
-    private $filesPath = 'tests/unit/testData/Hooks';
+    private string $filesPath = 'tests/unit/testData/Hooks';
 
     private ?Config\SystemConfig $systemConfig = null;
-
-    private $pathProvider;
-    private $reflection;
-    private $metadata;
+    private ?PathProvider $pathProvider = null;
+    private ?ReflectionHelper $reflectionHelper = null;
+    private ?Metadata $metadata = null;
 
     protected function setUp(): void
     {
@@ -59,24 +54,19 @@ class HookManagerTest extends TestCase
 
         $this->systemConfig = $this->createMock(Config\SystemConfig::class);
 
-        $injectableFactory = $this->createMock(InjectableFactory::class);
         $dataCache = $this->createMock(DataCache::class);
         $fileManager = new FileManager();
         $this->pathProvider = $this->createMock(PathProvider::class);
-        $generalInvoker = $this->createMock(GeneralInvoker::class);
 
-        $hookManager = new HookManager(
-            $injectableFactory,
-            $fileManager,
-            $this->metadata,
-            $dataCache,
-            $this->createMock(Log::class),
-            $this->pathProvider,
-            $generalInvoker,
-            $this->systemConfig,
+        $dataProvider = new DataProvider(
+            systemConfig: $this->systemConfig,
+            fileManager: $fileManager,
+            pathProvider: $this->pathProvider,
+            dataCache: $dataCache,
+            metadata: $this->metadata,
         );
 
-        $this->reflection = new ReflectionHelper($hookManager);
+        $this->reflectionHelper = new ReflectionHelper($dataProvider);
     }
 
     private function initPathProvider(string $folder): void
@@ -106,156 +96,150 @@ class HookManagerTest extends TestCase
 
     public function testHookExists(): void
     {
-        $data = array (
-            'Espo\\Hooks\\Note\\Stream' => 8,
-            'Espo\\Hooks\\Note\\Mentions' => 9,
-            'Espo\\Hooks\\Note\\Notifications' => 14,
-        );
-
-        $data = array (
-          array (
+        $data = [
+          [
             'className' => 'Espo\\Hooks\\Note\\Stream',
             'order' => 8,
-          ),
-          array (
+          ],
+          [
             'className' => 'Espo\\Hooks\\Note\\Mentions',
             'order' => 9,
-          ),
-          array (
+          ],
+          [
             'className' => 'Espo\\Hooks\\Note\\Notifications',
             'order' => 14,
-          ),
-        );
+          ],
+        ];
 
         $this->assertTrue(
-            $this->reflection->invokeMethod('hookExists', array('Espo\\Hooks\\Note\\Mentions', $data))
+            $this->reflectionHelper->invokeMethod('hookExists', ['Espo\\Hooks\\Note\\Mentions', $data])
         );
         $this->assertTrue(
-            $this->reflection->invokeMethod('hookExists', array('Espo\\Modules\\Crm\\Hooks\\Note\\Mentions', $data))
+            $this->reflectionHelper->invokeMethod('hookExists', ['Espo\\Modules\\Crm\\Hooks\\Note\\Mentions', $data])
         );
         $this->assertTrue(
-            $this->reflection->invokeMethod('hookExists', array('Espo\\Modules\\Test\\Hooks\\Note\\Mentions', $data))
+            $this->reflectionHelper->invokeMethod('hookExists', ['Espo\\Modules\\Test\\Hooks\\Note\\Mentions', $data])
         );
         $this->assertTrue(
-            $this->reflection->invokeMethod('hookExists', array('Espo\\Modules\\Test\\Hooks\\Common\\Stream', $data))
+            $this->reflectionHelper->invokeMethod('hookExists', ['Espo\\Modules\\Test\\Hooks\\Common\\Stream', $data])
         );
         $this->assertFalse(
-            $this->reflection->invokeMethod('hookExists', array('Espo\\Hooks\\Note\\TestHook', $data))
+            $this->reflectionHelper->invokeMethod('hookExists', ['Espo\\Hooks\\Note\\TestHook', $data])
         );
     }
 
-    public function testSortHooks()
+    public function testSortHooks(): void
     {
-        $data = array (
+        $data = [
             'Common' =>
-            array (
+            [
               'afterSave' =>
-              array (
-                array (
+              [
+                [
                     'className' => 'Espo\\Hooks\\Common\\AssignmentEmailNotification',
                     'order' => 9,
-                ),
-                array (
+                ],
+                [
                     'className' => 'Espo\\Hooks\\Common\\Notifications',
                     'order' => 10,
-                ),
-                array (
+                ],
+                [
                     'className' => 'Espo\\Hooks\\Common\\Stream',
                     'order' => 9,
-                ),
-              ),
+                ],
+              ],
               'beforeSave' =>
-              array (
-                array (
+              [
+                [
                     'className' => 'Espo\\Hooks\\Common\\Formula',
                     'order' => 5,
-                ),
-                array (
+                ],
+                [
                     'className' => 'Espo\\Hooks\\Common\\NextNumber',
                     'order' => 10,
-                ),
-                array (
+                ],
+                [
                     'className' => 'Espo\\Hooks\\Common\\CurrencyConverted',
                     'order' => 1,
-                ),
-              ),
-            ),
+                ],
+              ],
+            ],
             'Note' =>
-            array (
+            [
               'beforeSave' =>
-              array (
-                array (
+              [
+                [
                     'className' => 'Espo\\Hooks\\Note\\Mentions',
                     'order' => 9,
-                ),
-              ),
+                ],
+              ],
               'afterSave' =>
-              array (
-                array (
+              [
+                [
                     'className' => 'Espo\\Hooks\\Note\\Notifications',
                     'order' => 14,
-                ),
-              ),
-            ),
-        );
+                ],
+              ],
+            ],
+        ];
 
-        $result = array (
+        $result = [
           'Common' =>
-          array (
+          [
             'afterSave' =>
-            array (
-                array (
+            [
+                [
                     'className' => 'Espo\\Hooks\\Common\\AssignmentEmailNotification',
                     'order' => 9,
-                ),
-                array (
+                ],
+                [
                     'className' => 'Espo\\Hooks\\Common\\Stream',
                     'order' => 9,
-                ),
-                array (
+                ],
+                [
                     'className' => 'Espo\\Hooks\\Common\\Notifications',
                     'order' => 10,
-                ),
-            ),
+                ],
+            ],
             'beforeSave' =>
-            array (
-                array (
+            [
+                [
                     'className' => 'Espo\\Hooks\\Common\\CurrencyConverted',
                     'order' => 1,
-                ),
-                array (
+                ],
+                [
                     'className' => 'Espo\\Hooks\\Common\\Formula',
                     'order' => 5,
-                ),
-                array (
+                ],
+                [
                     'className' => 'Espo\\Hooks\\Common\\NextNumber',
                     'order' => 10,
-                ),
-            ),
-          ),
+                ],
+            ],
+          ],
           'Note' =>
-          array (
+          [
             'beforeSave' =>
-            array (
-                array (
+            [
+                [
                     'className' => 'Espo\\Hooks\\Note\\Mentions',
                     'order' => 9,
-                ),
-            ),
+                ],
+            ],
             'afterSave' =>
-            array (
-                array (
+            [
+                [
                     'className' => 'Espo\\Hooks\\Note\\Notifications',
                     'order' => 14,
-                ),
-            ),
-          ),
-        );
+                ],
+            ],
+          ],
+        ];
 
-        $this->assertEquals($result, $this->reflection->invokeMethod('sortHooks', array($data)) );
+        $this->assertEquals($result, $this->reflectionHelper->invokeMethod('sortHooks', [$data]));
     }
 
-    public function testCase1CustomHook()
+    public function testCase1CustomHook(): void
     {
         $this->initPathProvider('testCase1');
 
@@ -272,7 +256,7 @@ class HookManagerTest extends TestCase
                 'Test',
             ]);
 
-        $this->reflection->invokeMethod('loadHooks');
+        $this->reflectionHelper->invokeMethod('load');
 
         $result = [
           'Note' =>
@@ -287,10 +271,10 @@ class HookManagerTest extends TestCase
           ],
         ];
 
-        $this->assertEquals($result, $this->reflection->getProperty('data'));
+        $this->assertEquals($result, $this->reflectionHelper->getProperty('data'));
     }
 
-    public function testCase2ModuleHook1()
+    public function testCase2ModuleHook1(): void
     {
         $this->initPathProvider('testCase2');
 
@@ -307,7 +291,7 @@ class HookManagerTest extends TestCase
                 'Test',
             ]);
 
-        $this->reflection->invokeMethod('loadHooks');
+        $this->reflectionHelper->invokeMethod('load');
 
         $result = [
           'Note' =>
@@ -323,10 +307,10 @@ class HookManagerTest extends TestCase
           ],
         ];
 
-        $this->assertEquals($result, $this->reflection->getProperty('data'));
+        $this->assertEquals($result, $this->reflectionHelper->getProperty('data'));
     }
 
-    public function testCase2ModuleHookReverseModuleOrder()
+    public function testCase2ModuleHookReverseModuleOrder(): void
     {
         $this->initPathProvider('testCase2');
 
@@ -343,7 +327,7 @@ class HookManagerTest extends TestCase
                 'Crm',
             ]);
 
-        $this->reflection->invokeMethod('loadHooks');
+        $this->reflectionHelper->invokeMethod('load');
 
         $result = [
           'Note' =>
@@ -359,7 +343,7 @@ class HookManagerTest extends TestCase
           ],
         ];
 
-        $this->assertEquals($result, $this->reflection->getProperty('data'));
+        $this->assertEquals($result, $this->reflectionHelper->getProperty('data'));
     }
 
     public function testCase3CoreHook()
@@ -376,21 +360,21 @@ class HookManagerTest extends TestCase
             ->method('getModuleList')
             ->willReturn([]);
 
-        $this->reflection->invokeMethod('loadHooks');
+        $this->reflectionHelper->invokeMethod('load');
 
-        $result = array (
+        $result = [
           'Note' =>
-          array (
+          [
             'beforeSave' =>
-            array (
-                array (
+            [
+                [
                     'className' => 'tests\\unit\\testData\\Hooks\\testCase3\\application\\Espo\\Hooks\\Note\\Mentions',
                     'order' => 9,
-                ),
-            ),
-          ),
-        );
+                ],
+            ],
+          ],
+        ];
 
-        $this->assertEquals($result, $this->reflection->getProperty('data'));
+        $this->assertEquals($result, $this->reflectionHelper->getProperty('data'));
     }
 }
