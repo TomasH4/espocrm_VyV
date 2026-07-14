@@ -542,7 +542,7 @@ class Expression implements WhereItem
     /**
      * Difference between two dates in days. Floor is applied.
      *
-     * @since 10.0.0
+     * @since 10.0.3
      */
     public static function timestampDiffDay(Expression $from, Expression $to): self
     {
@@ -552,7 +552,7 @@ class Expression implements WhereItem
     /**
      * Difference between two dates in hours. Floor is applied.
      *
-     * @since 10.0.0
+     * @since 10.0.3
      */
     public static function timestampDiffHour(Expression $from, Expression $to): self
     {
@@ -562,7 +562,7 @@ class Expression implements WhereItem
     /**
      * Difference between two dates in minutes. Floor is applied.
      *
-     * @since 10.0.0
+     * @since 10.0.3
      */
     public static function timestampDiffMinute(Expression $from, Expression $to): self
     {
@@ -572,7 +572,7 @@ class Expression implements WhereItem
     /**
      * Difference between two dates in seconds.
      *
-     * @since 10.0.0
+     * @since 10.0.3
      */
     public static function timestampDiffSecond(Expression $from, Expression $to): self
     {
