@@ -13,7 +13,3 @@ What reports we do not accept:
 Submitting multiple unverified reports without a proper proof of concept
 (for example, by simply copy-pasting LLM-generated output) may be considered abuse of the reporting process
 and may result in the reporting account being blocked.
-
-## Supported versions
-
-For severe vulnerabilities we provide fixes for 2 minor versions (the second number in the version string) back from the current stable version.
