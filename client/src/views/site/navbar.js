@@ -454,8 +454,11 @@ class NavbarSiteView extends View {
                 .all(this.itemList.map(item => this.createItemView(item)));
         };
 
-        const update = () => {
-            setup().then(() => this.reRender());
+        const update = async () => {
+            await setup();
+            await this.reRender({
+                keep: [this.composeItemKey('notificationBadge')],
+            });
         };
 
         setup();
@@ -511,7 +514,7 @@ class NavbarSiteView extends View {
                     return false;
                 }
 
-                const view = this.getView(name + 'Item');
+                const view = this.getView(this.composeItemKey(name));
 
                 if ('isAvailable' in view) {
                     return view.isAvailable();
@@ -521,11 +524,20 @@ class NavbarSiteView extends View {
             })
             .map(name => {
                 return {
-                    key: name + 'Item',
+                    key: this.composeItemKey(name),
                     name: name,
                     class: defsMap[name].class || '',
                 };
             });
+    }
+
+    /**
+     * @private
+     * @param {string} name
+     * @return {string}
+     */
+    composeItemKey(name) {
+        return name + 'Item';
     }
 
     /**
@@ -552,7 +564,11 @@ class NavbarSiteView extends View {
             return Promise.resolve();
         }
 
-        const key = name + 'Item';
+        const key = this.composeItemKey(name);
+
+        if (defs.view === 'views/notification/badge' && this.hasView(key)) {
+            return Promise.resolve();
+        }
 
         return this.createView(key, defs.view, {selector: `[data-item="${name}"]`});
     }
