@@ -590,6 +590,10 @@
                                     "type": "string",
                                     "description": "A translatable label."
                                 },
+                                "labelTranslation": {
+                                    "type": "string",
+                                    "description": "A label translation path. As of v10.0.0."
+                                },
                                 "handler": {
                                     "type": "string",
                                     "description": "A frontend handler. A view is passed to the constructor."
@@ -597,6 +601,10 @@
                                 "actionFunction": {
                                     "type": "string",
                                     "description": "An action method in the handler."
+                                },
+                                "iconClass": {
+                                    "type": "string",
+                                    "description": "An icon class. As of v10.0.0."
                                 }
                             }
                         },
