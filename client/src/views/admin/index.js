@@ -77,9 +77,17 @@ class AdminIndexView extends View {
             panelItem.itemList = panelItem.itemList || [];
             panelItem.label = this.translate(panelItem.label, 'labels', 'Admin');
 
+            if (panelItem.labelTranslation) {
+                panelItem.label = this.getLanguage().translatePath(panelItem.labelTranslation);
+            }
+
             if (panelItem.itemList) {
                 panelItem.itemList.forEach(item => {
                     item.label = this.translate(item.label, 'labels', 'Admin');
+
+                    if (item.labelTranslation) {
+                        item.label = this.getLanguage().translatePath(item.labelTranslation);
+                    }
 
                     if (item.description) {
                         item.keywords = (this.getLanguage().get('Admin', 'keywords', item.description) || '')
