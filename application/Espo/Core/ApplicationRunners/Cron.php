@@ -55,7 +55,13 @@ class Cron implements Runner
     public function run(): void
     {
         if (!$this->config->isCronEnabled()) {
-            $this->log->warning("Cron is not run because it's disabled with 'cronDisabled' param.");
+            $this->log->warning("Cron is skipped as 'cronDisabled' is set to true in the config.");
+
+            return;
+        }
+
+        if ($this->config->isMaintenanceMode()) {
+            $this->log->warning("Cron run is skipped in maintenance mode.");
 
             return;
         }

@@ -107,6 +107,14 @@
         "listed": false,
         "noSystemUser": true
     },
+    "cron:run": {
+        "className": "Espo\\Classes\\ConsoleCommands\\CronRun",
+        "listed": true,
+        "allowedFlags": [
+            "force"
+        ],
+        "allowedOptions": []
+    },
     "job:prepare": {
         "className": "Espo\\Classes\\ConsoleCommands\\JobPrepare",
         "listed": false,
