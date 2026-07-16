@@ -573,8 +573,11 @@ class ListRelatedView<S extends ListRelatedViewSchema = ListRelatedViewSchema> e
             o.pagination = true;
         }
 
-        const massUnlinkDisabled = this.panelDefs.massUnlinkDisabled ||
-            this.panelDefs.unlinkDisabled || this.unlinkDisabled;
+        const unlinkDisabled = this.panelDefs.unlinkDisabled ||
+            this.unlinkDisabled ||
+            (this.link && this.model.getLinkParam(this.link, 'readOnly'));
+
+        const massUnlinkDisabled = this.panelDefs.massUnlinkDisabled || unlinkDisabled;
 
         o = {
             unlinkMassAction: !massUnlinkDisabled,
@@ -582,7 +585,7 @@ class ListRelatedView<S extends ListRelatedViewSchema = ListRelatedViewSchema> e
             buttonsDisabled: true,
             forceDisplayTopBar: true,
             rowActionsOptions:  {
-                unlinkDisabled: this.panelDefs.unlinkDisabled || this.unlinkDisabled,
+                unlinkDisabled: unlinkDisabled,
                 editDisabled: this.panelDefs.editDisabled,
                 removeDisabled: this.panelDefs.removeDisabled,
             },

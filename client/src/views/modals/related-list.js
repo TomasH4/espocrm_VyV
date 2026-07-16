@@ -204,7 +204,8 @@ class RelatedListModalView extends ModalView {
             }
         }
 
-        this.unlinkDisabled = this.unlinkDisabled || this.options.unlinkDisabled || this.defs.unlinkDisabled;
+        this.unlinkDisabled = this.unlinkDisabled || this.options.unlinkDisabled || this.defs.unlinkDisabled ||
+            (this.link && this.model.getLinkParam(this.link, 'readOnly'));
 
         if (!this.massUnlinkDisabled) {
             if (this.unlinkDisabled || this.defs.massUnlinkDisabled || this.defs.unlinkDisabled) {
