@@ -30,6 +30,7 @@
 namespace Espo\Core\Acl\Cache;
 
 use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Core\Utils\System\SystemState;
 use Espo\Entities\Portal;
 use Espo\Entities\User;
 use Espo\ORM\EntityManager;
@@ -40,19 +41,26 @@ use Espo\ORM\Name\Attribute;
  */
 class Clearer
 {
-    public function __construct(private FileManager $fileManager, private EntityManager $entityManager)
-    {}
+    public function __construct(
+        private FileManager $fileManager,
+        private EntityManager $entityManager,
+        private SystemState $systemState,
+    ) {}
 
     public function clearForAllInternalUsers(): void
     {
         $this->fileManager->removeInDir('data/cache/application/acl');
         $this->fileManager->removeInDir('data/cache/application/aclMap');
+
+        $this->bumpSystemStateVersionNumber();
     }
 
     public function clearForAllPortalUsers(): void
     {
         $this->fileManager->removeInDir('data/cache/application/aclPortal');
         $this->fileManager->removeInDir('data/cache/application/aclPortalMap');
+
+        $this->bumpSystemStateVersionNumber();
     }
 
     public function clearForUser(User $user): void
@@ -67,6 +75,8 @@ class Clearer
 
         $this->fileManager->remove('data/cache/application/acl/' . $part);
         $this->fileManager->remove('data/cache/application/aclMap/' . $part);
+
+        $this->bumpSystemStateVersionNumber();
     }
 
     private function clearForPortalUser(User $user): void
@@ -82,5 +92,12 @@ class Clearer
             $this->fileManager->remove('data/cache/application/aclPortal/' . $part);
             $this->fileManager->remove('data/cache/application/aclPortalMap/' . $part);
         }
+
+        $this->bumpSystemStateVersionNumber();
+    }
+
+    private function bumpSystemStateVersionNumber(): void
+    {
+        $this->systemState->bumpVersionNumber();
     }
 }

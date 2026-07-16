@@ -33,6 +33,7 @@ use Espo\Core\Currency\ConfigDataProvider;
 use Espo\Core\Utils\Config\ConfigWriter;
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\DataCache;
+use Espo\Core\Utils\System\SystemState;
 use Espo\Entities\CurrencyRecord;
 use Espo\ORM\EntityManager;
 use Espo\ORM\Name\Attribute;
@@ -54,6 +55,7 @@ class SyncManager
         private RateEntryProvider $rateEntryProvider,
         private DataCache $dataCache,
         private SystemConfig $systemConfig,
+        private SystemState $systemState,
     ) {}
 
     public function sync(): void
@@ -127,6 +129,7 @@ class SyncManager
             $this->syncToConfigInTransaction();
         });
 
+        $this->getBumpVersionNumber();
         $this->clearCache();
     }
 
@@ -154,6 +157,7 @@ class SyncManager
         $this->configWriter->set('currencyRates', $rates);
         $this->configWriter->save();
 
+        $this->getBumpVersionNumber();
         $this->clearCache();
     }
 
@@ -164,5 +168,10 @@ class SyncManager
         }
 
         $this->dataCache->clear($this->cacheKey);
+    }
+
+    private function getBumpVersionNumber(): void
+    {
+        $this->systemState->bumpVersionNumber();
     }
 }
