@@ -32,16 +32,13 @@ namespace Espo\Core\Webhook;
 use Espo\Core\Name\Field;
 use Espo\Core\ORM\Entity;
 use Espo\Core\ORM\EntityManager;
+use Espo\Core\Utils\Cache\DataCacheAccess;
 use Espo\Core\Utils\Config;
-use Espo\Core\Utils\Config\SystemConfig;
-use Espo\Core\Utils\DataCache;
 use Espo\Core\Utils\FieldUtil;
 use Espo\Core\Utils\Log;
 use Espo\Entities\Webhook;
 use Espo\Entities\WebhookEventQueueItem;
-
 use Espo\ORM\Name\Attribute;
-use RuntimeException;
 use stdClass;
 
 /**
@@ -63,45 +60,21 @@ class Manager
         Field::VERSION_NUMBER,
     ];
 
-    /** @var ?array<string, bool> */
-    private $data = null;
-
+    /**
+     * @param DataCacheAccess<array<string, bool>> $dataCacheAccess
+     */
     public function __construct(
         private Config $config,
-        private DataCache $dataCache,
         private EntityManager $entityManager,
         private FieldUtil $fieldUtil,
         private Log $log,
-        private SystemConfig $systemConfig,
+        private DataCacheAccess $dataCacheAccess,
     ) {
-        $this->loadData();
-    }
 
-    private function loadData(): void
-    {
-        if ($this->systemConfig->useCache() && $this->dataCache->has($this->cacheKey)) {
-            /** @var array<string, bool> $data */
-            $data = $this->dataCache->get($this->cacheKey);
-
-            $this->data = $data;
-        }
-
-        if (is_null($this->data)) {
-            $this->data = $this->buildData();
-
-            if ($this->systemConfig->useCache()) {
-                $this->storeDataToCache();
-            }
-        }
-    }
-
-    private function storeDataToCache(): void
-    {
-        if ($this->data === null) {
-            throw new RuntimeException("No data to store.");
-        }
-
-        $this->dataCache->store($this->cacheKey, $this->data);
+        $this->dataCacheAccess->init(
+            key: $this->cacheKey,
+            loader: fn () => $this->buildData(),
+        );
     }
 
     /**
@@ -135,11 +108,12 @@ class Manager
      */
     public function addEvent(string $event): void
     {
-        $this->data[$event] = true;
+        $data = $this->dataCacheAccess->get();
 
-        if ($this->systemConfig->useCache()) {
-            $this->storeDataToCache();
-        }
+        $data[$event] = true;
+
+        $this->dataCacheAccess->set($data);
+        $this->dataCacheAccess->store();
     }
 
     /**
@@ -160,16 +134,19 @@ class Manager
             return;
         }
 
-        unset($this->data[$event]);
+        $data = $this->dataCacheAccess->get();
 
-        if ($this->systemConfig->useCache()) {
-            $this->storeDataToCache();
-        }
+        unset($data[$event]);
+
+        $this->dataCacheAccess->set($data);
+        $this->dataCacheAccess->store();
     }
 
     private function eventExists(string $event): bool
     {
-        return isset($this->data[$event]);
+        $data = $this->dataCacheAccess->get();
+
+        return isset($data[$event]);
     }
 
     private function logDebugEvent(string $event, Entity $entity): void

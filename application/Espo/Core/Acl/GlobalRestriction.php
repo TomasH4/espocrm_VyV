@@ -29,8 +29,7 @@
 
 namespace Espo\Core\Acl;
 
-use Espo\Core\Utils\Config\SystemConfig;
-use Espo\Core\Utils\DataCache;
+use Espo\Core\Utils\Cache\DataCacheAccess;
 use Espo\Core\Utils\FieldUtil;
 use Espo\Core\Utils\Metadata;
 
@@ -83,45 +82,21 @@ class GlobalRestriction
         self::TYPE_READ_ONLY,
     ];
 
-    private ?stdClass $data = null;
-
     private string $cacheKey = 'entityAcl';
 
     public function __construct(
         private Metadata $metadata,
-        private DataCache $dataCache,
         private FieldUtil $fieldUtil,
-        SystemConfig $systemConfig,
+        private DataCacheAccess $dataCacheAccess,
     ) {
 
-        $useCache = $systemConfig->useCache();
-
-        if ($useCache && $this->dataCache->has($this->cacheKey)) {
-            /** @var stdClass $cachedData */
-            $cachedData = $this->dataCache->get($this->cacheKey);
-
-            $this->data = $cachedData;
-
-            return;
-        }
-
-        if (!$this->data) {
-            $this->buildData();
-        }
-
-        if ($useCache) {
-            $this->storeCacheFile();
-        }
+        $this->dataCacheAccess->init(
+            key: $this->cacheKey,
+            loader: fn () => $this->buildData(),
+        );
     }
 
-    private function storeCacheFile(): void
-    {
-        assert($this->data !== null);
-
-        $this->dataCache->store($this->cacheKey, $this->data);
-    }
-
-    private function buildData(): void
+    private function buildData(): stdClass
     {
         /** @var string[] $scopeList */
         $scopeList = array_keys($this->metadata->get(['entityDefs']) ?? []);
@@ -211,7 +186,7 @@ class GlobalRestriction
             }
         }
 
-        $this->data = $data;
+        return $data;
     }
 
     /**
@@ -220,21 +195,9 @@ class GlobalRestriction
      */
     public function getScopeRestrictedFieldList(string $scope, string $type): array
     {
-        assert($this->data !== null);
+        $data = $this->dataCacheAccess->get();
 
-        if (!property_exists($this->data, $scope)) {
-            return [];
-        }
-
-        if (!property_exists($this->data->$scope, 'fields')) {
-            return [];
-        }
-
-        if (!property_exists($this->data->$scope->fields, $type)) {
-            return [];
-        }
-
-        return $this->data->$scope->fields->$type;
+        return $data->$scope->fields->$type ?? [];
     }
 
     /**
@@ -243,21 +206,9 @@ class GlobalRestriction
      */
     public function getScopeRestrictedAttributeList(string $scope, string $type): array
     {
-        assert($this->data !== null);
+        $data = $this->dataCacheAccess->get();
 
-        if (!property_exists($this->data, $scope)) {
-            return [];
-        }
-
-        if (!property_exists($this->data->$scope, 'attributes')) {
-            return [];
-        }
-
-        if (!property_exists($this->data->$scope->attributes, $type)) {
-            return [];
-        }
-
-        return $this->data->$scope->attributes->$type;
+        return $data->$scope->attributes->$type ?? [];
     }
 
     /**
@@ -266,20 +217,8 @@ class GlobalRestriction
      */
     public function getScopeRestrictedLinkList(string $scope, string $type): array
     {
-        assert($this->data !== null);
+        $data = $this->dataCacheAccess->get();
 
-        if (!property_exists($this->data, $scope)) {
-            return [];
-        }
-
-        if (!property_exists($this->data->$scope, 'links')) {
-            return [];
-        }
-
-        if (!property_exists($this->data->$scope->links, $type)) {
-            return [];
-        }
-
-        return $this->data->$scope->links->$type;
+        return $data->$scope->links->$type ?? [];
     }
 }

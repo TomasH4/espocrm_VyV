@@ -169,7 +169,7 @@ class DataManager
      */
     public function rebuildMetadata(): void
     {
-        $this->metadata->init(true);
+        $this->metadata->init();
         $this->ormMetadataData->reload();
         $this->entityManager->getMetadata()->updateData();
 
