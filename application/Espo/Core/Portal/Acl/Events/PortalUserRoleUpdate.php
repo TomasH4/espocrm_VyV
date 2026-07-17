@@ -27,7 +27,7 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Core\Acl\Events;
+namespace Espo\Core\Portal\Acl\Events;
 
 use Espo\Core\Utils\Event\CrossInstanceEvent;
 use stdClass;
@@ -36,7 +36,7 @@ use UnexpectedValueException;
 /**
  * @since 10.1.0
  */
-class InvalidatePortalUserCache implements CrossInstanceEvent
+class PortalUserRoleUpdate implements CrossInstanceEvent
 {
     public function __construct(
         public string $userId,

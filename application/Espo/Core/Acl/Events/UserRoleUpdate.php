@@ -36,7 +36,7 @@ use UnexpectedValueException;
 /**
  * @since 10.1.0
  */
-readonly class InvalidateUserCache implements CrossInstanceEvent
+readonly class UserRoleUpdate implements CrossInstanceEvent
 {
     public function __construct(
         public string $userId,

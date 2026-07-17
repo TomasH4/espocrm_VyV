@@ -48,11 +48,14 @@ class EventDispatcher
     ) {}
 
     /**
-     * @param class-string<Event> $className
-     * @param Closure(Event, Context): void $callback
+     * @template T of Event
+     * @param class-string<T> $className
+     * @param Closure(T, Context): void $callback
      */
     public function subscribe(string $className, Closure $callback): void
     {
+        /** @var Closure(Event, Context): void $callback */
+
         $this->callbacks[$className] ??= [];
         $this->callbacks[$className][] = $callback;
 
@@ -65,11 +68,14 @@ class EventDispatcher
     }
 
     /**
-     * @param class-string<Event> $className
-     * @param Closure(Event, Context): void $callback
+     * @template T of Event
+     * @param class-string<T> $className
+     * @param Closure(T, Context): void $callback
      */
     public function unsubscribe(string $className, Closure $callback): void
     {
+        /** @var Closure(Event, Context): void $callback */
+
         if (!array_key_exists($className, $this->callbacks)) {
             return;
         }

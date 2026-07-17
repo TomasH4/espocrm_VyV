@@ -29,8 +29,8 @@
 
 namespace Espo\Core\Acl\Cache;
 
-use Espo\Core\Acl\Events\InvalidatePortalUserCache;
-use Espo\Core\Acl\Events\InvalidateUserCache;
+use Espo\Core\Portal\Acl\Events\PortalUserRoleUpdate;
+use Espo\Core\Acl\Events\UserRoleUpdate;
 use Espo\Core\Utils\Event\EventDispatcher;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\System\SystemState;
@@ -80,7 +80,7 @@ class Clearer
         $this->fileManager->remove('data/cache/application/acl/' . $part);
         $this->fileManager->remove('data/cache/application/aclMap/' . $part);
 
-        $this->eventDispatcher->dispatch(new InvalidateUserCache($user->getId()));
+        $this->eventDispatcher->dispatch(new UserRoleUpdate($user->getId()));
     }
 
     private function clearForPortalUser(User $user): void
@@ -96,7 +96,7 @@ class Clearer
             $this->fileManager->remove('data/cache/application/aclPortal/' . $part);
             $this->fileManager->remove('data/cache/application/aclPortalMap/' . $part);
 
-            $event = new InvalidatePortalUserCache(
+            $event = new PortalUserRoleUpdate(
                 userId: $user->getId(),
                 portalId: $portal->getId(),
             );

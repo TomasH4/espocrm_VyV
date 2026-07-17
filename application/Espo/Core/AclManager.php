@@ -29,9 +29,11 @@
 
 namespace Espo\Core;
 
+use Espo\Core\Acl\Events\UserRoleUpdate;
 use Espo\Core\Acl\OwnershipSharedChecker;
 use Espo\Core\Acl\Permission;
 use Espo\Core\Name\Field;
+use Espo\Core\Utils\Event\EventDispatcher;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityManager;
 use Espo\Entities\User;
@@ -119,12 +121,15 @@ class AclManager
         MapFactory $mapFactory,
         protected GlobalRestriction $globalRestriction,
         protected OwnerUserFieldProvider $ownerUserFieldProvider,
-        protected EntityManager $entityManager
+        protected EntityManager $entityManager,
+        protected EventDispatcher $eventDispatcher,
     ) {
         $this->accessCheckerFactory = $accessCheckerFactory;
         $this->ownershipCheckerFactory = $ownershipCheckerFactory;
         $this->tableFactory = $tableFactory;
         $this->mapFactory = $mapFactory;
+
+        $this->initEventHandling();
     }
 
     /**
@@ -781,5 +786,15 @@ class AclManager
         }
 
         return false;
+    }
+
+    protected function initEventHandling(): void
+    {
+        $this->eventDispatcher->subscribe(UserRoleUpdate::class, function (UserRoleUpdate $event) {
+            $userId = $event->userId;
+
+            unset($this->tableHashMap[$userId]);
+            unset($this->mapHashMap[$userId]);
+        });
     }
 }
