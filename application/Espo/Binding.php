@@ -272,6 +272,11 @@ class Binding implements BindingProcessor
             'Espo\\Core\\Utils\\Event\\EventDispatcherTransport',
             'eventDispatcherTransport'
         );
+
+        $binder->bindService(
+            'Espo\\Tools\\Pipeline\\PipelineDataProvider',
+            'pipelineDataProvider'
+        );
     }
 
     private function bindCore(Binder $binder): void

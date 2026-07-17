@@ -97,5 +97,8 @@
     },
     "eventDispatcherTransport": {
         "loaderClassName": "Espo\\Core\\Utils\\Event\\EventDispatcherTransportLoader"
+    },
+    "pipelineDataProvider": {
+        "className": "Espo\\Tools\\Pipeline\\PipelineDataProvider"
     }
 }

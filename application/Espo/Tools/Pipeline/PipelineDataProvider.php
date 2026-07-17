@@ -31,6 +31,7 @@ namespace Espo\Tools\Pipeline;
 
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\DataCache;
+use Espo\Core\Utils\Event\EventDispatcher;
 use Espo\Core\Utils\Log;
 use Espo\Core\Utils\Metadata;
 use Espo\Entities\Pipeline;
@@ -38,6 +39,7 @@ use Espo\Entities\PipelineStage;
 use Espo\ORM\EntityManager;
 use Espo\Tools\Pipeline\Data\PipelineData;
 use Espo\Tools\Pipeline\Data\StageData;
+use Espo\Tools\Pipeline\Events\UpdateGlobal;
 use stdClass;
 use Throwable;
 
@@ -46,19 +48,33 @@ class PipelineDataProvider
     private const int LIMIT = 100;
     private const string CACHE_KEY = 'pipelines';
 
+    /**
+     * @var ?array<string, PipelineData[]>
+     */
+    private ?array $data = null;
+
     public function __construct(
         private Metadata $metadata,
         private EntityManager $entityManager,
         private SystemConfig $systemConfig,
         private DataCache $dataCache,
         private Log $log,
-    ) {}
+        EventDispatcher $eventDispatcher,
+    ) {
+        $eventDispatcher->subscribe(UpdateGlobal::class, function () {
+            $this->data = null;
+        });
+    }
 
     /**
      * @return array<string, PipelineData[]>
      */
     public function get(): array
     {
+        if ($this->data !== null) {
+            return $this->data;
+        }
+
         $data = null;
         $store = false;
 
@@ -75,6 +91,8 @@ class PipelineDataProvider
         if ($store) {
             $this->storeCache($data);
         }
+
+        $this->data = $data;
 
         return $data;
     }
