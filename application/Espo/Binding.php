@@ -262,6 +262,16 @@ class Binding implements BindingProcessor
             'Espo\\Core\\Utils\\System\\SystemState',
             'systemState'
         );
+
+        $binder->bindService(
+            'Espo\\Core\\Utils\\Event\\Configuration',
+            'eventDispatcherConfiguration',
+        );
+
+        $binder->bindService(
+            'Espo\\Core\\Utils\\Event\\EventDispatcherTransport',
+            'eventDispatcherTransport'
+        );
     }
 
     private function bindCore(Binder $binder): void

@@ -91,5 +91,11 @@
     },
     "session": {
         "className": "Espo\\Core\\Session\\DefaultSession"
+    },
+    "eventDispatcherConfiguration": {
+        "className": "Espo\\Core\\Utils\\Event\\Configuration"
+    },
+    "eventDispatcherTransport": {
+        "loaderClassName": "Espo\\Core\\Utils\\Event\\EventDispatcherTransportLoader"
     }
 }

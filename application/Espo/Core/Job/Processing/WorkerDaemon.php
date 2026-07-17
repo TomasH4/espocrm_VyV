@@ -31,6 +31,7 @@ namespace Espo\Core\Job\Processing;
 
 use Espo\Core\Job\Processing\Consumer\Params;
 use Espo\Core\Job\Processing\Util\ExitSetup;
+use Espo\Core\Utils\Event\Configuration;
 
 /**
  * @since 10.1.0
@@ -41,6 +42,7 @@ class WorkerDaemon
     public function __construct(
         private Consumer $consumer,
         private ExitSetup $exitSetup,
+        private Configuration $eventConfiguration,
     ) {}
 
     public function run(WorkerDaemon\Params $params): void
@@ -48,6 +50,8 @@ class WorkerDaemon
         $consumerParams = $this->prepareParams($params);
 
         $this->setupExit();
+
+        $this->eventConfiguration->setSubscribeToCrossInstanceEvents(true);
 
         $this->consumer->start($consumerParams);
     }
