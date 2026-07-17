@@ -42,7 +42,7 @@ interface EventTransport
      */
     public function subscribe(Closure $callback): void;
 
-    public function dispatch(Envelope $envelope): void;
+    public function publish(Envelope $envelope): void;
 
     /**
      * @throws TransportNotConnected

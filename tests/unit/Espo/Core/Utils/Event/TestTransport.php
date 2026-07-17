@@ -49,7 +49,7 @@ class TestTransport implements EventTransport
         $this->callback = $callback;
     }
 
-    public function dispatch(Envelope $envelope): void
+    public function publish(Envelope $envelope): void
     {}
 
     public function tick(): void

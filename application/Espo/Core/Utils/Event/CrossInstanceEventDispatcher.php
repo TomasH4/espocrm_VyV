@@ -88,7 +88,7 @@ class CrossInstanceEventDispatcher
             origin: $this->originProvider->get(),
         );
 
-        $this->transport->dispatch($envelope);
+        $this->transport->publish($envelope);
     }
 
     private function ensureSubscribeTransport(): void
