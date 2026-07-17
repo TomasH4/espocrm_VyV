@@ -42,15 +42,15 @@ use stdClass;
 class GlobalRestriction
 {
     /** Totally forbidden. */
-    public const TYPE_FORBIDDEN = 'forbidden';
+    public const string TYPE_FORBIDDEN = 'forbidden';
     /** Reading forbidden, writing allowed. */
-    public const TYPE_INTERNAL = 'internal';
+    public const string TYPE_INTERNAL = 'internal';
     /** Forbidden for non-admin users. */
-    public const TYPE_ONLY_ADMIN = 'onlyAdmin';
+    public const string TYPE_ONLY_ADMIN = 'onlyAdmin';
     /** Read-only for all users. */
-    public const TYPE_READ_ONLY = 'readOnly';
+    public const string TYPE_READ_ONLY = 'readOnly';
     /** Read-only for non-admin users. */
-    public const TYPE_NON_ADMIN_READ_ONLY = 'nonAdminReadOnly';
+    public const string TYPE_NON_ADMIN_READ_ONLY = 'nonAdminReadOnly';
 
     /**
      * @var array<int, self::TYPE_*>
