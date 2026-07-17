@@ -161,8 +161,10 @@ class Client
                         throw new NotAllowedInternalHost("Not allowed internal host in '$url'.");
                     }
 
-                    $options['curl'] ??= [];
-                    $options['curl'][CURLOPT_RESOLVE] = $resolve;
+                    if ($resolve) {
+                        $options['curl'] ??= [];
+                        $options['curl'][CURLOPT_RESOLVE] = $resolve;
+                    }
 
                     return $handler($request, $options);
                 };

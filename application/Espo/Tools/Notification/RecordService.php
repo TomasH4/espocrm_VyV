@@ -299,6 +299,10 @@ class RecordService
 
         $count = $row['c'] ?? null;
 
+        if (is_string($count) && is_numeric($count)) {
+            $count = (int) $count;
+        }
+
         if (!is_int($count)) {
             throw new UnexpectedValueException();
         }
