@@ -31,10 +31,10 @@ namespace tests\unit\Espo\Core\Utils\Event;
 
 use Closure;
 use Espo\Core\Utils\Event\Envelope;
-use Espo\Core\Utils\Event\EventDispatcherTransport;
+use Espo\Core\Utils\Event\EventTransport;
 use stdClass;
 
-class TestTransport implements EventDispatcherTransport
+class TestTransport implements EventTransport
 {
     /**
      * @var (Closure(Envelope): void)|null

@@ -30,22 +30,15 @@
 namespace Espo\Core\Utils\Event;
 
 use Closure;
-use Espo\Core\Utils\Event\Exceptions\TransportNotConnected;
 
-/**
- * @since 10.1.0
- */
-interface EventDispatcherTransport
+class BypassEventTransport implements EventTransport
 {
-    /**
-     * @param Closure(Envelope): void $callback
-     */
-    public function subscribe(Closure $callback): void;
+    public function subscribe(Closure $callback): void
+    {}
 
-    public function dispatch(Envelope $envelope): void;
+    public function dispatch(Envelope $envelope): void
+    {}
 
-    /**
-     * @throws TransportNotConnected
-     */
-    public function tick(): void;
+    public function tick(): void
+    {}
 }

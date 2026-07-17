@@ -43,7 +43,7 @@ class CrossInstanceEventDispatcher
     private bool $isTransportSubscribed = false;
 
     public function __construct(
-        private EventDispatcherTransport $transport,
+        private EventTransport $transport,
         private OriginProvider $originProvider,
     ) {}
 

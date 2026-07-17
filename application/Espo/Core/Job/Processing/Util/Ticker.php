@@ -30,13 +30,13 @@
 namespace Espo\Core\Job\Processing\Util;
 
 use Espo\Core\Job\Processing\Exceptions\TickFailure;
-use Espo\Core\Utils\Event\EventDispatcherTransport;
+use Espo\Core\Utils\Event\EventTransport;
 use Espo\Core\Utils\Event\Exceptions\TransportNotConnected;
 
 class Ticker
 {
     public function __construct(
-        private EventDispatcherTransport $transport
+        private EventTransport $transport
     ) {}
 
     /**

@@ -29,16 +29,20 @@
 
 namespace Espo\Core\Utils\Event;
 
-use Closure;
+use Espo\Core\Container\Loader;
+use Espo\Core\InjectableFactory;
 
-class BypassEventDispatcherTransport implements EventDispatcherTransport
+/**
+ * @noinspection PhpUnused
+ */
+class EventTransportLoader implements Loader
 {
-    public function subscribe(Closure $callback): void
-    {}
+    public function __construct(
+        private InjectableFactory $injectableFactory,
+    ) {}
 
-    public function dispatch(Envelope $envelope): void
-    {}
-
-    public function tick(): void
-    {}
+    public function load(): EventTransport
+    {
+        return $this->injectableFactory->create(BypassEventTransport::class);
+    }
 }

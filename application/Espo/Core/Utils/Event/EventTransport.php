@@ -29,20 +29,23 @@
 
 namespace Espo\Core\Utils\Event;
 
-use Espo\Core\Container\Loader;
-use Espo\Core\InjectableFactory;
+use Closure;
+use Espo\Core\Utils\Event\Exceptions\TransportNotConnected;
 
 /**
- * @noinspection PhpUnused
+ * @since 10.1.0
  */
-class EventDispatcherTransportLoader implements Loader
+interface EventTransport
 {
-    public function __construct(
-        private InjectableFactory $injectableFactory,
-    ) {}
+    /**
+     * @param Closure(Envelope): void $callback
+     */
+    public function subscribe(Closure $callback): void;
 
-    public function load(): EventDispatcherTransport
-    {
-        return $this->injectableFactory->create(BypassEventDispatcherTransport::class);
-    }
+    public function dispatch(Envelope $envelope): void;
+
+    /**
+     * @throws TransportNotConnected
+     */
+    public function tick(): void;
 }

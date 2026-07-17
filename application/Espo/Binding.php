@@ -269,8 +269,8 @@ class Binding implements BindingProcessor
         );
 
         $binder->bindService(
-            'Espo\\Core\\Utils\\Event\\EventDispatcherTransport',
-            'eventDispatcherTransport'
+            'Espo\\Core\\Utils\\Event\\EventTransport',
+            'eventTransport'
         );
 
         $binder->bindService(
