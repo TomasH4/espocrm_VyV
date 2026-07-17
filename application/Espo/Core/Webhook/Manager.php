@@ -34,8 +34,11 @@ use Espo\Core\ORM\Entity;
 use Espo\Core\ORM\EntityManager;
 use Espo\Core\Utils\Cache\DataCacheAccess;
 use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Event\Context;
+use Espo\Core\Utils\Event\EventDispatcher;
 use Espo\Core\Utils\FieldUtil;
 use Espo\Core\Utils\Log;
+use Espo\Core\Webhook\Events\UpdateGlobal;
 use Espo\Entities\Webhook;
 use Espo\Entities\WebhookEventQueueItem;
 use Espo\ORM\Name\Attribute;
@@ -69,12 +72,21 @@ class Manager
         private FieldUtil $fieldUtil,
         private Log $log,
         private DataCacheAccess $dataCacheAccess,
+        private EventDispatcher $eventDispatcher,
     ) {
 
         $this->dataCacheAccess->init(
             key: $this->cacheKey,
             loader: fn () => $this->buildData(),
         );
+
+        $this->eventDispatcher->subscribe(UpdateGlobal::class, function (UpdateGlobal $event, Context $context) {
+            if ($context->isLocal) {
+                return;
+            }
+
+            $this->dataCacheAccess->reset();
+        });
     }
 
     /**
@@ -114,6 +126,8 @@ class Manager
 
         $this->dataCacheAccess->set($data);
         $this->dataCacheAccess->store();
+
+        $this->eventDispatcher->dispatch(new UpdateGlobal());
     }
 
     /**
@@ -140,6 +154,8 @@ class Manager
 
         $this->dataCacheAccess->set($data);
         $this->dataCacheAccess->store();
+
+        $this->eventDispatcher->dispatch(new UpdateGlobal());
     }
 
     private function eventExists(string $event): bool
