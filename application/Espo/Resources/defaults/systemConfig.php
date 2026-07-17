@@ -121,6 +121,8 @@ return [
         'cleanupAppLog',
         'cleanupAppLogPeriod',
         'rabbitMq',
+        'redis',
+        'eventTransport',
     ],
     'adminItems' => [
         'devMode',

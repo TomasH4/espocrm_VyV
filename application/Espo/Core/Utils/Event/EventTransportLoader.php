@@ -31,6 +31,8 @@ namespace Espo\Core\Utils\Event;
 
 use Espo\Core\Container\Loader;
 use Espo\Core\InjectableFactory;
+use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Event\Redis\RedisEventTransport;
 
 /**
  * @noinspection PhpUnused
@@ -39,10 +41,15 @@ class EventTransportLoader implements Loader
 {
     public function __construct(
         private InjectableFactory $injectableFactory,
+        private Config $config,
     ) {}
 
     public function load(): EventTransport
     {
+        if ($this->config->get('eventTransport') === 'Redis') {
+            return $this->injectableFactory->create(RedisEventTransport::class);
+        }
+
         return $this->injectableFactory->create(BypassEventTransport::class);
     }
 }
