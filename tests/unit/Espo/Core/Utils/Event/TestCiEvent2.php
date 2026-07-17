@@ -34,7 +34,7 @@ use stdClass;
 
 class TestCiEvent2 implements CrossInstanceEvent
 {
-    public static function fromRaw(stdClass $payload): static
+    public static function fromRaw(stdClass $payload): self
     {
         return new self();
     }

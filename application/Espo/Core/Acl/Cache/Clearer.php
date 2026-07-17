@@ -29,6 +29,9 @@
 
 namespace Espo\Core\Acl\Cache;
 
+use Espo\Core\Acl\Events\InvalidatePortalUserCache;
+use Espo\Core\Acl\Events\InvalidateUserCache;
+use Espo\Core\Utils\Event\EventDispatcher;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\System\SystemState;
 use Espo\Entities\Portal;
@@ -37,7 +40,7 @@ use Espo\ORM\EntityManager;
 use Espo\ORM\Name\Attribute;
 
 /**
- * @todo Clear cache in AclManager.
+ * @todo Clear loaded data in AclManager.
  */
 class Clearer
 {
@@ -45,6 +48,7 @@ class Clearer
         private FileManager $fileManager,
         private EntityManager $entityManager,
         private SystemState $systemState,
+        private EventDispatcher $eventDispatcher,
     ) {}
 
     public function clearForAllInternalUsers(): void
@@ -76,7 +80,7 @@ class Clearer
         $this->fileManager->remove('data/cache/application/acl/' . $part);
         $this->fileManager->remove('data/cache/application/aclMap/' . $part);
 
-        $this->bumpSystemStateVersionNumber();
+        $this->eventDispatcher->dispatch(new InvalidateUserCache($user->getId()));
     }
 
     private function clearForPortalUser(User $user): void
@@ -91,9 +95,14 @@ class Clearer
 
             $this->fileManager->remove('data/cache/application/aclPortal/' . $part);
             $this->fileManager->remove('data/cache/application/aclPortalMap/' . $part);
-        }
 
-        $this->bumpSystemStateVersionNumber();
+            $event = new InvalidatePortalUserCache(
+                userId: $user->getId(),
+                portalId: $portal->getId(),
+            );
+
+            $this->eventDispatcher->dispatch($event);
+        }
     }
 
     private function bumpSystemStateVersionNumber(): void

@@ -31,7 +31,6 @@ namespace Espo\Core\Job\Processing\Util;
 
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Config\StateConfig;
-use Espo\Core\Utils\Event\EventDispatcherTransport;
 
 class ExitPolicy
 {
@@ -40,15 +39,12 @@ class ExitPolicy
     public function __construct(
         private StateConfig $stateConfig,
         private Config\StateConfigDirect $stateConfigDirect,
-        private EventDispatcherTransport $eventDispatcherTransport,
     ) {
         $this->cacheTimestamp = $this->stateConfig->getCacheTimestamp();
     }
 
     public function toExit(): bool
     {
-        return
-            $this->cacheTimestamp !== $this->stateConfigDirect->getCacheTimestamp() ||
-            $this->eventDispatcherTransport->shouldReconnect();
+        return $this->cacheTimestamp !== $this->stateConfigDirect->getCacheTimestamp();
     }
 }

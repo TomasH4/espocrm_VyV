@@ -32,6 +32,8 @@ namespace Espo\Core\Currency;
 use Espo\Core\Field\Date;
 use Espo\Core\Utils\Cache\DataCacheAccess;
 use Espo\Core\Utils\DateTime;
+use Espo\Core\Utils\Event\EventDispatcher;
+use Espo\Tools\Currency\Events\CurrencyRateUpdate;
 use LogicException;
 use RuntimeException;
 use stdClass;
@@ -53,6 +55,7 @@ class InternalRatesProvider
         private DateTime $dateTime,
         private InternalRateEntryProvider $rateEntryProvider,
         private DataCacheAccess $dataCacheAccess,
+        private EventDispatcher $eventDispatcher,
     ) {
         $this->dataCacheAccess->init(
             key: $this->cacheKey,
@@ -73,6 +76,10 @@ class InternalRatesProvider
                 return $date === $this->today->toString();
             },
         );
+
+        $this->eventDispatcher->subscribe(CurrencyRateUpdate::class, function () {
+            $this->dataCacheAccess->reset();
+        });
     }
 
     /**

@@ -30,10 +30,12 @@
 namespace Espo\Core\Job\Processing\RabbitMq;
 
 use Espo\Core\Job\JobRunner;
+use Espo\Core\Job\Processing\Exceptions\TickFailure;
 use Espo\Core\Job\Processing\JobProvider;
 use Espo\Core\Job\Processing\Consumer as ConsumerInterface;
 use Espo\Core\Job\Processing\Consumer\Params;
 use Espo\Core\Job\Processing\Util\ExitPolicy;
+use Espo\Core\Job\Processing\Util\Ticker;
 use Espo\Core\Utils\Log;
 use Exception;
 use PhpAmqpLib\Channel\AMQPChannel;
@@ -55,6 +57,7 @@ class Consumer implements ConsumerInterface
         private Log $log,
         private JobProvider $jobProvider,
         private ExitPolicy $exitPolicy,
+        private Ticker $ticker,
     ) {}
 
     public function start(Params $params): void
@@ -75,6 +78,14 @@ class Consumer implements ConsumerInterface
         $count = 0;
 
         while ($channel->is_consuming()) {
+            try {
+                $this->ticker->tick();
+            } catch (TickFailure $e) {
+                $this->log->warning("Tick failure.", ['exception' => $e]);
+
+                break;
+            }
+
             try {
                 $channel->wait(timeout: self::ITERATION_TIMEOUT);
             } catch (AMQPTimeoutException) {

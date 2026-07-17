@@ -33,7 +33,7 @@ use stdClass;
 
 interface CrossInstanceEvent extends Event
 {
-    public static function fromRaw(stdClass $payload): static;
+    public static function fromRaw(stdClass $payload): self;
 
     public function toRaw(): stdClass;
 }

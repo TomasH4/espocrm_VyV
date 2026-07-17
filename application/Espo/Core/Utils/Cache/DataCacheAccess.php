@@ -61,8 +61,6 @@ class DataCacheAccess
     ) {}
 
     /**
-     * @todo Event clearing loaded data.
-     *
      * @param Closure(): T $loader
      * @param (Closure(T): bool)|null $validityChecker
      */

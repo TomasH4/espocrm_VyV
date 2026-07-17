@@ -52,10 +52,8 @@ class TestTransport implements EventDispatcherTransport
     public function dispatch(Envelope $envelope): void
     {}
 
-    public function shouldReconnect(): bool
-    {
-        return true;
-    }
+    public function tick(): void
+    {}
 
     public function dispatchForTest(string $eventClassName, stdClass $payload): void
     {

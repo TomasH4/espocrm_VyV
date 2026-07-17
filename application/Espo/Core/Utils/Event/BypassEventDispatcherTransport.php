@@ -39,8 +39,6 @@ class BypassEventDispatcherTransport implements EventDispatcherTransport
     public function dispatch(Envelope $envelope): void
     {}
 
-    public function shouldReconnect(): bool
-    {
-        return false;
-    }
+    public function tick(): void
+    {}
 }

@@ -30,6 +30,7 @@
 namespace Espo\Core\Utils\Event;
 
 use Closure;
+use Espo\Core\Utils\Event\Exceptions\TransportNotConnected;
 
 /**
  * @since 10.1.0
@@ -43,5 +44,8 @@ interface EventDispatcherTransport
 
     public function dispatch(Envelope $envelope): void;
 
-    public function shouldReconnect(): bool;
+    /**
+     * @throws TransportNotConnected
+     */
+    public function tick(): void;
 }
