@@ -44,7 +44,7 @@ use Throwable;
 
 class RedisEventTransport implements EventTransport
 {
-    private const string STREAM_NAME = 'espocrm-events';
+    private const string STREAM_NAME = 'espocrm:events';
 
     private const int COUNT = 50;
 
