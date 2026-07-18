@@ -176,6 +176,7 @@ class RedisEventTransport implements EventTransport
             'trim' => ['MAXLEN', self::MAX_STREAM_LENGTH],
         ];
 
+        // Magic method is used.
         $client->xadd(self::STREAM_NAME, ['data' => $json], '*', $options);
     }
 
