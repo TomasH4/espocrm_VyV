@@ -159,11 +159,6 @@ class Consumer implements ConsumerInterface
         return $id;
     }
 
-    private function nack(AMQPMessage $message): void
-    {
-        $message->nack(false, true);
-    }
-
     private function setupConsume(AMQPChannel $channel, string $queue): void
     {
         $channel->basic_consume(
@@ -174,7 +169,7 @@ class Consumer implements ConsumerInterface
                 } catch (Throwable $e) {
                     $this->log->error("Worker: Could not get job ID.", ['exception' => $e]);
 
-                    $this->nack($message);
+                    $message->nack();
 
                     return;
                 }
@@ -189,7 +184,7 @@ class Consumer implements ConsumerInterface
                         'id' => $id,
                     ]);
 
-                    $this->nack($message);
+                    $message->nack();
 
                     return;
                 }
