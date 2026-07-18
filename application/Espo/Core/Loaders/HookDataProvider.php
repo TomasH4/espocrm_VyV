@@ -42,7 +42,7 @@ class HookDataProvider implements Loader
         private InjectableFactory $injectableFactory,
     ) {}
 
-    public function load()
+    public function load(): DataProvider
     {
         return $this->injectableFactory->create(DataProvider::class);
     }

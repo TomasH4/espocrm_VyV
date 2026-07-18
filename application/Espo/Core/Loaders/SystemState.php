@@ -42,7 +42,7 @@ class SystemState implements Loader
         private InjectableFactory $injectableFactory,
     ) {}
 
-    public function load()
+    public function load(): SystemStateService
     {
         return $this->injectableFactory->create(SystemStateService::class);
     }
