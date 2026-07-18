@@ -46,6 +46,7 @@ class RedisEventTransport implements EventTransport
     private const string STREAM_NAME = 'espocrm:events';
 
     private const int COUNT = 50;
+    private const int MAX_STREAM_LENGTH = 10000;
 
     /**
      * @var ?(Closure(Envelope): void) $callback
@@ -171,7 +172,11 @@ class RedisEventTransport implements EventTransport
     {
         $client = $this->clientProvider->get();
 
-        $client->xadd(self::STREAM_NAME, ['data' => $json]);
+        $options = [
+            'trim' => ['MAXLEN', self::MAX_STREAM_LENGTH],
+        ];
+
+        $client->xadd(self::STREAM_NAME, ['data' => $json], '*', $options);
     }
 
     /**
