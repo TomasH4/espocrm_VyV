@@ -30,7 +30,6 @@
 namespace Espo\Core\Utils\Event\Redis;
 
 use Closure;
-use Espo\Core\AclManager;
 use Espo\Core\Utils\Event\CrossInstanceEvent;
 use Espo\Core\Utils\Event\Envelope;
 use Espo\Core\Utils\Event\EventTransport;
