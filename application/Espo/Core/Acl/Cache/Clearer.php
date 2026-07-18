@@ -39,9 +39,6 @@ use Espo\Entities\User;
 use Espo\ORM\EntityManager;
 use Espo\ORM\Name\Attribute;
 
-/**
- * @todo Clear loaded data in AclManager.
- */
 class Clearer
 {
     public function __construct(
