@@ -196,9 +196,13 @@ const Utils = {
             fired = true;
 
             Espo.loader.require(handler, Handler => {
-                const handler = new Handler(view);
+                const handlerInstance = new Handler(view);
 
-                handler[method].call(handler, data, event);
+                if (!(method in handlerInstance)) {
+                    throw new Error(`No method '${method}' in action handler '${handler}'.`);
+                }
+
+                handlerInstance[method].call(handlerInstance, data, event);
             });
         } else if (
             // @ts-ignore
