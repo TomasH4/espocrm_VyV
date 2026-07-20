@@ -29,6 +29,7 @@
 
 namespace Espo\Core\Utils;
 
+use Espo\Core\Binding\Attributes\Qualify;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Resource\Reader as ResourceReader;
 use Espo\Core\Utils\Resource\Reader\Params as ResourceReaderParams;
@@ -80,6 +81,7 @@ class Language
         ?string $language,
         private FileManager $fileManager,
         private ResourceReader $resourceReader,
+        #[Qualify(DataCache::QUALIFIER_SYSTEM)]
         private DataCache $dataCache,
         protected bool $useCache = false,
         protected bool $noCustom = false,

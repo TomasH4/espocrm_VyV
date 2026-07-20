@@ -29,6 +29,7 @@
 
 namespace Espo\Core\Utils;
 
+use Espo\Core\Binding\Attributes\Qualify;
 use Espo\Core\Utils\Cache\DataCacheAccess;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Metadata\Builder;
@@ -61,7 +62,9 @@ class Metadata
         private Module $module,
         private Builder $builder,
         private BuilderHelper $builderHelper,
+        #[Qualify(DataCache::QUALIFIER_SYSTEM)]
         private DataCacheAccess $data,
+        #[Qualify(DataCache::QUALIFIER_SYSTEM)]
         private DataCacheAccess $objectData,
     ) {
 

@@ -39,6 +39,7 @@ use Espo\Core\Binding\EspoBindingLoader;
 
 use Espo\Core\Loaders\ApplicationState as ApplicationStateLoader;
 use Espo\Core\Utils\Cache\FileCacheItemPool;
+use Espo\Core\Utils\Cache\DataCacheServiceName;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Config\ConfigFileManager;
 use Espo\Core\Utils\Config;
@@ -177,7 +178,7 @@ class ContainerBuilder
         $cacheItemPool = new FileCacheItemPool($fileManager);
 
         /** @var DataCache $dataCache */
-        $dataCache = $this->services['dataCache'] ?? (
+        $dataCache = $this->services[DataCacheServiceName::SYSTEM] ?? (
             new DataCache($cacheItemPool)
         );
 
@@ -192,7 +193,7 @@ class ContainerBuilder
 
         $this->services['config'] = $config;
         $this->services['fileManager'] = $fileManager;
-        $this->services['dataCache'] = $dataCache;
+        $this->services[DataCacheServiceName::SYSTEM] = $dataCache;
         $this->services['module'] = $module;
         $this->services['systemConfig'] = $systemConfig;
 

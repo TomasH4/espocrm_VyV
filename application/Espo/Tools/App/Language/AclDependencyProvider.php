@@ -29,6 +29,7 @@
 
 namespace Espo\Tools\App\Language;
 
+use Espo\Core\Binding\Attributes\Qualify;
 use Espo\Core\ORM\Type\FieldType;
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\DataCache;
@@ -52,6 +53,7 @@ class AclDependencyProvider
     private bool $useCache;
 
     public function __construct(
+        #[Qualify(DataCache::QUALIFIER_SYSTEM)]
         private DataCache $dataCache,
         private Metadata $metadata,
         private Defs $ormDefs,

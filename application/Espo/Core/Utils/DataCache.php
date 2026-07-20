@@ -33,14 +33,21 @@ use Espo\Core\Utils\Cache\CacheItem;
 use Espo\Core\Utils\Cache\Exceptions\InvalidArgument;
 use Espo\Core\Utils\Cache\Exceptions\PersistenceError;
 use Espo\Core\Utils\Cache\Exceptions\ReadError;
-use Espo\Core\Utils\Cache\FileCacheItemPool;
-use InvalidArgumentException;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\InvalidArgumentException;
 use stdClass;
 
 class DataCache
 {
+    /**
+     * DI qualifier. Can be applied to the DataCache and DataCacheAccess dependencies.
+     *
+     * @since 10.1.0
+     */
+    public const string QUALIFIER_SYSTEM = 'system';
+
     public function __construct(
-        private FileCacheItemPool $fileCacheItemPool,
+        private CacheItemPoolInterface $pool,
     ) {}
 
     /**
@@ -48,7 +55,11 @@ class DataCache
      */
     public function has(string $key): bool
     {
-        return $this->fileCacheItemPool->hasItem($key);
+        try {
+            return $this->pool->hasItem($key);
+        } catch (InvalidArgumentException $e) {
+            throw new InvalidArgument(previous: $e);
+        }
     }
 
     /**
@@ -59,7 +70,11 @@ class DataCache
      */
     public function get(string $key): array|stdClass|null
     {
-        $item = $this->fileCacheItemPool->getItem($key);
+        try {
+            $item = $this->pool->getItem($key);
+        } catch (InvalidArgumentException $e) {
+            throw new InvalidArgument(previous: $e);
+        }
 
         if (!$item->isHit()) {
             return null;
@@ -105,7 +120,7 @@ class DataCache
         /** @phpstan-var mixed $data */
 
         if (!$this->checkDataIsValid($data)) {
-            throw new InvalidArgumentException("Bad cache data type.");
+            throw new InvalidArgument("Bad cache data type.");
         }
 
         $item = new CacheItem(
@@ -113,7 +128,7 @@ class DataCache
             value: $data,
         );
 
-        $result = $this->fileCacheItemPool->save($item);
+        $result = $this->pool->save($item);
 
         if ($result === false) {
             throw new PersistenceError("Could not store '$key'.");
@@ -127,18 +142,12 @@ class DataCache
      */
     public function clear(string $key): void
     {
-        $this->fileCacheItemPool->deleteItem($key);
+        $this->pool->deleteItem($key);
     }
 
-    /**
-     * @param mixed $data
-     * @return bool
-     */
-    private function checkDataIsValid($data)
+    private function checkDataIsValid(mixed $data): bool
     {
-        $isInvalid =
-            !is_array($data) &&
-            !$data instanceof stdClass;
+        $isInvalid = !is_array($data) && !$data instanceof stdClass;
 
         return !$isInvalid;
     }

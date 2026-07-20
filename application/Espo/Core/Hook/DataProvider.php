@@ -29,6 +29,7 @@
 
 namespace Espo\Core\Hook;
 
+use Espo\Core\Binding\Attributes\Qualify;
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\DataCache;
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -63,6 +64,7 @@ class DataProvider
         private SystemConfig $systemConfig,
         private FileManager $fileManager,
         private PathProvider $pathProvider,
+        #[Qualify(DataCache::QUALIFIER_SYSTEM)]
         private DataCache $dataCache,
         private Metadata $metadata,
     ) {}

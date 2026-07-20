@@ -31,6 +31,7 @@ namespace Espo\Core\Utils;
 
 use Espo\Core\Api\Action;
 use Espo\Core\Api\Route as RouteItem;
+use Espo\Core\Binding\Attributes\Qualify;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -56,6 +57,7 @@ class Route
     public function __construct(
         private Metadata $metadata,
         private FileManager $fileManager,
+        #[Qualify(DataCache::QUALIFIER_SYSTEM)]
         private DataCache $dataCache,
         private PathProvider $pathProvider,
         private SystemConfig $systemConfig,

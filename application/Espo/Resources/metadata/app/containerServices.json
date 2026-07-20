@@ -2,6 +2,9 @@
     "authTokenManager": {
         "className": "Espo\\Core\\Authentication\\AuthToken\\EspoManager"
     },
+    "dataCache": {
+        "loaderClassName": "Espo\\Core\\Utils\\Cache\\DataCacheServiceLoader"
+    },
     "ormMetadataData": {
         "className": "Espo\\Core\\Utils\\Metadata\\OrmMetadataData"
     },

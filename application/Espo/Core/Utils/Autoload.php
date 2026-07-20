@@ -29,6 +29,7 @@
 
 namespace Espo\Core\Utils;
 
+use Espo\Core\Binding\Attributes\Qualify;
 use Espo\Core\Utils\Autoload\Loader;
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -46,6 +47,7 @@ class Autoload
 
     public function __construct(
         private Metadata $metadata,
+        #[Qualify(DataCache::QUALIFIER_SYSTEM)]
         private DataCache $dataCache,
         private FileManager $fileManager,
         private Loader $loader,

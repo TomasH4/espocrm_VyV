@@ -37,6 +37,8 @@ use Espo\Core\Binding\BindingLoader;
 use Espo\Core\Binding\Key\QualifiedClassKey;
 use Espo\Core\Container\ContainerBuilder;
 use Espo\Core\InjectableFactory;
+use Espo\Core\Utils\Cache\FileCacheItemPool;
+use Psr\Cache\CacheItemPoolInterface;
 use tests\integration\Core\BaseTestCase;
 use tests\integration\testClasses\Binding\SomeClass;
 use tests\integration\testClasses\Binding\SomeClassRequiringService;
@@ -56,6 +58,13 @@ class BindingTest extends BaseTestCase
             public function load(): BindingData
             {
                 $data = new BindingData();
+
+                $binder = new Binder($data);
+
+                $binder->bindImplementation(
+                    CacheItemPoolInterface::class,
+                    FileCacheItemPool::class
+                );
 
                 $data->addGlobal(
                     SomeInterface::class,
@@ -95,6 +104,13 @@ class BindingTest extends BaseTestCase
             {
                 $data = new BindingData();
 
+                $binder = new Binder($data);
+
+                $binder->bindImplementation(
+                    CacheItemPoolInterface::class,
+                    FileCacheItemPool::class
+                );
+
                 $data->addGlobal(
                     SomeInterface::class,
                     Binding::createFromFactoryClassName(
@@ -132,6 +148,13 @@ class BindingTest extends BaseTestCase
             public function load(): BindingData
             {
                 $data = new BindingData();
+
+                $binder = new Binder($data);
+
+                $binder->bindImplementation(
+                    CacheItemPoolInterface::class,
+                    FileCacheItemPool::class
+                );
 
                 $data->addGlobal(
                     SomeInterface::class,
@@ -172,6 +195,13 @@ class BindingTest extends BaseTestCase
             public function load(): BindingData
             {
                 $data = new BindingData();
+
+                $binder = new Binder($data);
+
+                $binder->bindImplementation(
+                    CacheItemPoolInterface::class,
+                    FileCacheItemPool::class
+                );
 
                 $data->addGlobal(
                     SomeService::class,
@@ -214,6 +244,13 @@ class BindingTest extends BaseTestCase
             {
                 $data = new BindingData();
 
+                $binder = new Binder($data);
+
+                $binder->bindImplementation(
+                    CacheItemPoolInterface::class,
+                    FileCacheItemPool::class
+                );
+
                 $data->addContext(
                     SomeClassRequiringValue::class,
                     '$value',
@@ -251,6 +288,11 @@ class BindingTest extends BaseTestCase
             {
                 $data = new BindingData();
                 $binder = new Binder($data);
+
+                $binder->bindImplementation(
+                    CacheItemPoolInterface::class,
+                    FileCacheItemPool::class
+                );
 
                 $binder->bindService(SomeService::class, 'testService');
                 $binder->bindService(QualifiedClassKey::create(SomeService::class, 'alt'), 'testServiceAlt');

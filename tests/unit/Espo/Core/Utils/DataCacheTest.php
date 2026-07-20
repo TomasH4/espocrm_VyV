@@ -29,6 +29,7 @@
 
 namespace tests\unit\Espo\Core\Utils;
 
+use Espo\Core\Utils\Cache\Exceptions\InvalidArgument;
 use Espo\Core\Utils\Cache\FileCacheItemPool;
 use Espo\Core\Utils\DataCache;
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -110,7 +111,7 @@ class DataCacheTest extends TestCase
 
     public function testStoreBadDataType()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgument::class);
 
         $data = false;
 

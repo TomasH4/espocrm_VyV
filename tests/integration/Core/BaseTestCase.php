@@ -37,6 +37,7 @@ use Espo\Core\Container;
 use Espo\Core\DataManager;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
+use Espo\Core\Utils\Cache\DataCacheServiceName as CacheServiceName;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Metadata;
@@ -249,6 +250,7 @@ abstract class BaseTestCase extends TestCase
             'module',
             'fileManager',
             'applicationParams',
+            CacheServiceName::SYSTEM,
         ]);
 
         if ($username === null && $method === null) {
