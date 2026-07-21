@@ -145,6 +145,21 @@ class DataCache
         $this->pool->deleteItem($key);
     }
 
+    /**
+     * Clears all cache.
+     *
+     * @since 10.1.0
+     * @throws PersistenceError
+     */
+    public function clearAll(): void
+    {
+        $result = $this->pool->clear();
+
+        if ($result === false) {
+            throw new PersistenceError("Could not clear cache.");
+        }
+    }
+
     private function checkDataIsValid(mixed $data): bool
     {
         $isInvalid = !is_array($data) && !$data instanceof stdClass;

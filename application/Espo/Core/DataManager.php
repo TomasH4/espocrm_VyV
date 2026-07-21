@@ -29,12 +29,15 @@
 
 namespace Espo\Core;
 
+use Espo\Core\Binding\Attributes\Qualify;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Hook\Control;
 use Espo\Core\ORM\EntityManagerProxy;
+use Espo\Core\Utils\Cache\Exceptions\PersistenceError;
 use Espo\Core\Utils\Database\Helper as DatabaseHelper;
 use Espo\Core\Utils\Database\Schema\RebuildMode;
 use Espo\Core\Utils\Database\Schema\SchemaManagerProxy;
+use Espo\Core\Utils\DataCache;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Util;
@@ -71,6 +74,9 @@ class DataManager
         private DatabaseParamsFactory $databaseParamsFactory,
         private InjectableFactory $injectableFactory,
         private Control $hookControl,
+        #[Qualify(DataCache::QUALIFIER_SYSTEM)]
+        private DataCache $systemDataCache,
+        private DataCache $dataCache,
     ) {}
 
     /**
@@ -96,15 +102,30 @@ class DataManager
      * Clear cache.
      *
      * @throws Error
+     * @todo Trigger an inter-process event.
      */
     public function clearCache(): void
     {
         $this->module->clearCache();
 
+        try {
+            $this->systemDataCache->clearAll();
+        } catch (PersistenceError $e) {
+            throw new Error("Could not clear system cache.", previous: $e);
+        }
+
+        if ($this->systemDataCache !== $this->dataCache) {
+            try {
+                $this->dataCache->clearAll();
+            } catch (PersistenceError $e) {
+                throw new Error("Could not clear application cache.", previous: $e);
+            }
+        }
+
         $result = $this->fileManager->removeInDir($this->cachePath);
 
         if (!$result) {
-            throw new Error("Error while clearing cache");
+            throw new Error("Error while clearing cache.");
         }
 
         $this->updateCacheTimestamp();
