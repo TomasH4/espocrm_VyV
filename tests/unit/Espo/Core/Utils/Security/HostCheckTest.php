@@ -71,9 +71,6 @@ class HostCheckTest extends TestCase
         );
     }
 
-    /**
-     * @noinspection SpellCheckingInspection
-     */
     public function testIpAddress()
     {
         $hostCheck = new HostCheck();
