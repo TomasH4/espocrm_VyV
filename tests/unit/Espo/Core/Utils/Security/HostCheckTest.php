@@ -102,6 +102,6 @@ class HostCheckTest extends TestCase
     {
         $hostCheck = new HostCheck();
 
-        $this->assertEquals($hostCheck->ipAddressIsNotInternal($ipAddress), $expected);
+        $this->assertEquals($expected, $hostCheck->ipAddressIsNotInternal($ipAddress));
     }
 }
