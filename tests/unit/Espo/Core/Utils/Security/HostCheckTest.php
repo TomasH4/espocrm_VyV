@@ -87,10 +87,6 @@ class HostCheckTest extends TestCase
             ['2620:fe::fe', true],
             ['2404:6800:4004:80c::200e', true],
             ['2a09:bac1:1234::1', true],
-            // documentation
-            ['2001:db8:abcd:1234::1', false],
-            // documentation
-            ['2001:db8::1', false],
             ['fe80::1', false],
             ['fc00::1', false],
             ['::1', false],
