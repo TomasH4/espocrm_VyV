@@ -1033,9 +1033,18 @@ class SearchView extends View<ViewSchema> {
         this.currentFilterLabelList!.push(filterLabel);
 
         this.filtersButton.classList
-            .remove('btn-default', 'btn-primary', 'btn-danger', 'btn-success', 'btn-info', 'btn-info');
+            .remove(...[
+                'text-primary',
+                'text-danger',
+                'text-success',
+                'text-info',
+                'text-warning',
+            ]);
 
-        this.filtersButton.classList.add(`btn-${filterStyle}`);
+
+        if (filterStyle !== 'default') {
+            this.filtersButton.classList.add(`text-${filterStyle}`);
+        }
 
         presetName = presetName || '';
 
