@@ -117,9 +117,15 @@ class DataManager
             throw new Error("Could not clear system cache.", previous: $e);
         }
 
-        $dataCache = $this->dataCacheProvider->get();
+        try {
+            $dataCache = $this->dataCacheProvider->get();
+        } catch (Throwable $e) {
+            $this->log->error("Could not get application data cache.", ['exception' => $e]);
 
-        if ($this->systemDataCache !== $dataCache) {
+            $dataCache = null;
+        }
+
+        if ($dataCache && $this->systemDataCache !== $dataCache) {
             try {
                 $dataCache->clearAll();
             } catch (PersistenceError $e) {
