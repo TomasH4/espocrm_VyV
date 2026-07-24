@@ -51,7 +51,6 @@ use RuntimeException;
 class FormService
 {
     private const CACHE_KEY_PREFIX = 'leadCaptureForm';
-    private const RTL_LANGUAGE_CODE_LIST = ['ar', 'fa', 'he', 'ur'];
 
     public function __construct(
         private EntityManager $entityManager,
@@ -66,10 +65,11 @@ class FormService
         private ThemeManager $themeManager,
         private Config\SystemConfig $systemConfig,
         private ThemeMetadataProvider $themeMetadataProvider,
+        private ThemeDirectionDetector $themeDirectionDetector,
     ) {}
 
     /**
-     * @return array{LeadCapture, array<string, mixed>, ?string}
+     * @return array{LeadCapture, array<string, mixed>, ?string, Direction}
      * @throws NotFound
      */
     public function getData(string $id): array
@@ -82,15 +82,9 @@ class FormService
 
         $data['captchaKey'] = $captchaKey;
 
-        return [$leadCapture, $data, $captchaScript];
-    }
+        $direction = $this->themeDirectionDetector->detect($leadCapture);
 
-    public function getDirection(LeadCapture $leadCapture): Direction
-    {
-        $language = $leadCapture->getFormLanguage() ?? $this->config->get('language') ?? 'en_US';
-        $languageCode = strtolower(substr($language, 0, 2));
-
-        return in_array($languageCode, self::RTL_LANGUAGE_CODE_LIST, true) ? Direction::Rtl : Direction::Ltr;
+        return [$leadCapture, $data, $captchaScript, $direction];
     }
 
     /**

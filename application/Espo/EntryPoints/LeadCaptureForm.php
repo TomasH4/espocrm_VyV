@@ -63,7 +63,7 @@ class LeadCaptureForm implements EntryPoint
             throw new BadRequest("No ID.");
         }
 
-        [$leadCapture, $data, $captchaScript] = $this->service->getData($id);
+        [$leadCapture, $data, $captchaScript, $direction] = $this->service->getData($id);
 
         $params = new ActionRenderer\Params(
             controller: 'controllers/lead-capture-form',
@@ -75,7 +75,7 @@ class LeadCaptureForm implements EntryPoint
             ->withFrameAncestors($leadCapture->getFormFrameAncestors())
             ->withPageTitle($leadCapture->getFormTitle())
             ->withTheme($leadCapture->getFormTheme())
-            ->withDirection($this->service->getDirection($leadCapture));
+            ->withDirection($direction);
 
         if ($captchaScript) {
             $params = $params->withScripts([new Script(source: $captchaScript)]);
