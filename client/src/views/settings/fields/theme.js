@@ -34,7 +34,7 @@ export default class ThemeSettingsFieldView extends EnumFieldView {
 
     // language=Handlebars
     editTemplateContent = `
-        <div class="grid-auto-fit-xxs">
+        <div>
             <div>
                 <select data-name="{{name}}" class="form-control main-element">
                     {{options
@@ -47,6 +47,8 @@ export default class ThemeSettingsFieldView extends EnumFieldView {
                     }}
                 </select>
             </div>
+        </div>
+        <div class="grid-auto-fit-xxs">
             {{#if navbarOptionList.length}}
             <div>
                 <select data-name="themeNavbar" class="form-control">
