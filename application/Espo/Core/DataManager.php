@@ -33,6 +33,7 @@ use Espo\Core\Binding\Attributes\Qualify;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Hook\Control;
 use Espo\Core\ORM\EntityManagerProxy;
+use Espo\Core\Utils\Cache\DataCacheProvider;
 use Espo\Core\Utils\Cache\Exceptions\PersistenceError;
 use Espo\Core\Utils\Database\Helper as DatabaseHelper;
 use Espo\Core\Utils\Database\Schema\RebuildMode;
@@ -76,7 +77,7 @@ class DataManager
         private Control $hookControl,
         #[Qualify(DataCache::QUALIFIER_SYSTEM)]
         private DataCache $systemDataCache,
-        private DataCache $dataCache,
+        private DataCacheProvider $dataCacheProvider,
     ) {}
 
     /**
@@ -108,21 +109,24 @@ class DataManager
     {
         $this->module->clearCache();
 
+        $result = $this->fileManager->removeInDir($this->cachePath);
+
         try {
             $this->systemDataCache->clearAll();
         } catch (PersistenceError $e) {
             throw new Error("Could not clear system cache.", previous: $e);
         }
 
-        if ($this->systemDataCache !== $this->dataCache) {
+        $dataCache = $this->dataCacheProvider->get();
+
+        if ($this->systemDataCache !== $dataCache) {
             try {
-                $this->dataCache->clearAll();
+                $dataCache->clearAll();
             } catch (PersistenceError $e) {
                 throw new Error("Could not clear application cache.", previous: $e);
             }
         }
 
-        $result = $this->fileManager->removeInDir($this->cachePath);
 
         if (!$result) {
             throw new Error("Error while clearing cache.");
