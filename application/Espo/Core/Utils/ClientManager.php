@@ -41,6 +41,7 @@ use Espo\Core\Utils\Config\ApplicationConfig;
 use Espo\Core\Utils\Config\SystemConfig;
 use Espo\Core\Utils\File\Manager as FileManager;
 
+use Espo\Core\Utils\Theme\Direction;
 use Espo\Core\Utils\Theme\MetadataProvider as ThemeMetadataProvider;
 use Slim\Psr7\Response as Psr7Response;
 use Slim\ResponseEmitter;
@@ -179,6 +180,7 @@ class ClientManager
             additionalScripts: $params->scripts,
             pageTitle: $params->pageTitle,
             theme: $params->theme,
+            direction: $params->direction,
         );
     }
 
@@ -193,6 +195,7 @@ class ClientManager
         array $additionalScripts = [],
         ?string $pageTitle = null,
         ?string $theme = null,
+        ?Direction $direction = null,
     ): string {
 
         $runScript ??= $this->runScript;
@@ -248,6 +251,8 @@ class ClientManager
             $this->themeMetadataProvider->getStylesheet($theme) :
             $this->themeManager->getStylesheet();
 
+        $direction ??= $this->themeManager->getDirection();
+
         $data = [
             'applicationId' => $this->applicationId,
             'apiUrl' => $this->apiUrl,
@@ -256,6 +261,7 @@ class ClientManager
             'appTimestamp' => $appTimestamp,
             'loaderCacheTimestamp' => Json::encode($loaderCacheTimestamp),
             'stylesheet' => $stylesheet,
+            'direction' => $direction->value,
             'theme' => Json::encode($theme),
             'runScript' => $runScript,
             'basePath' => $this->basePath,

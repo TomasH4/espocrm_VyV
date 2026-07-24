@@ -30,6 +30,7 @@
 namespace Espo\Core\Utils\Client\ActionRenderer;
 
 use Espo\Core\Utils\Client\Script;
+use Espo\Core\Utils\Theme\Direction;
 
 /**
  * Immutable.
@@ -45,6 +46,7 @@ class Params
     private array $scripts = [];
     private ?string $pageTitle = null;
     private ?string $theme = null;
+    private ?Direction $direction = null;
 
     /**
      * @param ?array<string, mixed> $data
@@ -130,6 +132,14 @@ class Params
         return $obj;
     }
 
+    public function withDirection(?Direction $direction): self
+    {
+        $obj = clone $this;
+        $obj->direction = $direction;
+
+        return $obj;
+    }
+
     public function getController(): string
     {
         return $this->controller;
@@ -185,5 +195,10 @@ class Params
     public function getTheme(): ?string
     {
         return $this->theme;
+    }
+
+    public function getDirection(): ?Direction
+    {
+        return $this->direction;
     }
 }

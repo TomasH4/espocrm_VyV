@@ -37,6 +37,7 @@ use Espo\Core\Utils\Config;
 use Espo\Core\Utils\DataCache;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\Metadata;
+use Espo\Core\Utils\Theme\Direction;
 use Espo\Core\Utils\Theme\MetadataProvider as ThemeMetadataProvider;
 use Espo\Core\Utils\ThemeManager;
 use Espo\Entities\Integration;
@@ -50,6 +51,7 @@ use RuntimeException;
 class FormService
 {
     private const CACHE_KEY_PREFIX = 'leadCaptureForm';
+    private const RTL_LANGUAGE_CODE_LIST = ['ar', 'fa', 'he', 'ur'];
 
     public function __construct(
         private EntityManager $entityManager,
@@ -81,6 +83,14 @@ class FormService
         $data['captchaKey'] = $captchaKey;
 
         return [$leadCapture, $data, $captchaScript];
+    }
+
+    public function getDirection(LeadCapture $leadCapture): Direction
+    {
+        $language = $leadCapture->getFormLanguage() ?? $this->config->get('language') ?? 'en_US';
+        $languageCode = strtolower(substr($language, 0, 2));
+
+        return in_array($languageCode, self::RTL_LANGUAGE_CODE_LIST, true) ? Direction::Rtl : Direction::Ltr;
     }
 
     /**

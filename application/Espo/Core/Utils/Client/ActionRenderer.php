@@ -33,6 +33,7 @@ use Espo\Core\Api\Response;
 use Espo\Core\Utils\Client\ActionRenderer\Params;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\ClientManager;
+use Espo\Core\Utils\Theme\Direction;
 
 /**
  * Renders a front-end page that executes a controller action. Utilized by entry points.
@@ -56,6 +57,7 @@ class ActionRenderer
             scripts: $params->getScripts(),
             pageTitle: $params->getPageTitle(),
             theme: $params->getTheme(),
+            direction: $params->getDirection(),
         );
 
         $securityParams = new SecurityParams(
@@ -78,6 +80,7 @@ class ActionRenderer
         array $scripts,
         ?string $pageTitle,
         ?string $theme,
+        ?Direction $direction,
     ): string {
 
         $encodedData = Json::encode($data);
@@ -99,6 +102,7 @@ class ActionRenderer
             scripts: $scripts,
             pageTitle: $pageTitle,
             theme: $theme,
+            direction: $direction,
         );
 
         return $this->clientManager->render($params);
