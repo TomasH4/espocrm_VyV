@@ -127,7 +127,6 @@ class DataManager
             }
         }
 
-
         if (!$result) {
             throw new Error("Error while clearing cache.");
         }
