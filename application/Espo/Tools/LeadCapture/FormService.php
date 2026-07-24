@@ -50,7 +50,7 @@ use RuntimeException;
 
 class FormService
 {
-    private const CACHE_KEY_PREFIX = 'leadCaptureForm';
+    private const string CACHE_KEY_PREFIX = 'leadCaptureForm';
 
     public function __construct(
         private EntityManager $entityManager,
