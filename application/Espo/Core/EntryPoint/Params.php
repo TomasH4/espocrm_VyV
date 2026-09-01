@@ -34,12 +34,8 @@ namespace Espo\Core\EntryPoint;
  */
 readonly class Params
 {
-    /**
-     * @param string[] $allowedMethods
-     */
     public function __construct(
         public ?string $name = null,
-        public ?array $allowedMethods = null,
         public bool $final = false,
     ) {}
 }
