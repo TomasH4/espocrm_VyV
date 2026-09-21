@@ -30,6 +30,7 @@
 namespace tests\integration\Espo\Core\Utils\Database\Fields;
 
 use Doctrine\DBAL\Types\StringType;
+use Espo\Core\Utils\Database\Platform;
 use integration\Core\NoTransaction;
 
 #[NoTransaction]
@@ -44,7 +45,7 @@ class FileFieldTest extends Base
         $this->assertFalse($column->getNotnull());
         $this->assertEquals(17, $column->getLength());
 
-        if ($this->getPlatform() === 'Mysql') {
+        if ($this->getPlatform() === Platform::MYSQL) {
             $this->assertEquals('utf8mb4_unicode_ci', $column->getCollation());
         }
     }
