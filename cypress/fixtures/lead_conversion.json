@@ -1,0 +1,19 @@
+{
+  "b2b": {
+    "firstName": "Carlos",
+    "lastName": "Gómez",
+    "emailAddress": "cgomez@empresa.com",
+    "phoneNumber": "+573001234567",
+    "accountName": "Empresa Gómez S.A.",
+    "status": "Assigned"
+  },
+  "b2c": {
+    "firstName": "Laura",
+    "lastName": "Mora",
+    "emailAddress": "lmora@persona.com",
+    "phoneNumber": "+573109876543",
+    "accountName": null,
+    "status": "New"
+  }
+}
+

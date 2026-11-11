@@ -1,0 +1,29 @@
+{
+  "seedContacts": [
+    {
+      "firstName": "Carlos",
+      "lastName": "Gomez",
+      "emailAddress": "cgomez@empresa.com",
+      "status": "Active"
+    },
+    {
+      "firstName": "Ana",
+      "lastName": "Gomis",
+      "emailAddress": "agomis@empresa.com",
+      "status": "Active"
+    },
+    {
+      "firstName": "Luis",
+      "lastName": "Restrepo",
+      "emailAddress": "lrestrepo@empresa.com",
+      "status": "Inactive"
+    }
+  ],
+  "searchQueries": {
+    "partialTerm": "Gom",
+    "exactQuotesTerm": "\"Carlos Gomez\"",
+    "nonExistentTerm": "TerminoInexistenteXYZ",
+    "oversizedTerm": "TextoDemasiadoLargoQueSuperaLosCienCaracteresDefensivosParaValidarLaSeguridadContraSobrecargaDeConsultasSQL1234567890"
+  }
+}
+

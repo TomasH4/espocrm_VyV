@@ -9,6 +9,7 @@ services:
       MARIADB_PASSWORD: espocrm_password
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     restart: always
 
   espocrm:

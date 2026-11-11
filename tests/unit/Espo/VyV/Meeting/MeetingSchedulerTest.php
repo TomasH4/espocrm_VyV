@@ -366,5 +366,85 @@ class MeetingSchedulerTest extends TestCase
         $this->assertSame('Sincronizacion', $result->getName());
         $this->assertSame(45, $result->getDuration());
     }
+
+    /**
+     * [REC-02]: Verifica el calculo matematico exacto de duracion al cruzar medianoche
+     * utilizando DateTimeImmutable para garantizar precision sin afectacion de timezone.
+     */
+    public function testScheduleMeetingCalculatesDurationAcrossMidnightCorrectly(): void
+    {
+        // Arrange
+        // Inicio: 23:45, Fin dia siguiente: 00:30 -> 45 minutos de duracion
+        $this->repositoryMock
+            ->expects($this->once())
+            ->method('saveMeeting')
+            ->with(
+                $this->identicalTo('Guardia Nocturna'),
+                $this->identicalTo('2026-11-10 23:45:00'),
+                $this->identicalTo('2026-11-11 00:30:00'),
+                $this->identicalTo(45)
+            )
+            ->willReturn(true);
+
+        $input = [
+            'name'      => 'Guardia Nocturna',
+            'dateStart' => '2026-11-10 23:45:00',
+            'dateEnd'   => '2026-11-11 00:30:00',
+        ];
+
+        // Act
+        $result = $this->sut->schedule($input);
+
+        // Assert
+        $this->assertTrue($result->isSuccess());
+        $this->assertSame(201, $result->getCode());
+        $this->assertSame(45, $result->getDuration());
+        $this->assertSame('2026-11-11 00:30:00', $result->getDateEnd());
+    }
+
+    /**
+     * [REC-02]: Verifica que un formato corrupto en dateStart retorne error 400.
+     */
+    public function testScheduleMeetingFailsWhenDateStartIsCorruptFormat(): void
+    {
+        // Arrange
+        $this->repositoryMock->expects($this->never())->method('saveMeeting');
+
+        $input = [
+            'name'      => 'Reunion Invalida',
+            'dateStart' => 'fecha-no-valida-32-13-2026',
+        ];
+
+        // Act
+        $result = $this->sut->schedule($input);
+
+        // Assert
+        $this->assertFalse($result->isSuccess());
+        $this->assertSame(400, $result->getCode());
+        $this->assertSame('Formato de fecha de inicio invalido', $result->getError());
+    }
+
+    /**
+     * [REC-02]: Verifica que un formato corrupto en dateEnd retorne error 400.
+     */
+    public function testScheduleMeetingFailsWhenDateEndIsCorruptFormat(): void
+    {
+        // Arrange
+        $this->repositoryMock->expects($this->never())->method('saveMeeting');
+
+        $input = [
+            'name'      => 'Reunion Fin Invalido',
+            'dateStart' => '2026-11-10 10:00:00',
+            'dateEnd'   => 'no-es-una-fecha',
+        ];
+
+        // Act
+        $result = $this->sut->schedule($input);
+
+        // Assert
+        $this->assertFalse($result->isSuccess());
+        $this->assertSame(400, $result->getCode());
+        $this->assertSame('Formato de fecha de fin invalido', $result->getError());
+    }
 }
 

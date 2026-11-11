@@ -430,5 +430,37 @@ class ContactSearcherTest extends TestCase
         // Assert
         $this->assertTrue($result->isSuccess());
     }
+
+    /**
+     * [REC-03]: Verifica que una consulta excesivamente larga (ej. 150 caracteres)
+     * sea truncada defensivamente a exactamente 100 caracteres antes de construir
+     * la clausula SQL, mitigando sobrecarga y ataques de denegacion de servicio (DoS).
+     */
+    public function testSearchContactsTruncatesQueryBeyond100Characters(): void
+    {
+        // Arrange
+        $oversizedQuery = str_repeat('a', 150);
+        $expected100Chars = str_repeat('a', 100);
+
+        $this->repositoryMock
+            ->expects($this->once())
+            ->method('search')
+            ->with(
+                $this->callback(function (array $clause) use ($expected100Chars): bool {
+                    return $clause['type'] === 'partial'
+                        && $clause['field'] === 'name'
+                        && $clause['value'] === "%{$expected100Chars}%";
+                }),
+                $this->isNull(),
+                $this->identicalTo(20)
+            )
+            ->willReturn([]);
+
+        // Act
+        $result = $this->sut->search(['query' => $oversizedQuery, 'filter' => 'all']);
+
+        // Assert
+        $this->assertTrue($result->isSuccess());
+    }
 }
 

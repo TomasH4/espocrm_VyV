@@ -1,0 +1,17 @@
+{
+  "standard": {
+    "firstName": "Carlos",
+    "lastName": "Gómez",
+    "emailAddress": "carlos.gomez@empresa.com",
+    "phoneNumber": "+573001234567",
+    "status": "New"
+  },
+  "minimal": {
+    "firstName": "",
+    "lastName": "Torres",
+    "emailAddress": null,
+    "phoneNumber": null,
+    "status": "New"
+  }
+}
+

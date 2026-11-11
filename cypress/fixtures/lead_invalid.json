@@ -1,0 +1,21 @@
+{
+  "without_lastname": {
+    "firstName": "Carlos",
+    "lastName": "",
+    "emailAddress": "carlos@empresa.com",
+    "phoneNumber": "+573001234567"
+  },
+  "whitespace_lastname": {
+    "firstName": "Carlos",
+    "lastName": "     ",
+    "emailAddress": "carlos@empresa.com",
+    "phoneNumber": "+573001234567"
+  },
+  "invalid_email": {
+    "firstName": "Carlos",
+    "lastName": "Gómez",
+    "emailAddress": "correo_sin_arroba.com",
+    "phoneNumber": "+573001234567"
+  }
+}
+

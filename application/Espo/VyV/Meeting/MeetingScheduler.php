@@ -48,20 +48,29 @@ final class MeetingScheduler
             return MeetingScheduleResult::failure(400, 'El campo dateStart es obligatorio');
         }
 
-        $tsStart = strtotime($dateStart);
+        try {
+            $dtStart = new \DateTimeImmutable($dateStart);
+        } catch (\Throwable) {
+            return MeetingScheduleResult::failure(400, 'Formato de fecha de inicio invalido');
+        }
 
         // Nodo 4: Decision 2 - Verificacion de presencia de fecha de fin
         if (!empty($dateEnd)) {
-            $tsEnd = strtotime($dateEnd);
+            try {
+                $dtEnd = new \DateTimeImmutable($dateEnd);
+            } catch (\Throwable) {
+                return MeetingScheduleResult::failure(400, 'Formato de fecha de fin invalido');
+            }
 
             // Nodo 5: Decision 3 - Validacion de consistencia temporal (¿dateEnd estrictamente mayor a dateStart?)
-            if ($tsEnd <= $tsStart) {
+            if ($dtEnd <= $dtStart) {
                 // Nodo 6: Retorno de error por inconsistencia temporal (fecha fin menor o igual a inicio)
                 return MeetingScheduleResult::failure(422, 'La fecha de fin debe ser posterior a la fecha de inicio');
             }
 
             // Nodo 7: Calculo automatico de duracion en minutos a partir de las fechas
-            $duration = (int) (($tsEnd - $tsStart) / 60);
+            $diff = $dtStart->diff($dtEnd);
+            $duration = ($diff->days * 1440) + ($diff->h * 60) + $diff->i;
             $finalEnd = $dateEnd;
         } else {
             // Nodo 8: Decision 4 - Verificacion de duracion especificada por el usuario
@@ -74,7 +83,7 @@ final class MeetingScheduler
             }
 
             // Nodo 11: Calculo automatico de la fecha de fin a partir de dateStart y duration
-            $finalEnd = date('Y-m-d H:i:s', $tsStart + ($duration * 60));
+            $finalEnd = $dtStart->modify("+{$duration} minutes")->format('Y-m-d H:i:s');
         }
 
         // Nodo 12: Invocacion del servicio de persistencia en base de datos

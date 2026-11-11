@@ -1,0 +1,25 @@
+{
+  "stages": [
+    {
+      "name": "Oportunidad Prospecting",
+      "stage": "Prospecting",
+      "expectedProbability": 10
+    },
+    {
+      "name": "Oportunidad Proposal",
+      "stage": "Proposal",
+      "expectedProbability": 50
+    },
+    {
+      "name": "Oportunidad Closed Won",
+      "stage": "Closed Won",
+      "expectedProbability": 100
+    },
+    {
+      "name": "Oportunidad Closed Lost",
+      "stage": "Closed Lost",
+      "expectedProbability": 0
+    }
+  ]
+}
+

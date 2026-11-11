@@ -128,6 +128,32 @@ class LeadCreatorTest extends TestCase
         $this->assertStringContainsString('lastName', $result->getError());
     }
 
+    /**
+     * Variante: lastName compuesto exclusivamente por espacios en blanco.
+     * [REC-01]: Verifica que los espacios puros se consideren vacios tras trim()
+     * y retornen error 400 sin invocar persistencia en BD.
+     */
+    public function testCreateLeadFailsWhenLastNameContainsOnlyWhitespace(): void
+    {
+        // Arrange
+        $this->repositoryMock->expects($this->never())->method('save');
+        $input = [
+            'firstName'    => 'Carlos',
+            'lastName'     => '     ', // solo espacios en blanco
+            'emailAddress' => 'carlos@empresa.com',
+            'phoneNumber'  => '3001234567',
+        ];
+
+        // Act
+        $result = $this->sut->create($input);
+
+        // Assert
+        $this->assertFalse($result->isSuccess());
+        $this->assertSame(400, $result->getCode());
+        $this->assertSame('El campo lastName es obligatorio', $result->getError());
+        $this->assertNull($result->getId());
+    }
+
     // =========================================================================
     // CAMINO C2 - CP-CB-02
     // Nodo 2 -> Si -> Nodo 4 -> Si -> Nodo 6 -> No -> Nodo 7

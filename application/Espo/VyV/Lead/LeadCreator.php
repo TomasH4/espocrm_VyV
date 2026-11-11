@@ -37,11 +37,14 @@ final class LeadCreator
     {
         // Nodo 1: Captura de parametros de entrada
         $firstName = isset($data['firstName']) ? trim((string) $data['firstName']) : '';
-        $lastName  = isset($data['lastName'])  ? trim((string) $data['lastName'])  : '';
-        $email     = isset($data['emailAddress']) && $data['emailAddress'] !== ''
+        $rawLast   = isset($data['lastName']) ? trim((string) $data['lastName']) : '';
+        $lastName  = $rawLast !== '' ? $rawLast : '';
+        $email     = isset($data['emailAddress']) && trim((string) $data['emailAddress']) !== ''
             ? trim((string) $data['emailAddress'])
             : null;
-        $phone     = isset($data['phoneNumber']) ? trim((string) $data['phoneNumber']) : null;
+        $phone     = isset($data['phoneNumber']) && trim((string) $data['phoneNumber']) !== ''
+            ? trim((string) $data['phoneNumber'])
+            : null;
 
         // Nodo 2: Decision 1 - Validacion de campo obligatorio (apellido)
         if ($lastName === '') {

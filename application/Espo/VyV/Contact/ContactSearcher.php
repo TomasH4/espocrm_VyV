@@ -33,7 +33,9 @@ final class ContactSearcher
     public function search(array $params): ContactSearchResult
     {
         // Nodo 1: Inicio y captura de parametros de entrada ($query, $filter, $limit)
-        $query  = isset($params['query']) ? trim((string) $params['query']) : null;
+        $rawQuery = isset($params['query']) ? trim((string) $params['query']) : null;
+        // Limite defensivo: maximo 100 caracteres por busqueda para evitar sobrecarga SQL / DoS
+        $query  = ($rawQuery !== null && $rawQuery !== '') ? mb_substr($rawQuery, 0, 100) : null;
         $filter = isset($params['filter']) && $params['filter'] !== '' ? (string) $params['filter'] : 'all';
         $limit  = isset($params['limit']) && (int) $params['limit'] > 0 ? (int) $params['limit'] : 20;
 

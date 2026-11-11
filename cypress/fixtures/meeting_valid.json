@@ -1,0 +1,27 @@
+{
+  "with_dateEnd": {
+    "name": "Comité Técnico",
+    "dateStart": "2026-11-10 10:00:00",
+    "dateEnd": "2026-11-10 11:30:00",
+    "expectedDuration": 90
+  },
+  "with_duration": {
+    "name": "Llamada Rápida",
+    "dateStart": "2026-11-10 15:00:00",
+    "duration": 30,
+    "expectedDateEnd": "2026-11-10 15:30:00"
+  },
+  "default_duration": {
+    "name": "Reunión de Equipo",
+    "dateStart": "2026-11-10 09:00:00",
+    "expectedDuration": 60,
+    "expectedDateEnd": "2026-11-10 10:00:00"
+  },
+  "across_midnight": {
+    "name": "Guardia Nocturna",
+    "dateStart": "2026-11-10 23:45:00",
+    "dateEnd": "2026-11-11 00:30:00",
+    "expectedDuration": 45
+  }
+}
+

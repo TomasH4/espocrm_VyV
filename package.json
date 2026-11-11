@@ -14,7 +14,9 @@
     "build-frontend": "grunt internal",
     "sa": "php vendor/bin/phpstan",
     "unit-tests": "php vendor/bin/phpunit ./tests/unit",
-    "integration-tests": "php vendor/bin/phpunit ./tests/integration"
+    "integration-tests": "php vendor/bin/phpunit ./tests/integration",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "homepage": "https://www.espocrm.com",
   "author": "EspoCRM, Inc.",
