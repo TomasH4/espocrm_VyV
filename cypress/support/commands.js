@@ -1,25 +1,29 @@
 // cypress/support/commands.js
 
 /**
- * Autentica al usuario administrador directamente mediante la API REST de EspoCRM,
- * almacenando los encabezados o tokens de autorizacion requeridos para evitar pasar
- * por el formulario visual de login en cada prueba.
+ * Autentica al usuario en EspoCRM utilizando cy.session() para cachear la sesión
+ * (cookies y localStorage) entre pruebas y archivos de especificación, cumpliendo
+ * con el principio FIRST (Fast) al evitar renderizados repetidos de login.
  */
 Cypress.Commands.add('loginViaApi', () => {
-  cy.request({
-    method: 'GET',
-    url: `${Cypress.env('apiUrl')}/App/user`,
-    auth: {
-      user: Cypress.env('username'),
-      pass: Cypress.env('password'),
-    },
-    failOnStatusCode: false,
-  }).then((response) => {
-    const token = response.headers['x-auth-token'] || response.headers['x-espo-authorization'] || '';
-    window.localStorage.setItem('auth-token', token);
-    // Establecer cabecera de autenticacion basica si es requerida por frontend
-    const credentials = btoa(`${Cypress.env('username')}:${Cypress.env('password')}`);
-    window.localStorage.setItem('auth-credentials', credentials);
+  cy.env(['apiUrl', 'username', 'password']).then((env) => {
+    const username = env.username || 'Tomas';
+    const password = env.password || 'tomas12345';
+
+    cy.session(
+      `session-${username}`,
+      () => {
+        cy.visit('/');
+        cy.get('#field-userName', { timeout: 10000 }).should('be.visible').type(username);
+        cy.get('#field-password').should('be.visible').type(password);
+        cy.get('#btn-login').should('be.visible').and('not.be.disabled').click();
+        cy.get('#main, .navbar', { timeout: 15000 }).should('be.visible');
+        cy.get('#login').should('not.exist');
+      },
+      {
+        cacheAcrossSpecs: true,
+      }
+    );
   });
 });
 
@@ -27,15 +31,21 @@ Cypress.Commands.add('loginViaApi', () => {
  * Crea cualquier entidad (Lead, Contact, Opportunity, Meeting) mediante API.
  */
 Cypress.Commands.add('createEntityViaApi', (entity, payload) => {
-  return cy.request({
-    method: 'POST',
-    url: `${Cypress.env('apiUrl')}/${entity}`,
-    auth: {
-      user: Cypress.env('username'),
-      pass: Cypress.env('password'),
-    },
-    body: payload,
-    failOnStatusCode: false,
+  return cy.env(['apiUrl', 'username', 'password']).then((env) => {
+    const apiUrl = env.apiUrl || 'http://localhost:8080/api/v1';
+    const username = env.username || 'Tomas';
+    const password = env.password || 'tomas12345';
+
+    return cy.request({
+      method: 'POST',
+      url: `${apiUrl}/${entity}`,
+      auth: {
+        user: username,
+        pass: password,
+      },
+      body: payload,
+      failOnStatusCode: false,
+    });
   });
 });
 
@@ -51,14 +61,33 @@ Cypress.Commands.add('createLeadViaApi', (payload) => {
  */
 Cypress.Commands.add('deleteEntityViaApi', (entity, id) => {
   if (!id) return;
-  cy.request({
-    method: 'DELETE',
-    url: `${Cypress.env('apiUrl')}/${entity}/${id}`,
-    auth: {
-      user: Cypress.env('username'),
-      pass: Cypress.env('password'),
-    },
-    failOnStatusCode: false,
+  cy.env(['apiUrl', 'username', 'password']).then((env) => {
+    const apiUrl = env.apiUrl || 'http://localhost:8080/api/v1';
+    const username = env.username || 'Tomas';
+    const password = env.password || 'tomas12345';
+
+    cy.request({
+      method: 'DELETE',
+      url: `${apiUrl}/${entity}/${id}`,
+      auth: {
+        user: username,
+        pass: password,
+      },
+      failOnStatusCode: false,
+    });
   });
 });
 
+/**
+ * Selecciona una opción en un campo select/enum compatible con Selectize.js de EspoCRM.
+ */
+Cypress.Commands.add('selectOption', (fieldName, value) => {
+  cy.get(`select[data-name="${fieldName}"]`).then(($select) => {
+    if ($select[0].selectize) {
+      $select[0].selectize.setValue(value);
+    } else {
+      cy.wrap($select).select(value, { force: true });
+    }
+    cy.wrap($select).trigger('change', { force: true });
+  });
+});

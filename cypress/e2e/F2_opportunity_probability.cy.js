@@ -4,7 +4,7 @@
  * Suite de pruebas E2E automatizadas para la Funcionalidad 2: Cálculo automático de probabilidad en Oportunidades
  *
  * Principios FIRST:
- *   Fast            - Sesión inicializada vía API; sin latencia de pantalla de login.
+ *   Fast            - Sesión inicializada vía API/cy.session; sin latencia de pantalla de login.
  *   Independent     - Cada test instancia o limpia sus propias oportunidades en BD.
  *   Repeatable      - Respuestas y transiciones sincronizadas con alias de red.
  *   Self-Validating - Fluent Assertions encadenadas sobre propiedades numéricas exactas.
@@ -18,7 +18,7 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
   let createdOpportunityIds = [];
 
   beforeEach(() => {
-    // [FIRST - Fast]: Autenticación acelerada por API
+    // [FIRST - Fast]: Autenticación acelerada por API / sesión
     cy.loginViaApi();
   });
 
@@ -46,9 +46,15 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
       .and('be.enabled')
       .type('Oportunidad Prospecting Test');
 
-    cy.get('select[data-name="stage"]')
+    cy.get('input[data-name="amount"]')
       .should('be.visible')
-      .select('Prospecting');
+      .type('10000');
+
+    cy.get('input[data-name="closeDate"]')
+      .should('be.visible')
+      .type('2026-12-31');
+
+    cy.selectOption('stage', 'Prospecting');
 
     cy.get('button[data-action="save"]')
       .should('be.visible')
@@ -100,9 +106,15 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
       .should('be.visible')
       .type('Oportunidad Ganada Test');
 
-    cy.get('select[data-name="stage"]')
+    cy.get('input[data-name="amount"]')
       .should('be.visible')
-      .select('Closed Won');
+      .type('20000');
+
+    cy.get('input[data-name="closeDate"]')
+      .should('be.visible')
+      .type('2026-12-31');
+
+    cy.selectOption('stage', 'Closed Won');
 
     cy.get('button[data-action="save"]')
       .should('be.visible')
@@ -125,6 +137,9 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
         createdOpportunityIds.push(response.body.id);
       }
     });
+
+    cy.url()
+      .should('include', '#Opportunity/view/');
 
     cy.get('[data-name="probability"], .field-probability')
       .should('be.visible')
@@ -150,9 +165,15 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
       .should('be.visible')
       .type('Oportunidad Perdida Test');
 
-    cy.get('select[data-name="stage"]')
+    cy.get('input[data-name="amount"]')
       .should('be.visible')
-      .select('Closed Lost');
+      .type('5000');
+
+    cy.get('input[data-name="closeDate"]')
+      .should('be.visible')
+      .type('2026-12-31');
+
+    cy.selectOption('stage', 'Closed Lost');
 
     cy.get('button[data-action="save"]')
       .should('be.visible')
@@ -176,6 +197,9 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
       }
     });
 
+    cy.url()
+      .should('include', '#Opportunity/view/');
+
     cy.get('[data-name="probability"], .field-probability')
       .should('be.visible')
       .and('contain.text', '0');
@@ -192,6 +216,8 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
     cy.createEntityViaApi('Opportunity', {
       name: 'Oportunidad Transición Etapa',
       stage: 'Prospecting',
+      amount: 15000,
+      closeDate: '2026-12-31',
       probability: 10,
     }).then(({ body }) => {
       const optId = body.id;
@@ -204,9 +230,7 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
       // -------------------------------------------------------------------------
       cy.visit(`/#Opportunity/edit/${optId}`);
 
-      cy.get('select[data-name="stage"]')
-        .should('be.visible')
-        .select('Proposal');
+      cy.selectOption('stage', 'Proposal');
 
       cy.get('button[data-action="save"]')
         .should('be.visible')
@@ -225,6 +249,9 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
           .that.has.property('probability')
           .which.equals(50);
       });
+
+      cy.url()
+        .should('include', '#Opportunity/view/');
 
       cy.get('[data-name="probability"], .field-probability')
         .should('be.visible')
@@ -254,9 +281,15 @@ describe('Funcionalidad 2: Cálculo Automático de Probabilidad en Oportunidades
       .should('be.visible')
       .type('Oportunidad Error 500');
 
-    cy.get('select[data-name="stage"]')
+    cy.get('input[data-name="amount"]')
       .should('be.visible')
-      .select('Proposal');
+      .type('8000');
+
+    cy.get('input[data-name="closeDate"]')
+      .should('be.visible')
+      .type('2026-12-31');
+
+    cy.selectOption('stage', 'Proposal');
 
     cy.get('button[data-action="save"]')
       .should('be.visible')

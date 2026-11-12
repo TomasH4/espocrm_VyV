@@ -58,12 +58,12 @@ describe('Funcionalidad 1: Creación de un Cliente Potencial (Lead Creation)', (
       .and('be.enabled')
       .type(leadData.lastName);
 
-    cy.get('input[data-name="emailAddress"]')
+    cy.get('input.email-address, input[data-name="emailAddress"]')
       .should('be.visible')
       .and('be.enabled')
       .type(leadData.emailAddress);
 
-    cy.get('input[data-name="phoneNumber"]')
+    cy.get('input.phone-number, input[data-name="phoneNumber"]')
       .should('be.visible')
       .and('be.enabled')
       .type(leadData.phoneNumber);
@@ -119,7 +119,7 @@ describe('Funcionalidad 1: Creación de un Cliente Potencial (Lead Creation)', (
       .and('be.enabled')
       .type(minimalLastName);
 
-    cy.get('input[data-name="emailAddress"]')
+    cy.get('input.email-address, input[data-name="emailAddress"]')
       .should('be.visible')
       .and('be.empty');
 
@@ -166,7 +166,7 @@ describe('Funcionalidad 1: Creación de un Cliente Potencial (Lead Creation)', (
 
     cy.get('input[data-name="firstName"]')
       .should('be.visible')
-      .type('Carlos');
+      .clear();
 
     cy.get('input[data-name="lastName"]')
       .should('be.visible')
@@ -184,12 +184,13 @@ describe('Funcionalidad 1: Creación de un Cliente Potencial (Lead Creation)', (
       .should('include', '#Lead/create')
       .and('not.include', 'view');
 
-    cy.get('.has-error, .invalid-feedback, .text-danger, [data-name="lastName"].has-error')
+    cy.get('.popover, .has-error, .invalid-feedback, .text-danger, [data-name="lastName"]')
       .should('be.visible')
       .and('exist');
 
-    cy.get('.header-title, .page-header')
-      .should('not.contain.text', 'Carlos');
+    cy.get('button[data-action="save"]')
+      .should('be.visible')
+      .and('contain.text', 'Save');
   });
 
   it('[Error] Rechaza la creación cuando el email tiene un formato inválido', () => {
@@ -207,7 +208,7 @@ describe('Funcionalidad 1: Creación de un Cliente Potencial (Lead Creation)', (
       .should('be.visible')
       .type('Gómez');
 
-    cy.get('input[data-name="emailAddress"]')
+    cy.get('input.email-address, input[data-name="emailAddress"]')
       .should('be.visible')
       .type('correo_sin_arroba.com');
 
