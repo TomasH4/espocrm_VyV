@@ -1,0 +1,26 @@
+{
+  "name": "espocrm-stagehand-tests",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "E2E AI-driven tests using Stagehand and Google Gemini for VyV EspoCRM",
+  "scripts": {
+    "test:lead": "tsx F1_lead_creation.stagehand.ts",
+    "test:opportunity": "tsx F2_opportunity_probability.stagehand.ts",
+    "test:contact": "tsx F3_contact_search.stagehand.ts",
+    "test:meeting": "tsx F4_meeting_scheduling.stagehand.ts",
+    "test:conversion": "tsx F5_lead_conversion.stagehand.ts",
+    "test:all": "tsx run_all_stagehand.ts",
+    "test:deepeval": "python -u tests_stagehand/deepeval_runner.py",
+    "test:headed:lead": "tsx F1_lead_creation.stagehand.ts",
+    "test:headed:opportunity": "tsx F2_opportunity_probability.stagehand.ts",
+    "test:headed:contact": "tsx F3_contact_search.stagehand.ts",
+    "test:headed:meeting": "tsx F4_meeting_scheduling.stagehand.ts",
+    "test:headed:conversion": "tsx F5_lead_conversion.stagehand.ts"
+  },
+  "dependencies": {
+    "@browserbasehq/stagehand": "^4.4.0",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.19.2",
+    "zod": "^4.6.6"
+  }
+}

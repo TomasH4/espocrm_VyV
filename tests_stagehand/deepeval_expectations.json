@@ -1,0 +1,35 @@
+{
+  "F1_lead_creation": {
+    "expected": [
+      "Lead created successfully",
+      "All required fields are populated"
+    ]
+  },
+  "F2_opportunity_probability": {
+    "expected": [
+      "Probability set to 10% for Prospecting",
+      "Probability set to 100% for Closed Won",
+      "Probability set to 0% for Closed Lost",
+      "Probability updated dynamically on Proposal"
+    ]
+  },
+  "F3_contact_search": {
+    "expected": [
+      "Partial search returns matching contacts",
+      "Exact search returns single contact",
+      "Inactive contact appears when filtered"
+    ]
+  },
+  "F4_meeting_scheduling": {
+    "expected": [
+      "Meeting scheduled with correct date and participants",
+      "Calendar event appears in UI"
+    ]
+  },
+  "F5_lead_conversion": {
+    "expected": [
+      "Lead converted to opportunity",
+      "Opportunity reflects original lead data"
+    ]
+  }
+}
