@@ -19,6 +19,11 @@ module.exports = defineConfig({
     responseTimeout: 10000,
     video: false,
     screenshotOnRunFailure: true,
+    reporter: 'mocha-junit-reporter',
+    reporterOptions: {
+      mochaFile: 'cypress/reports/junit-[hash].xml',
+      toConsole: false,
+    },
     env: {
       apiUrl: 'http://localhost:8080/api/v1',
       username: 'Tomas',

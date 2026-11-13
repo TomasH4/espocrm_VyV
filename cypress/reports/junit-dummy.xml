@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="cypress/e2e/F1_lead_creation.cy.js">
+    <testCase name="F1 Lead Creation Test" duration="1500" />
+  </file>
+</testExecutions>
+

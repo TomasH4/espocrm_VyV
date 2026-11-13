@@ -14,4 +14,26 @@
       <exclude>tests/integration/Espo/Core/Utils/Database/FulltextIndex/CheckCreatedIndexTest.php</exclude>
     </testsuite>
   </testsuites>
+
+  <source>
+    <include>
+      <directory suffix=".php">application/Espo</directory>
+      <directory suffix=".php">custom</directory>
+    </include>
+    <exclude>
+      <directory>vendor</directory>
+      <directory>tests</directory>
+    </exclude>
+  </source>
+
+  <coverage>
+    <report>
+      <clover outputFile="coverage/phpunit-coverage.xml"/>
+      <html outputDirectory="coverage/phpunit-html"/>
+    </report>
+  </coverage>
+
+  <logging>
+    <junit outputFile="coverage/phpunit-junit.xml"/>
+  </logging>
 </phpunit>
