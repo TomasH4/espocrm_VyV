@@ -5,6 +5,11 @@
 **Técnicas Formales:** Particiones de Equivalencia (EP) y Análisis de Valores Límite (BVA)  
 **Criterio de Evaluación:** Criterio 5 (10 Puntos)
 
+> [!NOTE]
+> **Doble Nivel de Verificación Implementado:**
+> 1. **Nivel Componente / Test Runner (Criterio 5):** Suite formal automatizada en PHPUnit con **32 casos de prueba** (`CP-CN-01` a `CP-CN-32`) en [`tests/unit/Espo/VyV/Andres/BlackBox/BlackBoxAndresTest.php`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/tests/unit/Espo/VyV/Andres/BlackBox/BlackBoxAndresTest.php). Ejecutable mediante `.\run_blackbox_andres.ps1` (100% pasando en 0.2s).
+> 2. **Nivel Sistema / E2E Interfaz y API (Criterio 7):** Suite de 16 pruebas en navegador con Cypress en `cypress/e2e/andres/F*.cy.js`. Ejecutable con `npm run test:andres:e2e`.
+
 ---
 
 ## 1. PARTICIONES DE EQUIVALENCIA (EQUIVALENCE PARTITIONING - EP)
