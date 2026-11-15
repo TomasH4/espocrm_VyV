@@ -1,5 +1,6 @@
 param(
-    [string]$Feature = "all"
+    [string]$Feature = "all",
+    [switch]$Coverage
 )
 
 $features = @{
@@ -30,28 +31,31 @@ $features = @{
     }
 }
 
+$covFlags = if ($Coverage) { "--coverage-text" } else { "--no-coverage" }
+
 $key = $Feature.ToUpper()
 
 if ($key -eq "ALL" -or [string]::IsNullOrWhiteSpace($Feature)) {
     Write-Host "=================================================================" -ForegroundColor Cyan
     Write-Host " Ejecutando TODAS las pruebas unitarias TDD de Andres (F1 a F5)" -ForegroundColor Cyan
     Write-Host "=================================================================" -ForegroundColor Cyan
-    docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/Andres/ --coverage-text --coverage-filter /var/www/html/application/Espo/VyV/ --colors=always"
+    docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/Andres/ $covFlags --colors=always"
 }
 elseif ($features.ContainsKey($key)) {
     $target = $features[$key]
     Write-Host "=================================================================" -ForegroundColor Cyan
     Write-Host " Ejecutando $($target.Name)" -ForegroundColor Cyan
     Write-Host "=================================================================" -ForegroundColor Cyan
-    docker exec espocrm bash -c "cd /var/www/html && phpunit $($target.Test) --coverage-text --coverage-filter $($target.Filter) --colors=always"
+    docker exec espocrm bash -c "cd /var/www/html && phpunit $($target.Test) $covFlags --colors=always"
 }
 else {
     Write-Host "Opcion no valida: '$Feature'" -ForegroundColor Red
     Write-Host "Uso:" -ForegroundColor Yellow
-    Write-Host "  .\run_tests_andres.ps1      (Ejecuta las 5 funcionalidades de Andres)"
-    Write-Host "  .\run_tests_andres.ps1 F1   (Solo F1: Transicion de Estados)"
-    Write-Host "  .\run_tests_andres.ps1 F2   (Solo F2: Calculo de SLA)"
-    Write-Host "  .\run_tests_andres.ps1 F3   (Solo F3: Descuentos en Cotizaciones)"
-    Write-Host "  .\run_tests_andres.ps1 F4   (Solo F4: Evaluacion de Tareas)"
-    Write-Host "  .\run_tests_andres.ps1 F5   (Solo F5: Deteccion de Duplicados)"
+    Write-Host "  .\run_tests_andres.ps1              (Ejecuta las 5 funcionalidades en modo rapido)"
+    Write-Host "  .\run_tests_andres.ps1 -Coverage    (Ejecuta las 5 funcionalidades con reporte de cobertura)"
+    Write-Host "  .\run_tests_andres.ps1 F1           (Solo F1: Transicion de Estados)"
+    Write-Host "  .\run_tests_andres.ps1 F2           (Solo F2: Calculo de SLA)"
+    Write-Host "  .\run_tests_andres.ps1 F3           (Solo F3: Descuentos en Cotizaciones)"
+    Write-Host "  .\run_tests_andres.ps1 F4           (Solo F4: Evaluacion de Tareas)"
+    Write-Host "  .\run_tests_andres.ps1 F5           (Solo F5: Deteccion de Duplicados)"
 }
