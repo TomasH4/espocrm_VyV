@@ -1,0 +1,6 @@
+"Endpoint","Muestras","Min (ms)","Avg (ms)","P95 (ms)","Max (ms)","StdDev","Exito (%)"
+"F1: Consulta de Casos (GET /Case)","20","387.44","427.87","550.8","550.8","40.99","100%"
+"F2: Creacion de Caso Prioritario (POST /Case)","20","493.47","561.26","690.38","690.38","44.7","100%"
+"F3: Consulta de Ventas (GET /Opportunity)","20","394.63","435.6","600.83","600.83","45.2","100%"
+"F4: Consulta de Tareas (GET /Task)","20","388.18","425.12","582.18","582.18","46.8","100%"
+"F5: Busqueda de Cuentas (GET /Account)","20","390.12","428.22","609.21","609.21","45.49","100%"
