@@ -36,7 +36,7 @@ try {
         projectKey = "espocrm_VyV"
     }
     Write-Output "TOKEN_GENERATED: $($tokenRes.token)"
-    $tokenRes.token | Out-File -FilePath "C:\Users\sqluser\Desktop\VyV\espocrm_VyV\.sonar_token" -Encoding utf8
+    $tokenRes.token | Out-File -FilePath "$PSScriptRoot\.sonar_token" -Encoding utf8
 } catch {
     Write-Output "Token error: $_"
 }

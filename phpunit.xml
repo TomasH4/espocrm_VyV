@@ -17,7 +17,7 @@
 
   <source>
     <include>
-      <directory suffix=".php">application/Espo</directory>
+      <directory suffix=".php">application/Espo/VyV</directory>
       <directory suffix=".php">custom</directory>
     </include>
     <exclude>
