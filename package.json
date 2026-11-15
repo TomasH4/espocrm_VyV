@@ -7,7 +7,9 @@
     "url": "https://github.com/espocrm/espocrm.git"
   },
   "scripts": {
-    "test:andres:unit": "powershell -ExecutionPolicy Bypass -File .\\run_tests_andres.ps1",
+    "test:andres:whitebox": "powershell -ExecutionPolicy Bypass -File .\\run_tests_andres.ps1 -WhiteBox",
+    "test:andres:blackbox": "powershell -ExecutionPolicy Bypass -File .\\run_blackbox_andres.ps1",
+    "test:andres:unit": "powershell -ExecutionPolicy Bypass -File .\\run_tests_andres.ps1 -All",
     "test:andres:e2e": "cypress run --spec \"cypress/e2e/andres/F*.cy.js\"",
     "test:deepeval": "python -u tests_stagehand/deepeval_runner.py",
     "postinstall": "node js/scripts/postinstall-cleanup && node js/scripts/prepare-lib-original.js",
