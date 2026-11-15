@@ -91,3 +91,39 @@ Cypress.Commands.add('selectOption', (fieldName, value) => {
     cy.wrap($select).trigger('change', { force: true });
   });
 });
+
+/**
+ * Autentica al usuario especificado (por defecto 'andres') mediante cy.session().
+ * Cumple con el Principio FIRST (Fast) y bypass de UI en pruebas E2E.
+ */
+Cypress.Commands.add('loginAs', (username = 'andres', password = 'andres12345') => {
+  cy.session(
+    `session-${username}`,
+    () => {
+      cy.visit('/');
+      cy.get('#field-userName', { timeout: 10000 }).should('be.visible').type(username);
+      cy.get('#field-password').should('be.visible').type(password);
+      cy.get('#btn-login').should('be.visible').and('not.be.disabled').click();
+      cy.get('#main, .navbar', { timeout: 15000 }).should('be.visible');
+      cy.get('#login').should('not.exist');
+    },
+    {
+      cacheAcrossSpecs: true,
+    }
+  );
+});
+
+/**
+ * Peticion autenticada a la API REST de EspoCRM con las credenciales de Andres Bedoya.
+ */
+Cypress.Commands.add('requestAsAndres', (options) => {
+  const defaultAuth = {
+    user: 'andres',
+    pass: 'andres12345',
+  };
+  return cy.request({
+    auth: defaultAuth,
+    failOnStatusCode: false,
+    ...options,
+  });
+});

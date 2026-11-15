@@ -1,0 +1,8 @@
+{
+    "fields": {
+        "resolution": {
+            "type": "text",
+            "required": false
+        }
+    }
+}
