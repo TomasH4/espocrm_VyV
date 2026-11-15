@@ -8,28 +8,28 @@ param(
 
 $features = @{
     "F1" = @{
-        "Name"   = "F1: Validacion de Transicion de Estados de Casos (Caja Blanca)"
-        "Test"   = "tests/unit/Espo/VyV/Andres/CaseStatusTransitionValidatorTest.php"
+        "Name"   = "F1: Validacion de Transicion de Estados de Casos (TDD / Caja Blanca)"
+        "Test"   = "tests/unit/Espo/VyV/Andres/tdd-unit-automatizadas/CaseStatusTransitionValidatorTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/CaseStatus"
     }
     "F2" = @{
-        "Name"   = "F2: Calculo de SLA y Tiempo Limite de Atencion (Caja Blanca)"
-        "Test"   = "tests/unit/Espo/VyV/Andres/CaseSlaCalculatorTest.php"
+        "Name"   = "F2: Calculo de SLA y Tiempo Limite de Atencion (TDD / Caja Blanca)"
+        "Test"   = "tests/unit/Espo/VyV/Andres/tdd-unit-automatizadas/CaseSlaCalculatorTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/CaseSla"
     }
     "F3" = @{
-        "Name"   = "F3: Calculo de Descuentos Escalonados en Cotizaciones (Caja Blanca)"
-        "Test"   = "tests/unit/Espo/VyV/Andres/QuoteDiscountCalculatorTest.php"
+        "Name"   = "F3: Calculo de Descuentos Escalonados en Cotizaciones (TDD / Caja Blanca)"
+        "Test"   = "tests/unit/Espo/VyV/Andres/tdd-unit-automatizadas/QuoteDiscountCalculatorTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/QuoteDiscount"
     }
     "F4" = @{
-        "Name"   = "F4: Evaluacion y Escalado de Tareas Vencidas (Caja Blanca)"
-        "Test"   = "tests/unit/Espo/VyV/Andres/TaskOverdueEvaluatorTest.php"
+        "Name"   = "F4: Evaluacion y Escalado de Tareas Vencidas (TDD / Caja Blanca)"
+        "Test"   = "tests/unit/Espo/VyV/Andres/tdd-unit-automatizadas/TaskOverdueEvaluatorTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/TaskOverdue"
     }
     "F5" = @{
-        "Name"   = "F5: Deteccion de Empresas Duplicadas (Caja Blanca)"
-        "Test"   = "tests/unit/Espo/VyV/Andres/AccountDuplicateDetectorTest.php"
+        "Name"   = "F5: Deteccion de Empresas Duplicadas (TDD / Caja Blanca)"
+        "Test"   = "tests/unit/Espo/VyV/Andres/tdd-unit-automatizadas/AccountDuplicateDetectorTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/AccountDeduplication"
     }
 }
@@ -56,10 +56,9 @@ $key = $Feature.ToUpper()
 
 if ($key -eq "ALL" -or [string]::IsNullOrWhiteSpace($Feature) -or $WhiteBox) {
     Write-Host "=================================================================" -ForegroundColor Cyan
-    Write-Host " Ejecutando Suite de CAJA BLANCA (Caminos Independientes McCabe)" -ForegroundColor Cyan
+    Write-Host " Ejecutando Suite TDD / Caja Blanca (tdd-unit-automatizadas)" -ForegroundColor Cyan
     Write-Host "=================================================================" -ForegroundColor Cyan
-    # Ejecuta las 5 suites de caja blanca excluyendo la carpeta BlackBox
-    docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/Andres/Case*Test.php tests/unit/Espo/VyV/Andres/Quote*Test.php tests/unit/Espo/VyV/Andres/Task*Test.php tests/unit/Espo/VyV/Andres/Account*Test.php $covFlags --colors=always"
+    docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/Andres/tdd-unit-automatizadas/ $covFlags --colors=always"
 }
 elseif ($features.ContainsKey($key)) {
     $target = $features[$key]

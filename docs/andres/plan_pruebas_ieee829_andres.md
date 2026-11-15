@@ -98,7 +98,7 @@ Se adopta la **Pirámide de Automatización de Calidad**, garantizando la ejecuc
 
 ## 9. ENTREGABLES DE LA PRUEBA (TEST DELIVERABLES)
 1. Código fuente de la lógica de negocio en `application/Espo/VyV/`.
-2. Suites unitarias TDD en `tests/unit/Espo/VyV/Andres/`.
+2. Suites unitarias TDD en `tests/unit/Espo/VyV/Andres/tdd-unit-automatizadas/`.
 3. Especificaciones E2E en `cypress/e2e/andres/`.
 4. Especificaciones BDD y componentes Screenplay en `tests_bdd_screenplay/`.
 5. Scripts y métricas de rendimiento en `tests_performance_manual.ps1`, `tests_k6/` y `manual_performance_metrics.csv`.
