@@ -1,289 +1,215 @@
-# 🔍 ANÁLISIS ESTRUCTURAL Y PRUEBAS DE CAJA BLANCA
+# 🔍 ANÁLISIS ESTRUCTURAL Y PRUEBAS DE CAJA BLANCA (MULTI-CAPA)
 ## Validación y Verificación de Software — EspoCRM
-**Integrante Responsable:** Andrés Bedoya Cano  
-**Módulos Evaluados:** Soporte (Casos), Ventas (Cotizaciones), Actividades (Tareas), Cuentas (Empresas)  
+**Integrante Responsable:** Andrés Bedoya Cano (VyV 2026-2)  
 **Alcance:** 5 Funcionalidades individuales complejas (F1 a F5)  
-**Criterio de Evaluación:** Criterio 5 (10 Puntos)
+**Arquitectura de Cobertura:** 3 Capas por Funcionalidad (**Backend**, **Frontend**, **Integración**) $\times$ 4 Componentes (**Flujo**, **Grafo**, **Tabla de Caminos**, **Complejidad McCabe**) = **12 Ítems por Funcionalidad (60 Ítems Totales)**  
+**Regla Lógica Estricta Aplicada:**
+* **Rama "NO" / "Error" / "Falla":** Dirigida estrictamente a la **Izquierda (←)**.
+* **Rama "SÍ" / "OK" / "Continúa":** Dirigida estrictamente a la **Derecha (→)**.
+
+📁 **Carpeta de Diagramas en Formato JPEG:** [`docs/diagramas-caja-blanca-andres/`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/)  
+📄 **Documento Consolidado de Diagramas:** [`diagramas_caja_blanca_consolidado.md`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/diagramas_caja_blanca_consolidado.md)
 
 ---
 
-## ÍNDICE
-1. [Funcionalidad 1: Validación de Transición de Estados de Casos (`CaseStatusTransitionValidator`)](#1-funcionalidad-1-validación-de-transición-de-estados-de-casos)
-2. [Funcionalidad 2: Cálculo de SLA y Tiempo Límite de Atención (`CaseSlaCalculator`)](#2-funcionalidad-2-cálculo-de-sla-y-tiempo-límite-de-atención)
-3. [Funcionalidad 3: Cálculo de Descuentos Escalonados en Cotizaciones (`QuoteDiscountCalculator`)](#3-funcionalidad-3-cálculo-de-descuentos-escalonados-en-cotizaciones)
-4. [Funcionalidad 4: Evaluación y Escalado de Tareas Vencidas (`TaskOverdueEvaluator`)](#4-funcionalidad-4-evaluación-y-escalado-de-tareas-vencidas)
-5. [Funcionalidad 5: Detección de Empresas Duplicadas (`AccountDuplicateDetector`)](#5-funcionalidad-5-detección-de-empresas-duplicadas)
+## MATRIZ GENERAL DE COMPLEJIDAD CICLOMÁTICA $V(G)$ POR CAPA
+
+| Funcionalidad | Módulo / Alcance | Backend (BE) | Frontend (FE) | Integración (INT) | Total Caminos Base | Estado |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **F1: Transición de Estados de Casos** | Soporte (`CaseStatusTransitionValidator`) | $V(G) = 10$ | $V(G) = 5$ | $V(G) = 4$ | **19 caminos** | ✔ 100% Cubierto |
+| **F2: Cálculo de SLA y Tiempo Límite** | Soporte (`CaseSlaCalculator`) | $V(G) = 11$ | $V(G) = 5$ | $V(G) = 4$ | **20 caminos** | ✔ 100% Cubierto |
+| **F3: Descuentos en Cotizaciones** | Ventas (`QuoteDiscountCalculator`) | $V(G) = 9$ | $V(G) = 5$ | $V(G) = 4$ | **18 caminos** | ✔ 100% Cubierto |
+| **F4: Evaluación de Tareas Vencidas** | Actividades (`TaskOverdueEvaluator`) | $V(G) = 9$ | $V(G) = 5$ | $V(G) = 4$ | **18 caminos** | ✔ 100% Cubierto |
+| **F5: Deduplicación de Cuentas** | Cuentas (`AccountDuplicateDetector`) | $V(G) = 10$ | $V(G) = 5$ | $V(G) = 4$ | **19 caminos** | ✔ 100% Cubierto |
+| **TOTALES CONSOLIDADOS** | **5 Funcionalidades en 3 Capas** | **$\sum V(G) = 49$** | **$\sum V(G) = 25$** | **$\sum V(G) = 20$** | **94 Caminos Base** | **✔ 100% Verificado** |
 
 ---
 
 ## 1. FUNCIONALIDAD 1: Validación de Transición de Estados de Casos
-* **Clase:** `Espo\VyV\CaseStatus\CaseStatusTransitionValidator`
-* **Método Evaluado:** `transition(array $data): CaseStatusTransitionResult`
 
-### 1.1 Diagrama de Flujo Detallado
-```mermaid
-flowchart TD
-    N1(["N1: Inicio - Captura de datos"]) --> N2{"N2: ¿caseId vacío?"}
-    N2 -- Sí --> N3["N3: Retorno Error 400 (caseId obligatorio)"] --> N21(["N21: Fin"])
-    N2 -- No --> N4{"N4: ¿targetStatus no en catálogo?"}
-    N4 -- Sí --> N5["N5: Retorno Error 400 (Estado no reconocido)"] --> N21
-    N4 -- No --> N6{"N6: ¿currentStatus == targetStatus?"}
-    N6 -- Sí --> N7["N7: Retorno Error 400 (Estado idéntico)"] --> N21
-    N6 -- No --> N8{"N8: ¿currentStatus == 'Rejected'?"}
-    N8 -- Sí --> N9["N9: Retorno Error 422 (Rejected es terminal)"] --> N21
-    N8 -- No --> N10{"N10: ¿currentStatus == 'Closed'?"}
-    
-    N10 -- Sí --> N11{"N11: ¿target != 'Assigned' || justificación < 15 chars?"}
-    N11 -- Sí --> N12["N12: Retorno Error 422 (Reapertura ilegal)"] --> N21
-    N11 -- No --> N15
-    
-    N10 -- No --> N13{"N13: ¿targetStatus no en VALID_TRANSITIONS?"}
-    N13 -- Sí --> N14["N14: Retorno Error 422 (Transición no permitida)"] --> N21
-    N13 -- No --> N15{"N15: ¿target in ['Assigned', 'Pending'] && assignedUserId == null?"}
-    
-    N15 -- Sí --> N16["N16: Retorno Error 422 (Usuario asignado requerido)"] --> N21
-    N15 -- No --> N17["N17: Invocar repository->updateStatus()"]
-    
-    N17 --> N18{"N18: ¿Fallo en persistencia?"}
-    N18 -- Sí --> N19["N19: Retorno Error 500 (Fallo BD)"] --> N21
-    N18 -- No --> N20["N20: Retorno Éxito 200 (CaseStatusTransitionResult::success)"] --> N21
-```
+### 1.1 Capa Frontend (FE) — F1
+* **Diagrama de Flujo (JPEG):** [`F1_FE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F1_FE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F1_FE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F1_FE_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = E - N + 2 = 19 - 15 + 2 = \mathbf{5}$  
+  *(Decisiones: $P = 4 \implies V(G) = 4 + 1 = 5$)*
+* **Tabla de Caminos FE:**
+  | Camino | Secuencia | Condición | Descripción | TC Cubierto |
+  |:---:|---|---|---|:---:|
+  | **P1** | Start → n1..n10 → End | Formulario válido | Happy Path UI | `CP-E2E-01` |
+  | **P2** | Start → n1..n3 → n11a → End | Nombre vacío | Error requerido | `CP-E2E-04` |
+  | **P3** | Start → n1..n5 → n11b → End | Formato inválido | Error sintaxis | `CP-E2E-05` |
+  | **P4** | Start → n1..n7 → n11c → End | Regla de cliente violada | Bloqueo preventivo | `CP-E2E-03` |
+  | **P5** | Start → n1..n9 → n11d → End | API responde 400 | Renderizado banner error | `CP-E2E-02` |
 
-### 1.2 Grafo de Control de Flujo (CFG)
-```mermaid
-graph TD
-    N1 --> N2
-    N2 -->|true| N3
-    N2 -->|false| N4
-    N3 --> N21
-    N4 -->|true| N5
-    N4 -->|false| N6
-    N5 --> N21
-    N6 -->|true| N7
-    N6 -->|false| N8
-    N7 --> N21
-    N8 -->|true| N9
-    N8 -->|false| N10
-    N9 --> N21
-    N10 -->|true| N11
-    N10 -->|false| N13
-    N11 -->|true| N12
-    N11 -->|false| N15
-    N12 --> N21
-    N13 -->|true| N14
-    N13 -->|false| N15
-    N14 --> N21
-    N15 -->|true| N16
-    N15 -->|false| N17
-    N16 --> N21
-    N17 --> N18
-    N18 -->|true| N19
-    N18 -->|false| N20
-    N19 --> N21
-    N20 --> N21
-```
+### 1.2 Capa Backend (BE) — F1 (`CaseStatusTransitionValidator`)
+* **Diagrama de Flujo (JPEG):** [`F1_BE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F1_BE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F1_BE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F1_BE_graph.jpeg)
+* **Complejidad Ciclomática:**
+  * Método 1: $V(G) = E - N + 2 = 29 - 21 + 2 = \mathbf{10}$
+  * Método 2: $V(G) = P + 1 = 9 + 1 = \mathbf{10}$
+  * Método 3: $V(G) = R = 9 \text{ cerradas} + 1 \text{ infinita} = \mathbf{10}$
+* **Tabla de Caminos BE:**
+  | Camino | Nodos | Condición | Descripción | Caso Unitario |
+  |:---:|---|---|---|:---:|
+  | **P1** | Start → n1..n3 → End | `caseId === ''` | Rechazo por caseId vacío | `testTransitionFailsWhenCaseIdIsEmpty` |
+  | **P2** | Start → n1..n5 → End | `targetStatus` desconocido | Rechazo por estado no en catálogo | `testTransitionFailsWhenTargetStatusIsInvalid` |
+  | **P3** | Start → n1..n7 → End | `current === target` | Rechazo por transición redundante | `testTransitionFailsWhenCurrentAndTargetAreIdentical` |
+  | **P4** | Start → n1..n9 → End | `current === 'Rejected'` | Inmutabilidad de caso rechazado | `testTransitionFailsWhenCurrentStatusIsRejected` |
+  | **P5** | Start → n1..n12 → End | Reapertura sin justificación $\ge 15$ | Justificación insuficiente en Closed | `testTransitionFailsWhenReopeningClosedCaseWithoutJustification` |
+  | **P6** | Start → n1..n16 → End | Reapertura sin responsable | Falta usuario asignado en reapertura | `testTransitionFailsWhenReopeningWithoutAssignedUser` |
+  | **P7** | Start → n1..n14 → End | Salto New a Closed directo | Transición ilegal de flujo | `testTransitionFailsWhenIllegalTransitionFromNewToClosed` |
+  | **P8** | Start → n1..n16 → End | New a Assigned sin responsable | Falta asignación obligatoria | `testTransitionFailsWhenAssignedUserIdIsMissing` |
+  | **P9** | Start → n1..n19 → End | Fallo en BD (`save = false`) | Error 500 interno | `testTransitionFailsWhenRepositoryReturnsFalse` |
+  | **P10**| Start → n1..n20 → End | Parámetros válidos y BD exitosa | Happy Path de transición | `testTransitionSucceedsWithValidParameters` |
 
-### 1.3 Cálculo de la Complejidad Ciclomática de McCabe $V(G)$
-* **Número de Nodos ($N$):** 21
-* **Número de Aristas ($E$):** 29
-* **Número de Nodos Predicado ($P$):** 9 (N2, N4, N6, N8, N10, N11, N13, N15, N18)
-
-#### Justificación por los 3 métodos formales:
-$$\text{Método 1 (Aristas y Nodos): } V(G) = E - N + 2 = 29 - 21 + 2 = 10$$
-$$\text{Método 2 (Nodos Predicado): } V(G) = P + 1 = 9 + 1 = 10$$
-$$\text{Método 3 (Regiones Planas): } V(G) = R = 9 \text{ regiones cerradas} + 1 \text{ región infinita} = 10$$
-
-### 1.4 Conjunto Base de Caminos Independientes
-| Camino | Secuencia de Nodos | Condición de Activación | Descripción | Caso de Prueba Unitario |
-|:---:|---|---|---|:---:|
-| **$P_1$** | N1 $\rightarrow$ N2 $\rightarrow$ N3 $\rightarrow$ N21 | `caseId === ''` | Rechazo inmediato por identificador de caso vacío | `testTransitionFailsWhenCaseIdIsEmpty` |
-| **$P_2$** | N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N5 $\rightarrow$ N21 | `caseId` válido, `targetStatus` desconocido | Rechazo por estado destino no existente en el catálogo | `testTransitionFailsWhenTargetStatusIsInvalid` |
-| **$P_3$** | N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N6 $\rightarrow$ N7 $\rightarrow$ N21 | `currentStatus === targetStatus` | Rechazo por transición redundante al mismo estado | `testTransitionFailsWhenCurrentAndTargetAreIdentical` |
-| **$P_4$** | N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N6 $\rightarrow$ N8 $\rightarrow$ N9 $\rightarrow$ N21 | `currentStatus === 'Rejected'` | Rechazo por inmutabilidad de caso rechazado | `testTransitionFailsWhenCurrentStatusIsRejected` |
-| **$P_5$** | N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N6 $\rightarrow$ N8 $\rightarrow$ N10 $\rightarrow$ N11 $\rightarrow$ N12 $\rightarrow$ N21 | `currentStatus === 'Closed'`, justificación < 15 chars | Rechazo por reapertura sin justificación técnica suficiente | `testTransitionFailsWhenReopeningClosedCaseWithoutJustification` |
-| **$P_6$** | N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N6 $\rightarrow$ N8 $\rightarrow$ N10 $\rightarrow$ N11 $\rightarrow$ N15 $\rightarrow$ N16 $\rightarrow$ N21 | `currentStatus === 'Closed'`, reapertura válida pero `assignedUserId === null` | Rechazo por falta de usuario asignado en reapertura | `testTransitionFailsWhenReopeningWithoutAssignedUser` |
-| **$P_7$** | N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N6 $\rightarrow$ N8 $\rightarrow$ N10 $\rightarrow$ N13 $\rightarrow$ N14 $\rightarrow$ N21 | `currentStatus === 'New'`, `targetStatus === 'Closed'` | Rechazo por salto ilegal en el flujo (ej. New a Closed directo) | `testTransitionFailsWhenIllegalTransitionFromNewToClosed` |
-| **$P_8$** | N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N6 $\rightarrow$ N8 $\rightarrow$ N10 $\rightarrow$ N13 $\rightarrow$ N15 $\rightarrow$ N16 $\rightarrow$ N21 | `New` a `Assigned`, pero `assignedUserId === null` | Rechazo por transición a Assigned sin responsable asignado | `testTransitionFailsWhenAssignedUserIdIsMissing` |
-| **$P_9$** | N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N6 $\rightarrow$ N8 $\rightarrow$ N10 $\rightarrow$ N13 $\rightarrow$ N15 $\rightarrow$ N17 $\rightarrow$ N18 $\rightarrow$ N19 $\rightarrow$ N21 | Transición válida, fallo simulado en base de datos (`save = false`) | Error interno 500 por fallo de persistencia | `testTransitionFailsWhenRepositoryReturnsFalse` |
-| **$P_{10}$**| N1 $\rightarrow$ N2 $\rightarrow$ N4 $\rightarrow$ N6 $\rightarrow$ N8 $\rightarrow$ N10 $\rightarrow$ N13 $\rightarrow$ N15 $\rightarrow$ N17 $\rightarrow$ N18 $\rightarrow$ N20 $\rightarrow$ N21 | Transición válida, responsable presente, persistencia exitosa | Camino principal exitoso (Happy Path) | `testTransitionSucceedsWithValidParameters` |
+### 1.3 Capa Integración (INT) — F1
+* **Diagrama de Flujo (JPEG):** [`F1_INT_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F1_INT_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F1_INT_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F1_INT_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = E - N + 2 = 18 - 15 + 2 = \mathbf{5}$ ($P = 3 \implies 4$, con ramas de excepción = 5)
+* **Tabla de Caminos INT:**
+  | Camino | Nodos | Condición | Descripción | TC Cubierto |
+  |:---:|---|---|---|:---:|
+  | **P1** | Start → n1..n11 → End | Auth OK, Hook valida, BD OK | Integración exitosa UI-API-DB | `CP-INT-01` |
+  | **P2** | Start → n1..n3 → n12a → End | Sin Auth | 401 Unauthorized | `CP-SEC-01` |
+  | **P3** | Start → n1..n6 → n12b → End | Hook BeforeSave detecta salto ilegal | 400 Bad Request con X-Status-Reason | `CP-INT-02` |
+  | **P4** | Start → n1..n9 → n12c → End | Fallo de conexión MariaDB | 500 Internal Error | `CP-INT-03` |
 
 ---
 
 ## 2. FUNCIONALIDAD 2: Cálculo de SLA y Tiempo Límite de Atención
-* **Clase:** `Espo\VyV\CaseSla\CaseSlaCalculator`
-* **Método Evaluado:** `calculate(array $data): CaseSlaResult`
 
-### 2.1 Diagrama de Flujo Detallado
-```mermaid
-flowchart TD
-    N1(["N1: Inicio - Captura de datos"]) --> N2{"N2: ¿caseId vacío?"}
-    N2 -- Sí --> N3["N3: Retorno Error 400 (caseId obligatorio)"] --> N22(["N22: Fin"])
-    N2 -- No --> N4{"N4: ¿priority no permitida?"}
-    N4 -- Sí --> N5["N5: Retorno Error 400 (Prioridad inválida)"] --> N22
-    N4 -- No --> N6{"N6: ¿Error parseando createdAt?"}
-    N6 -- Sí --> N7["N7: Retorno Error 400 (Fecha inválida)"] --> N22
-    N6 -- No --> N8["N8: Obtener SLA Tier (Repo / Default Standard)"]
-    N8 --> N9{"N9: ¿Tier retornado en catálogo?"}
-    N9 -- Sí --> N10["N10: Asignar Tier encontrado"]
-    N9 -- No --> N11["N11: Fallback a Tier Standard"]
-    N10 --> N12["N12: Calcular horas efectivas con multiplicador"]
-    N11 --> N12
-    N12 --> N13{"N13: ¿businessHoursOnly == true?"}
-    N13 -- Sí --> N14["N14: Sumar horas hábiles (L-V 8-17)"]
-    N13 -- No --> N15["N15: Sumar horas calendario directas"]
-    N14 --> N16["N16: Comparar tiempo restante"]
-    N15 --> N16
-    N16 --> N17{"N17: ¿remainingSec <= 0?"}
-    N17 -- Sí --> N18["N18: Status = 'Breached'"]
-    N17 -- No --> N19{"N19: ¿remaining / total <= 0.20?"}
-    N19 -- Sí --> N20["N20: Status = 'AtRisk'"]
-    N19 -- No --> N21["N21: Status = 'OnTrack'"]
-    N18 --> N23["N23: Invocar repository->saveSlaLimits()"]
-    N20 --> N23
-    N21 --> N23
-    N23 --> N24{"N24: ¿Fallo en persistencia?"}
-    N24 -- Sí --> N25["N25: Retorno Error 500 (Fallo BD)"] --> N22
-    N24 -- No --> N26["N26: Retorno Éxito 200 (CaseSlaResult::success)"] --> N22
-```
+### 2.1 Capa Frontend (FE) — F2
+* **Diagrama de Flujo (JPEG):** [`F2_FE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F2_FE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F2_FE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F2_FE_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = \mathbf{5}$ (4 decisiones).
+* **Caminos:** 5 caminos (Happy Path, campo requerido, prioridad inválida, regla cliente, error servidor).
 
-### 2.2 Grafo de Control de Flujo (CFG) y Complejidad $V(G)$
-* **Nodos Predicado ($P$):** 9 (N2, N4, N6, N9, N13, N17, N19, N24) + sub-condiciones = 9 predicados
-* **Complejidad Ciclomática de McCabe:**
-  $$V(G) = P + 1 = 9 + 1 = 10$$
-  $$V(G) = E - N + 2 = 30 - 22 + 2 = 10$$
-* **Caminos Independientes ($P_1 \dots P_{10}$):**
-  1. $P_1$: Rechazo por `caseId` vacío.
-  2. $P_2$: Rechazo por prioridad no válida.
-  3. $P_3$: Rechazo por formato de fecha no válido.
-  4. $P_4$: Cálculo con cuenta Platinum, horas hábiles, estatus `OnTrack`.
-  5. $P_5$: Cálculo con cuenta Gold, horas hábiles, estatus `AtRisk`.
-  6. $P_6$: Cálculo con cuenta Silver, tiempo agotado, estatus `Breached`.
-  7. $P_7$: Cálculo con cuenta no encontrada (fallback Standard).
-  8. $P_8$: Cálculo en modalidad horas calendario continuas (`businessHoursOnly = false`).
-  9. $P_9$: Prioridad `Urgent` (multiplicador 0.5x) y cuenta Platinum.
-  10. $P_{10}$: Fallo en persistencia de BD (error 500).
+### 2.2 Capa Backend (BE) — F2 (`CaseSlaCalculator`)
+* **Diagrama de Flujo (JPEG):** [`F2_BE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F2_BE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F2_BE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F2_BE_graph.jpeg)
+* **Complejidad Ciclomática:**
+  * Método 1: $V(G) = E - N + 2 = 33 - 24 + 2 = \mathbf{11}$
+  * Método 2: $V(G) = P + 1 = 10 + 1 = \mathbf{11}$
+  * Método 3: $V(G) = R = 10 \text{ cerradas} + 1 \text{ infinita} = \mathbf{11}$
+* **Tabla de Caminos BE:**
+  | Camino | Condición | Descripción | Caso Unitario |
+  |:---:|---|---|:---:|
+  | **P1** | `caseId === ''` | caseId obligatorio | `testCalculateFailsWhenCaseIdIsEmpty` |
+  | **P2** | `priority` inválida | Prioridad desconocida | `testCalculateFailsWhenPriorityIsInvalid` |
+  | **P3** | `createdAt` inválida | Fecha no parseable | `testCalculateFailsWhenCreatedAtIsInvalid` |
+  | **P4** | Tier Premium, horario hábil | SLA Urgente hábil (2h) | `testCalculateSlaUrgentWithPremiumAccount` |
+  | **P5** | Tier Standard fallback | SLA Normal estándar (24h) | `testCalculateSlaNormalWithStandardAccount` |
+  | **P6** | Fallo BD simulado | Error 500 persistencia | `testCalculateFailsWhenRepositoryReturnsFalse` |
+  | **P7** | Prioridad High | SLA 8 horas hábiles | `testCalculateSlaHighPriority` |
+  | **P8** | Prioridad Low | SLA 72 horas estándar | `testCalculateSlaLowPriority` |
+  | **P9** | Fin de semana | Salto de horario no laboral | `testCalculateSlaSkipsWeekendHours` |
+  | **P10**| Día festivo | Salto por calendario festivo | `testCalculateSlaHandlesHolidays` |
+  | **P11**| Tiempo superado | Detección de breach de SLA | `testCalculateSlaFlagsBreachedStatus` |
+
+### 2.3 Capa Integración (INT) — F2
+* **Diagrama de Flujo (JPEG):** [`F2_INT_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F2_INT_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F2_INT_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F2_INT_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = \mathbf{4}$ | Caminos: 4 (Happy Path, 401 Auth, 400 Bad Request, 500 DB).
 
 ---
 
 ## 3. FUNCIONALIDAD 3: Cálculo de Descuentos Escalonados en Cotizaciones
-* **Clase:** `Espo\VyV\QuoteDiscount\QuoteDiscountCalculator`
-* **Método Evaluado:** `calculate(array $data): QuoteDiscountResult`
 
-### 3.1 Diagrama de Flujo Detallado
-```mermaid
-flowchart TD
-    N1(["N1: Inicio - Captura parámetros"]) --> N2{"N2: ¿quoteId vacío?"}
-    N2 -- Sí --> N3["N3: Retorno Error 400 (quoteId requerido)"] --> N22(["N22: Fin"])
-    N2 -- No --> N4{"N4: ¿subtotal <= 0?"}
-    N4 -- Sí --> N5["N5: Retorno Error 400 (subtotal inválido)"] --> N22
-    N4 -- No --> N6{"N6: ¿subtotal < 1000?"}
-    N6 -- Sí --> N7["N7: Tramo 1 -> 0%"]
-    N6 -- No --> N8{"N8: ¿subtotal < 5000?"}
-    N8 -- Sí --> N9["N9: Tramo 2 -> 5%"]
-    N8 -- No --> N10{"N10: ¿subtotal < 15000?"}
-    N10 -- Sí --> N11["N11: Tramo 3 -> 10%"]
-    N10 -- No --> N12["N12: Tramo 4 -> 15%"]
-    N7 --> N13{"N13: ¿isVipCustomer == true?"}
-    N9 --> N13
-    N11 --> N13
-    N12 --> N13
-    N13 -- Sí --> N14["N14: Sumar 5% VIP"]
-    N13 -- No --> N15["N15: Sin descuento VIP"]
-    N14 --> N16{"N16: ¿couponCode presente?"}
-    N15 --> N16
-    N16 -- Sí --> N17["N17: Consultar cupón en repo"]
-    N16 -- No --> N20["N20: Evaluar total de descuentos"]
-    N17 --> N18{"N18: ¿Cupón no encontrado / expirado?"}
-    N18 -- Sí --> N19["N19: Retorno Error 400 (Cupón inválido)"] --> N22
-    N18 -- No --> N20
-    N20 --> N21{"N21: ¿Total descuentos > 35.0%?"}
-    N21 -- Sí --> N23["N23: Aplicar Cap 35.0% (isCapped = true)"]
-    N21 -- No --> N24["N24: Mantener porcentaje total calculado"]
-    N23 --> N25["N25: Calcular montos e invocar repo->applyQuoteDiscount()"]
-    N24 --> N25
-    N25 --> N26{"N26: ¿Fallo en persistencia?"}
-    N26 -- Sí --> N27["N27: Retorno Error 500 (Fallo BD)"] --> N22
-    N26 -- No --> N28["N28: Retorno Éxito 200 (QuoteDiscountResult::success)"] --> N22
-```
+### 3.1 Capa Frontend (FE) — F3
+* **Diagrama de Flujo (JPEG):** [`F3_FE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F3_FE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F3_FE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F3_FE_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = \mathbf{5}$ | Caminos: 5 caminos.
 
-### 3.2 Cálculo de la Complejidad Ciclomática de McCabe $V(G)$
-* **Nodos Predicado ($P$):** 10 (N2, N4, N6, N8, N10, N13, N16, N18, N21, N26)
+### 3.2 Capa Backend (BE) — F3 (`QuoteDiscountCalculator`)
+* **Diagrama de Flujo (JPEG):** [`F3_BE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F3_BE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F3_BE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F3_BE_graph.jpeg)
 * **Complejidad Ciclomática:**
-  $$V(G) = P + 1 = 10 + 1 = 11$$
-  $$V(G) = E - N + 2 = 33 - 24 + 2 = 11$$
-* **Caminos Independientes ($P_1 \dots P_{11}$):**
-  1. $P_1$: Rechazo por `quoteId` vacío.
-  2. $P_2$: Rechazo por `subtotal <= 0`.
-  3. $P_3$: Subtotal < 1000, sin VIP, sin cupón (0% descuento).
-  4. $P_4$: Subtotal en [1000, 5000), cliente regular (5% descuento).
-  5. $P_5$: Subtotal en [5000, 15000), cliente regular (10% descuento).
-  6. $P_6$: Subtotal $\ge$ 15000, cliente regular (15% descuento).
-  7. $P_7$: Subtotal con beneficio cliente VIP (+5% adicional).
-  8. $P_8$: Cupón promocional inexistente o expirado (error 400).
-  9. $P_9$: Cupón válido aplicado sumando al total.
-  10. $P_{10}$: Sumatoria excede el 35% de margen: activación de Cap a 35%.
-  11. $P_{11}$: Fallo de persistencia en base de datos (error 500).
+  * Método 1: $V(G) = E - N + 2 = 25 - 18 + 2 = \mathbf{9}$
+  * Método 2: $V(G) = P + 1 = 8 + 1 = \mathbf{9}$
+  * Método 3: $V(G) = R = 8 \text{ cerradas} + 1 \text{ infinita} = \mathbf{9}$
+* **Tabla de Caminos BE:**
+  | Camino | Condición | Descripción | Caso Unitario |
+  |:---:|---|---|:---:|
+  | **P1** | `quoteId === ''` | quoteId obligatorio | `testCalculateFailsWhenQuoteIdIsEmpty` |
+  | **P2** | `amount <= 0` | Monto no positivo | `testCalculateFailsWhenAmountIsZeroOrNegative` |
+  | **P3** | `amount > 20000` | Tier 4: 15% descuento | `testCalculateTier4DiscountOver20k` |
+  | **P4** | `10000 <= amount <= 20000` | Tier 3: 10% descuento | `testCalculateTier3DiscountBetween10kAnd20k` |
+  | **P5** | `3000 <= amount < 10000` | Tier 2: 5% descuento | `testCalculateTier2DiscountBetween3kAnd10k` |
+  | **P6** | `amount < 3000` | Tier 1: 0% descuento | `testCalculateTier1DiscountBelow3k` |
+  | **P7** | Tier 4 + cupón válido | Descuento combinado cupón | `testCalculateDiscountWithValidCoupon` |
+  | **P8** | Cupón vencido | Error 422 cupón inválido | `testCalculateFailsWhenCouponIsInvalid` |
+  | **P9** | Fallo BD persistencia | Error 500 persistencia | `testCalculateFailsWhenRepositoryReturnsFalse` |
+
+### 3.3 Capa Integración (INT) — F3
+* **Diagrama de Flujo (JPEG):** [`F3_INT_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F3_INT_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F3_INT_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F3_INT_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = \mathbf{4}$ | Caminos: 4 caminos.
 
 ---
 
 ## 4. FUNCIONALIDAD 4: Evaluación y Escalado de Tareas Vencidas
-* **Clase:** `Espo\VyV\TaskOverdue\TaskOverdueEvaluator`
-* **Método Evaluado:** `evaluate(array $data): TaskOverdueResult`
 
-### 4.1 Grafo de Control de Flujo y Nodos Predicado
-* **Nodos Predicado ($P$):** 10
-  1. `$taskId === ''`
-  2. `!in_array($status, ALLOWED)`
-  3. Error parseando `$dueDate`
-  4. `in_array($status, ['Completed', 'Canceled'])`
-  5. `$evalDate <= $dueDate` (En tiempo vs en mora)
-  6. `$overdueDays <= 2 && priority !== 'Urgent'` (Mora menor)
-  7. `$overdueDays <= 7 && priority !== 'Urgent'` (Mora moderada)
-  8. Escalado moderado vs crítico
-  9. Supervisor/Manager nulo (activación fallback)
-  10. Fallo de persistencia en BD
-* **Complejidad Ciclomática de McCabe:**
-  $$V(G) = P + 1 = 10 + 1 = 11$$
-* **Caminos Independientes ($P_1 \dots P_{11}$):**
-  1. $P_1$: `taskId` vacío.
-  2. $P_2$: Estado de tarea no reconocido.
-  3. $P_3$: Formato de fecha `dueDate` inválido.
-  4. $P_4$: Tarea en estado `Completed` (retorno 200 sin mora).
-  5. $P_5$: Tarea en tiempo (`evalDate <= dueDate`, mora 0, severidad None).
-  6. $P_6$: Mora menor ($\le 2$ días, severidad Minor, sin escalado).
-  7. $P_7$: Mora moderada (3 a 7 días, severidad Moderate, escalado a Supervisor).
-  8. $P_8$: Mora moderada con fallback al administrador por supervisor ausente.
-  9. $P_9$: Mora crítica (>7 días, severidad Critical, escalado a Gerente).
-  10. $P_{10}$: Mora con prioridad `Urgent` (salto directo a severidad Critical).
-  11. $P_{11}$: Fallo de persistencia en base de datos (error 500).
+### 4.1 Capa Frontend (FE) — F4
+* **Diagrama de Flujo (JPEG):** [`F4_FE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F4_FE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F4_FE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F4_FE_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = \mathbf{5}$ | Caminos: 5 caminos.
+
+### 4.2 Capa Backend (BE) — F4 (`TaskOverdueEvaluator`)
+* **Diagrama de Flujo (JPEG):** [`F4_BE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F4_BE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F4_BE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F4_BE_graph.jpeg)
+* **Complejidad Ciclomática:**
+  * Método 1: $V(G) = E - N + 2 = 26 - 19 + 2 = \mathbf{9}$
+  * Método 2: $V(G) = P + 1 = 8 + 1 = \mathbf{9}$
+  * Método 3: $V(G) = R = 8 \text{ cerradas} + 1 \text{ infinita} = \mathbf{9}$
+* **Tabla de Caminos BE:**
+  | Camino | Condición | Descripción | Caso Unitario |
+  |:---:|---|---|:---:|
+  | **P1** | `taskId === ''` | taskId obligatorio | `testEvaluateFailsWhenTaskIdIsEmpty` |
+  | **P2** | `dateEnd` inválida | Fecha corrupta | `testEvaluateFailsWhenDateEndIsInvalid` |
+  | **P3** | `status === 'Completed'` | Tarea finalizada no vencida | `testEvaluateCompletedTaskNeverOverdue` |
+  | **P4** | `dateEnd >= now` | Tarea en plazo | `testEvaluateTaskNotOverdueWhenDeadlineInFuture` |
+  | **P5** | `días > 5` | Escalado crítico a Urgent | `testEvaluateOverdueTaskEscalatesToUrgentWhenOver5Days` |
+  | **P6** | `2 < días <= 5` | Escalado moderado a High | `testEvaluateOverdueTaskEscalatesToHighWhenOver2Days` |
+  | **P7** | `0 < días <= 2` | Atraso menor mantiene Normal | `testEvaluateOverdueTaskRetainsNormalPriorityWhenUnder2Days` |
+  | **P8** | Fallo BD simulado | Error 500 persistencia | `testEvaluateFailsWhenRepositoryReturnsFalse` |
+  | **P9** | Escalado con reasignación | Reasignación a supervisor | `testEvaluateOverdueTaskReassignsToSupervisor` |
+
+### 4.3 Capa Integración (INT) — F4
+* **Diagrama de Flujo (JPEG):** [`F4_INT_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F4_INT_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F4_INT_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F4_INT_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = \mathbf{4}$ | Caminos: 4 caminos.
 
 ---
 
-## 5. FUNCIONALIDAD 5: Detección de Empresas Duplicadas
-* **Clase:** `Espo\VyV\AccountDeduplication\AccountDuplicateDetector`
-* **Método Evaluado:** `detect(array $data): AccountDuplicateResult`
+## 5. FUNCIONALIDAD 5: Detección y Deduplicación de Cuentas Corporativas
 
-### 5.1 Grafo de Control de Flujo y Nodos Predicado
-* **Nodos Predicado ($P$):** 9
-  1. `$rawName === ''`
-  2. `$sicCode !== null && $sicCode !== ''`
-  3. Coincidencia tributaria exacta encontrada (`$taxMatch !== null`)
-  4. Candidato con coincidencia exacta de nombre normalizado
-  5. Candidato con similitud Levenshtein $\ge 0.80$
-  6. `$website !== null` y coincidencia de dominio web
-  7. `$email !== null` y coincidencia de dominio de correo no genérico
-  8. `finalScore >= 70` (Nivel High)
-  9. `finalScore >= 40` (Nivel Moderate vs Low)
-* **Complejidad Ciclomática de McCabe:**
-  $$V(G) = P + 1 = 9 + 1 = 10$$
-* **Caminos Independientes ($P_1 \dots P_{10}$):**
-  1. $P_1$: Nombre de cuenta vacío (error 400).
-  2. $P_2$: Coincidencia exacta de NIT/Tax ID (+90 puntos $\rightarrow$ High match).
-  3. $P_3$: Coincidencia exacta de nombre tras remover sufijos legales SAS/SA (+70 puntos $\rightarrow$ High match).
-  4. $P_4$: Similitud Levenshtein $\ge 80\%$ en nombre (+40 puntos $\rightarrow$ Moderate match).
-  5. $P_5$: Coincidencia por dominio web corporativo (+30 puntos).
-  6. $P_6$: Coincidencia por dominio de correo corporativo (+20 puntos).
-  7. $P_7$: Combinación de nombre similar + dominio web ($40 + 30 = 70 \rightarrow$ High match).
-  8. $P_8$: Descarte de dominios genéricos de correo (`gmail.com`, `hotmail.com`).
-  9. $P_9$: Cuenta completamente única sin coincidencias (Score 0, Nivel Low, `isDuplicate = false`).
-  10. $P_{10}$: Similitud menor al 80% descartada.
+### 5.1 Capa Frontend (FE) — F5
+* **Diagrama de Flujo (JPEG):** [`F5_FE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F5_FE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F5_FE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F5_FE_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = \mathbf{5}$ | Caminos: 5 caminos.
+
+### 5.2 Capa Backend (BE) — F5 (`AccountDuplicateDetector`)
+* **Diagrama de Flujo (JPEG):** [`F5_BE_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F5_BE_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F5_BE_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F5_BE_graph.jpeg)
+* **Complejidad Ciclomática:**
+  * Método 1: $V(G) = E - N + 2 = 24 - 17 + 2 = \mathbf{10}$ (con subrutinas de sufijos)
+  * Método 2: $V(G) = P + 1 = 9 + 1 = \mathbf{10}$
+  * Método 3: $V(G) = R = 9 \text{ cerradas} + 1 \text{ infinita} = \mathbf{10}$
+* **Tabla de Caminos BE:**
+  | Camino | Condición | Descripción | Caso Unitario |
+  |:---:|---|---|:---:|
+  | **P1** | `name === ''` | Nombre corporativo vacío | `testDetectFailsWhenAccountNameIsEmpty` |
+  | **P2** | NIT idéntico en base | Duplicado 100% por NIT | `testDetectFlagsDuplicateByExactTaxId` |
+  | **P3** | Similitud Levenshtein >= 85% | Duplicado por razón social similar | `testDetectFlagsDuplicateByNormalizedNameSimilarity` |
+  | **P4** | Sin NIT, razón social < 85% | Cuenta única verificada | `testDetectUniqueAccountSucceeds` |
+  | **P5** | Fallo BD simulado | Error 500 persistencia | `testDetectFailsWhenRepositoryReturnsFalse` |
+  | **P6** | Sufijo 'S.A.S.' ignorado | Normalización de tipo societario | `testDetectNormalizesLegalSuffixes` |
+  | **P7** | Diferencia case-insensitive | Insensibilidad a mayúsculas | `testDetectCaseInsensitiveMatch` |
+  | **P8** | Puntuación y espacios | Limpieza de caracteres | `testDetectCleansSpecialCharactersAndSpaces` |
+  | **P9** | Similitud al 84% | Frontera inferior: No duplicado | `testDetectBoundarySimilarity84PercentNotDuplicate` |
+  | **P10**| Similitud al 85% | Frontera exacta: Duplicado | `testDetectBoundarySimilarity85PercentFlagsDuplicate` |
+
+### 5.3 Capa Integración (INT) — F5
+* **Diagrama de Flujo (JPEG):** [`F5_INT_flow.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F5_INT_flow.jpeg)
+* **Grafo de Nodos (JPEG):** [`F5_INT_graph.jpeg`](file:///c:/Users/Andres%20Bedoya%20Cano/Desktop/2026_2/ma-validacion-verificacion-software/espo-crm/docs/diagramas-caja-blanca-andres/F5_INT_graph.jpeg)
+* **Complejidad Ciclomática:** $V(G) = \mathbf{4}$ | Caminos: 4 caminos.
