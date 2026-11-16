@@ -139,6 +139,9 @@ Se repitieron contra la aplicación en ejecución (`http://localhost:8080`, usua
 | CN-CUR-F4-06 (control) | `{"COP":-0.5}` | 400 | 400 |
 | CN-CUR-F4-09 (control) | `{"EUR":0.9}` | 200, sin cambios | 200, sin cambios |
 | Límite | `{"COP":0.0001}` | 200 | 200, y GET devuelve `COP: 0.0001` |
+| CN-CUR-F4-11 | `[1,2]` | 200 sin cambios (OBS-CUR-06) | **400** «Bad value for 'list': the rate must be a number» |
+
+**Efecto adicional encontrado con Cypress:** EspoCRM convierte el cuerpo `[1,2]` en `{"list":[1,2]}`. Como `validateRate()` se ejecuta antes de descartar las monedas que no aplican, ese cuerpo ahora responde 400. OBS-CUR-06 pedía justamente eso, así que queda resuelta. Lo verifican `cypress/e2e/cur/CUR-F4_api_tasas.cy.js` y la consulta con curl.
 
 Al terminar se restauró la tasa de COP de hoy a 0.00025.
 
