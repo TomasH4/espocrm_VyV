@@ -1,0 +1,93 @@
+
+Warning: The allowCypressEnv configuration option is enabled. This allows any browser code to read values from Cypress.env(). This is insecure and will be removed in a future major version.
+
+1. Replace Cypress.env() calls with cy.env() (for sensitive values) or Cypress.expose() (for public configuration)
+2. Set allowCypressEnv: false in your Cypress configuration to disable Cypress.env()
+
+Learn more: https://on.cypress.io/cypress-env-migration
+
+
+====================================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        15.21.2                                                                        │
+  │ Browser:        Electron 138 (headless)                                                        │
+  │ Node Version:   v24.14.0 (C:\Program Files\nodejs\node.exe)                                    │
+  │ Specs:          1 found (R-CUR_monedas_tasas.regression.cy.js)                                 │
+  │ Searched:       C:\Users\Usuario\OneDrive\Documentos\2026-2\Validacion y Verificacion\espocrm_ │
+  │                 VyV\cypress\e2e\regression\R-CUR_monedas_tasas.regression.cy.js                │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  R-CUR_monedas_tasas.regression.cy.js                                            (1 of 1)
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        16                                                                               │
+  │ Passing:      9                                                                                │
+  │ Failing:      7                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  7                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     1 minute, 7 seconds                                                              │
+  │ Spec Ran:     R-CUR_monedas_tasas.regression.cy.js                                             │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  C:\Users\Usuario\OneDrive\Documentos\2026-2\Validacion y Verificacion\espocrm_Vy     (1280x720)
+     V\cypress\screenshots\R-CUR_monedas_tasas.regression.cy.js\[Regresión] CUR Moned               
+     a y tasas de cambio -- RC-A Validación de tasas (código modificado) -- [Regresió               
+     n Corrección] R-CUR.A1 — CN-CUR-F4-07 {COP0} → 400 y la tasa no cambia (failed).               
+     png                                                                                            
+  -  C:\Users\Usuario\OneDrive\Documentos\2026-2\Validacion y Verificacion\espocrm_Vy     (1280x720)
+     V\cypress\screenshots\R-CUR_monedas_tasas.regression.cy.js\[Regresión] CUR Moned               
+     a y tasas de cambio -- RC-A Validación de tasas (código modificado) -- [Regresió               
+     n Corrección] R-CUR.A2 — CN-CUR-F4-08 {COPabc} → 400 y la tasa no cambia (failed               
+     ).png                                                                                          
+  -  C:\Users\Usuario\OneDrive\Documentos\2026-2\Validacion y Verificacion\espocrm_Vy     (1280x720)
+     V\cypress\screenshots\R-CUR_monedas_tasas.regression.cy.js\[Regresión] CUR Moned               
+     a y tasas de cambio -- RC-A Validación de tasas (código modificado) -- [Regresió               
+     n Corrección] R-CUR.A3 — TDD ciclo 2 {COPtrue} → 400 y la tasa no cambia (failed               
+     ).png                                                                                          
+  -  C:\Users\Usuario\OneDrive\Documentos\2026-2\Validacion y Verificacion\espocrm_Vy     (1280x720)
+     V\cypress\screenshots\R-CUR_monedas_tasas.regression.cy.js\[Regresión] CUR Moned               
+     a y tasas de cambio -- RC-A Validación de tasas (código modificado) -- [Regresió               
+     n Corrección] R-CUR.A4 — Valor límite {COP0.00009} → 400 y la tasa no cambia (fa               
+     iled).png                                                                                      
+  -  C:\Users\Usuario\OneDrive\Documentos\2026-2\Validacion y Verificacion\espocrm_Vy     (1280x720)
+     V\cypress\screenshots\R-CUR_monedas_tasas.regression.cy.js\[Regresión] CUR Moned               
+     a y tasas de cambio -- RC-A Validación de tasas (código modificado) -- [Regresió               
+     n Corrección] R-CUR.A5 — CN-CUR-F4-11 [1,2] → 400 y la tasa no cambia (failed).p               
+     ng                                                                                             
+  -  C:\Users\Usuario\OneDrive\Documentos\2026-2\Validacion y Verificacion\espocrm_Vy     (1280x720)
+     V\cypress\screenshots\R-CUR_monedas_tasas.regression.cy.js\[Regresión] CUR Moned               
+     a y tasas de cambio -- RC-A Validación de tasas (código modificado) -- [Regresió               
+     n Corrección] R-CUR.A6 — CN-CUR-F4-06 {COP-0.5} → 400 y la tasa no cambia (faile               
+     d).png                                                                                         
+  -  C:\Users\Usuario\OneDrive\Documentos\2026-2\Validacion y Verificacion\espocrm_Vy     (1280x720)
+     V\cypress\screenshots\R-CUR_monedas_tasas.regression.cy.js\[Regresión] CUR Moned               
+     a y tasas de cambio -- RC-B Conversión con tasas escritas por la API -- [Regresi               
+     ón Integración] R-CUR.B3 — Un PUT rechazado no deja una tasa que rompa la conver               
+     sión (failed).png                                                                              
+
+
+====================================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✖  R-CUR_monedas_tasas.regression.cy.j      01:07       16        9        7        -        - │
+  │    s                                                                                           │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✖  1 of 1 failed (100%)                     01:07       16        9        7        -        -  
+
