@@ -1,0 +1,107 @@
+{
+  "pantalla": "Formula Sandbox (CUR-F1, F2)",
+  "fecha": "2026-11-16T15:46:45.226Z",
+  "aprobadas": 19,
+  "violaciones": [
+    {
+      "id": "aria-command-name",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "ayuda": "ARIA commands must have an accessible name",
+      "nodos": 4,
+      "ejemplo": ".side-menu-button"
+    },
+    {
+      "id": "autocomplete-valid",
+      "impacto": "serious",
+      "wcag": [
+        "wcag21aa",
+        "wcag135"
+      ],
+      "ayuda": "autocomplete attribute must be used correctly",
+      "nodos": 1,
+      "ejemplo": ".global-search-input"
+    },
+    {
+      "id": "button-name",
+      "impacto": "critical",
+      "wcag": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "ayuda": "Buttons must have discernible text",
+      "nodos": 1,
+      "ejemplo": ".btn-text.btn-sm.dropdown-toggle"
+    },
+    {
+      "id": "color-contrast",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2aa",
+        "wcag143"
+      ],
+      "ayuda": "Elements must meet minimum color contrast ratio thresholds",
+      "nodos": 1,
+      "ejemplo": ".col-sm-4.cell[data-name=\"targetType\"] > label > .label-text"
+    },
+    {
+      "id": "html-has-lang",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2a",
+        "wcag311"
+      ],
+      "ayuda": "<html> element must have a lang attribute",
+      "nodos": 1,
+      "ejemplo": "html"
+    },
+    {
+      "id": "label",
+      "impacto": "critical",
+      "wcag": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "ayuda": "Form elements must have labels",
+      "nodos": 2,
+      "ejemplo": "input[autocomplete=\"new-password\"]"
+    },
+    {
+      "id": "link-in-text-block",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2a",
+        "wcag141"
+      ],
+      "ayuda": "Links must be distinguishable without relying on color",
+      "nodos": 1,
+      "ejemplo": "h3 > a[href$=\"#Admin\"]"
+    },
+    {
+      "id": "link-name",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2a",
+        "wcag244",
+        "wcag412"
+      ],
+      "ayuda": "Links must have discernible text",
+      "nodos": 12,
+      "ejemplo": "li[data-name=\"Home\"] > .nav-link[href=\"#\"]"
+    },
+    {
+      "id": "meta-viewport",
+      "impacto": "moderate",
+      "wcag": [
+        "wcag2aa",
+        "wcag144"
+      ],
+      "ayuda": "Zooming and scaling must not be disabled",
+      "nodos": 1,
+      "ejemplo": "meta[name=\"viewport\"]"
+    }
+  ]
+}

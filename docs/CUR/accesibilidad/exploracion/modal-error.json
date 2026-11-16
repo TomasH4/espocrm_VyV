@@ -1,0 +1,14 @@
+{
+  "ariaInvalid": null,
+  "describedby": "popover503896",
+  "fieldClass": "field",
+  "cellClass": "cell col-sm-6 form-group has-error",
+  "pops": [
+    {
+      "cls": "popover fade bottom in",
+      "role": "tooltip",
+      "live": null,
+      "text": "Rate shouldn't be less than 0.0001"
+    }
+  ]
+}

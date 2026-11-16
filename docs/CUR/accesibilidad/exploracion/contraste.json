@@ -1,0 +1,74 @@
+[
+  {
+    "t": "label[data-name=\"name\"] > .label-text",
+    "d": {
+      "fgColor": "#969696",
+      "bgColor": "#ffffff",
+      "contrastRatio": 2.95,
+      "fontSize": "10.5pt (14px)",
+      "fontWeight": "normal",
+      "messageKey": null,
+      "expectedContrastRatio": "4.5:1"
+    }
+  },
+  {
+    "t": "label[data-name=\"status\"] > .label-text",
+    "d": {
+      "fgColor": "#969696",
+      "bgColor": "#ffffff",
+      "contrastRatio": 2.95,
+      "fontSize": "10.5pt (14px)",
+      "fontWeight": "normal",
+      "messageKey": null,
+      "expectedContrastRatio": "4.5:1"
+    }
+  },
+  {
+    "t": "label[data-name=\"type\"] > .label-text",
+    "d": {
+      "fgColor": "#969696",
+      "bgColor": "#ffffff",
+      "contrastRatio": 2.95,
+      "fontSize": "10.5pt (14px)",
+      "fontWeight": "normal",
+      "messageKey": null,
+      "expectedContrastRatio": "4.5:1"
+    }
+  },
+  {
+    "t": "label[data-name=\"startDate\"] > .label-text",
+    "d": {
+      "fgColor": "#969696",
+      "bgColor": "#ffffff",
+      "contrastRatio": 2.95,
+      "fontSize": "10.5pt (14px)",
+      "fontWeight": "normal",
+      "messageKey": null,
+      "expectedContrastRatio": "4.5:1"
+    }
+  },
+  {
+    "t": "label[data-name=\"budget\"] > .label-text",
+    "d": {
+      "fgColor": "#969696",
+      "bgColor": "#ffffff",
+      "contrastRatio": 2.95,
+      "fontSize": "10.5pt (14px)",
+      "fontWeight": "normal",
+      "messageKey": null,
+      "expectedContrastRatio": "4.5:1"
+    }
+  },
+  {
+    "t": "label[data-name=\"endDate\"] > .label-text",
+    "d": {
+      "fgColor": "#969696",
+      "bgColor": "#ffffff",
+      "contrastRatio": 2.95,
+      "fontSize": "10.5pt (14px)",
+      "fontWeight": "normal",
+      "messageKey": null,
+      "expectedContrastRatio": "4.5:1"
+    }
+  }
+]

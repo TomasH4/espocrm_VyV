@@ -1,0 +1,42 @@
+[
+  {
+    "id": "aria-command-name",
+    "impact": "serious",
+    "help": "ARIA commands must have an accessible name",
+    "nodes": 2,
+    "ejemplo": ".close",
+    "html": "<a class=\"close\" data-dismiss=\"modal\" role=\"button\" tabindex=\"-1\"><span aria-hidden=\"true\">×</span></a>"
+  },
+  {
+    "id": "autocomplete-valid",
+    "impact": "serious",
+    "help": "autocomplete attribute must be used correctly",
+    "nodes": 2,
+    "ejemplo": "input[value=\"16.11.2026\"]",
+    "html": "<input class=\"main-element form-control numeric-text\" type=\"text\" data-name=\"date\" value=\"16.11.2026\" autocomplete=\"espo-date\">"
+  },
+  {
+    "id": "button-name",
+    "impact": "critical",
+    "help": "Buttons must have discernible text",
+    "nodes": 1,
+    "ejemplo": ".btn-icon",
+    "html": "<button type=\"button\" class=\"btn btn-default btn-icon date-picker-btn\" tabindex=\"-1\"><i class=\"far fa-calendar\"></i></button>"
+  },
+  {
+    "id": "color-contrast",
+    "impact": "serious",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "nodes": 3,
+    "ejemplo": ".main-btn-group > .btn-primary[data-name=\"save\"][title=\"Ctrl+Enter\"]",
+    "html": "<button data-name=\"save\" class=\"btn btn-primary btn-xs-wide\" type=\"button\" title=\"Ctrl+Enter\">Save</button>"
+  },
+  {
+    "id": "label",
+    "impact": "critical",
+    "help": "Form elements must have labels",
+    "nodes": 2,
+    "ejemplo": "input[value=\"16.11.2026\"]",
+    "html": "<input class=\"main-element form-control numeric-text\" type=\"text\" data-name=\"date\" value=\"16.11.2026\" autocomplete=\"espo-date\">"
+  }
+]

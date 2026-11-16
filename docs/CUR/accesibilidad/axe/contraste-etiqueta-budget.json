@@ -1,0 +1,9 @@
+{
+  "fgColor": "#969696",
+  "bgColor": "#ffffff",
+  "contrastRatio": 2.95,
+  "fontSize": "10.5pt (14px)",
+  "fontWeight": "normal",
+  "messageKey": null,
+  "expectedContrastRatio": "4.5:1"
+}

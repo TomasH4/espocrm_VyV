@@ -1,0 +1,106 @@
+{
+  "url": "/#CurrencyRecord",
+  "violations": [
+    {
+      "id": "aria-command-name",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "help": "ARIA commands must have an accessible name",
+      "nodes": 4,
+      "ejemplo": ".side-menu-button",
+      "html": "<a role=\"button\" class=\"side-menu-button\"><span class=\"fas fa-bars\"></span></a>"
+    },
+    {
+      "id": "autocomplete-valid",
+      "impact": "serious",
+      "tags": [
+        "wcag21aa",
+        "wcag135"
+      ],
+      "help": "autocomplete attribute must be used correctly",
+      "nodes": 2,
+      "ejemplo": ".global-search-input",
+      "html": "<input type=\"search\" class=\"form-control global-search-input\" placeholder=\"Search\" autocomplete=\"espo-dummy\" spellcheck=\"false\">"
+    },
+    {
+      "id": "button-name",
+      "impact": "critical",
+      "tags": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "help": "Buttons must have discernible text",
+      "nodes": 3,
+      "ejemplo": ".add-filter-button",
+      "html": "<button type=\"button\" class=\"btn btn-text btn-icon btn-icon-wide dropdown-toggle add-filter-button disabled\" data-toggle=\"dropdown\" tabindex=\"0\">\n                    <span class=\"fas fa-ellipsis-v\"></"
+    },
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "tags": [
+        "wcag2aa",
+        "wcag143"
+      ],
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "nodes": 11,
+      "ejemplo": ".sort[title=\"Sort\"][data-name=\"code\"]",
+      "html": "<a role=\"button\" tabindex=\"0\" class=\"sort\" data-name=\"code\" title=\"Sort\">Code</a>"
+    },
+    {
+      "id": "html-has-lang",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag311"
+      ],
+      "help": "<html> element must have a lang attribute",
+      "nodes": 1,
+      "ejemplo": "html",
+      "html": "<html dir=\"ltr\">"
+    },
+    {
+      "id": "label",
+      "impact": "critical",
+      "tags": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "help": "Form elements must have labels",
+      "nodes": 6,
+      "ejemplo": ".text-filter",
+      "html": "<input type=\"search\" class=\"form-control text-filter\" data-name=\"textFilter\" value=\"\" tabindex=\"0\" autocomplete=\"espo-dummy\" spellcheck=\"false\">"
+    },
+    {
+      "id": "link-name",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag244",
+        "wcag412"
+      ],
+      "help": "Links must have discernible text",
+      "nodes": 12,
+      "ejemplo": "li[data-name=\"Home\"] > .nav-link[href=\"#\"]",
+      "html": "<a href=\"#\" class=\"nav-link\">"
+    },
+    {
+      "id": "meta-viewport",
+      "impact": "moderate",
+      "tags": [
+        "wcag2aa",
+        "wcag144"
+      ],
+      "help": "Zooming and scaling must not be disabled",
+      "nodes": 1,
+      "ejemplo": "meta[name=\"viewport\"]",
+      "html": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">"
+    }
+  ],
+  "passes": 19,
+  "incomplete": [
+    "color-contrast"
+  ]
+}

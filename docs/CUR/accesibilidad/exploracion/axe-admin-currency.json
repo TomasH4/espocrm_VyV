@@ -1,0 +1,94 @@
+{
+  "url": "/#Admin/currency",
+  "violations": [
+    {
+      "id": "aria-command-name",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "help": "ARIA commands must have an accessible name",
+      "nodes": 5,
+      "ejemplo": ".side-menu-button",
+      "html": "<a role=\"button\" class=\"side-menu-button\"><span class=\"fas fa-bars\"></span></a>"
+    },
+    {
+      "id": "autocomplete-valid",
+      "impact": "serious",
+      "tags": [
+        "wcag21aa",
+        "wcag135"
+      ],
+      "help": "autocomplete attribute must be used correctly",
+      "nodes": 2,
+      "ejemplo": ".global-search-input",
+      "html": "<input type=\"search\" class=\"form-control global-search-input\" placeholder=\"Search\" autocomplete=\"espo-dummy\" spellcheck=\"false\">"
+    },
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "tags": [
+        "wcag2aa",
+        "wcag143"
+      ],
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "nodes": 1,
+      "ejemplo": "label[data-name=\"baseCurrency\"] > .label-text",
+      "html": "<span class=\"label-text\">Base Currency</span>"
+    },
+    {
+      "id": "html-has-lang",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag311"
+      ],
+      "help": "<html> element must have a lang attribute",
+      "nodes": 1,
+      "ejemplo": "html",
+      "html": "<html dir=\"ltr\">"
+    },
+    {
+      "id": "label",
+      "impact": "critical",
+      "tags": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "help": "Form elements must have labels",
+      "nodes": 5,
+      "ejemplo": "div[data-view-cid=\"view35\"] > .selectize-control.single.plugin-espo_select > .full.selectize-input.items > input[autocomplete=\"new-password\"][autofill=\"no\"][type=\"text\"]",
+      "html": "<input type=\"text\" autocomplete=\"new-password\" autofill=\"no\" tabindex=\"\" style=\"width: 4px;\">"
+    },
+    {
+      "id": "link-name",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag244",
+        "wcag412"
+      ],
+      "help": "Links must have discernible text",
+      "nodes": 12,
+      "ejemplo": "li[data-name=\"Home\"] > .nav-link[href=\"#\"]",
+      "html": "<a href=\"#\" class=\"nav-link\">"
+    },
+    {
+      "id": "meta-viewport",
+      "impact": "moderate",
+      "tags": [
+        "wcag2aa",
+        "wcag144"
+      ],
+      "help": "Zooming and scaling must not be disabled",
+      "nodes": 1,
+      "ejemplo": "meta[name=\"viewport\"]",
+      "html": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">"
+    }
+  ],
+  "passes": 18,
+  "incomplete": [
+    "color-contrast"
+  ]
+}

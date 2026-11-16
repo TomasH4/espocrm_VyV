@@ -1,0 +1,42 @@
+[
+  {
+    "el": "body.has-navbar minimized modal-open",
+    "enModal": false
+  },
+  {
+    "el": "div.dialog dialog-record modal in",
+    "enModal": true
+  },
+  {
+    "el": "a.action",
+    "enModal": true
+  },
+  {
+    "el": "button[data-name=save].btn btn-primary btn-xs-wide",
+    "enModal": true
+  },
+  {
+    "el": "button[data-name=fullForm].btn btn-default btn-xs-wide",
+    "enModal": true
+  },
+  {
+    "el": "button[data-name=cancel].btn btn-default btn-xs-wide",
+    "enModal": true
+  },
+  {
+    "el": "a.text-record",
+    "enModal": true
+  },
+  {
+    "el": "input[data-name=date].main-element form-control numeric-text",
+    "enModal": true
+  },
+  {
+    "el": "input[data-name=rate].main-element form-control numeric-text",
+    "enModal": true
+  },
+  {
+    "el": "body.has-navbar minimized modal-open",
+    "enModal": false
+  }
+]

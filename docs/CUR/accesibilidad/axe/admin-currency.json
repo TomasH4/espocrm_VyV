@@ -1,0 +1,85 @@
+{
+  "pantalla": "Administration › Currency (CUR-F5)",
+  "fecha": "2026-11-16T15:47:09.886Z",
+  "aprobadas": 18,
+  "violaciones": [
+    {
+      "id": "aria-command-name",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "ayuda": "ARIA commands must have an accessible name",
+      "nodos": 5,
+      "ejemplo": ".side-menu-button"
+    },
+    {
+      "id": "autocomplete-valid",
+      "impacto": "serious",
+      "wcag": [
+        "wcag21aa",
+        "wcag135"
+      ],
+      "ayuda": "autocomplete attribute must be used correctly",
+      "nodos": 2,
+      "ejemplo": ".global-search-input"
+    },
+    {
+      "id": "color-contrast",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2aa",
+        "wcag143"
+      ],
+      "ayuda": "Elements must meet minimum color contrast ratio thresholds",
+      "nodos": 1,
+      "ejemplo": "label[data-name=\"baseCurrency\"] > .label-text"
+    },
+    {
+      "id": "html-has-lang",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2a",
+        "wcag311"
+      ],
+      "ayuda": "<html> element must have a lang attribute",
+      "nodos": 1,
+      "ejemplo": "html"
+    },
+    {
+      "id": "label",
+      "impacto": "critical",
+      "wcag": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "ayuda": "Form elements must have labels",
+      "nodos": 5,
+      "ejemplo": "div[data-view-cid=\"view35\"] > .selectize-control.single.plugin-espo_select > .full.selectize-input.items > input[autocomplete=\"new-password\"][autofill=\"no\"][type=\"text\"]"
+    },
+    {
+      "id": "link-name",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2a",
+        "wcag244",
+        "wcag412"
+      ],
+      "ayuda": "Links must have discernible text",
+      "nodos": 12,
+      "ejemplo": "li[data-name=\"Home\"] > .nav-link[href=\"#\"]"
+    },
+    {
+      "id": "meta-viewport",
+      "impacto": "moderate",
+      "wcag": [
+        "wcag2aa",
+        "wcag144"
+      ],
+      "ayuda": "Zooming and scaling must not be disabled",
+      "nodos": 1,
+      "ejemplo": "meta[name=\"viewport\"]"
+    }
+  ]
+}

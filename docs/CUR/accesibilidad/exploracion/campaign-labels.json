@@ -1,0 +1,27 @@
+[
+  {
+    "f": "name",
+    "id": "",
+    "ariaLabel": null,
+    "labelledby": null,
+    "labelFor": false,
+    "wrapLabel": false
+  },
+  {
+    "f": "budget",
+    "id": "",
+    "ariaLabel": null,
+    "labelledby": null,
+    "labelFor": false,
+    "wrapLabel": false
+  },
+  {
+    "f": "currency-selectize",
+    "ariaLabel": null,
+    "role": null,
+    "tabindex": ""
+  },
+  {
+    "lang": ""
+  }
+]

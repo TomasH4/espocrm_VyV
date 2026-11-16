@@ -1,0 +1,62 @@
+{
+  "pantalla": "Modal de nueva tasa",
+  "fecha": "2026-11-16T15:47:15.870Z",
+  "aprobadas": 10,
+  "violaciones": [
+    {
+      "id": "aria-command-name",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "ayuda": "ARIA commands must have an accessible name",
+      "nodos": 2,
+      "ejemplo": ".close"
+    },
+    {
+      "id": "autocomplete-valid",
+      "impacto": "serious",
+      "wcag": [
+        "wcag21aa",
+        "wcag135"
+      ],
+      "ayuda": "autocomplete attribute must be used correctly",
+      "nodos": 2,
+      "ejemplo": "input[value=\"16.11.2026\"]"
+    },
+    {
+      "id": "button-name",
+      "impacto": "critical",
+      "wcag": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "ayuda": "Buttons must have discernible text",
+      "nodos": 1,
+      "ejemplo": ".btn-icon"
+    },
+    {
+      "id": "color-contrast",
+      "impacto": "serious",
+      "wcag": [
+        "wcag2aa",
+        "wcag143"
+      ],
+      "ayuda": "Elements must meet minimum color contrast ratio thresholds",
+      "nodos": 1,
+      "ejemplo": ".main-btn-group > .btn-primary[data-name=\"save\"][title=\"Ctrl+Enter\"]"
+    },
+    {
+      "id": "label",
+      "impacto": "critical",
+      "wcag": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "ayuda": "Form elements must have labels",
+      "nodos": 2,
+      "ejemplo": "input[value=\"16.11.2026\"]"
+    }
+  ]
+}

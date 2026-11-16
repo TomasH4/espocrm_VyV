@@ -1,0 +1,12 @@
+{
+  "date": "Mon, 16 Nov 2026 15:49:20 GMT",
+  "server": "Apache/2.4.69 (Debian)",
+  "x-content-type-options": "nosniff",
+  "content-security-policy": "script-src 'self' 'nonce-90ab00378ac91d41be49ceb20e60b2e4' 'unsafe-eval' https://maps.googleapis.com; form-action 'self'; frame-ancestors 'self'",
+  "vary": "Accept-Encoding",
+  "content-encoding": "gzip",
+  "content-length": "2320",
+  "keep-alive": "timeout=5, max=97",
+  "connection": "Keep-Alive",
+  "content-type": "text/html; charset=UTF-8"
+}

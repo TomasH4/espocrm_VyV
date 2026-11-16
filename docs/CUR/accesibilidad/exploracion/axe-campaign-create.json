@@ -1,0 +1,106 @@
+{
+  "url": "/#Campaign/create",
+  "violations": [
+    {
+      "id": "aria-command-name",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "help": "ARIA commands must have an accessible name",
+      "nodes": 5,
+      "ejemplo": ".side-menu-button",
+      "html": "<a role=\"button\" class=\"side-menu-button\"><span class=\"fas fa-bars\"></span></a>"
+    },
+    {
+      "id": "autocomplete-valid",
+      "impact": "serious",
+      "tags": [
+        "wcag21aa",
+        "wcag135"
+      ],
+      "help": "autocomplete attribute must be used correctly",
+      "nodes": 10,
+      "ejemplo": ".global-search-input",
+      "html": "<input type=\"search\" class=\"form-control global-search-input\" placeholder=\"Search\" autocomplete=\"espo-dummy\" spellcheck=\"false\">"
+    },
+    {
+      "id": "button-name",
+      "impact": "critical",
+      "tags": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "help": "Buttons must have discernible text",
+      "nodes": 4,
+      "ejemplo": ".dropdown-item-list-button",
+      "html": "<button data-toggle=\"dropdown\" class=\"btn btn-default dropdown-toggle dropdown-item-list-button\" type=\"button\"><span class=\"fas fa-ellipsis-h\"></span></button>"
+    },
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "tags": [
+        "wcag2aa",
+        "wcag143"
+      ],
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "nodes": 11,
+      "ejemplo": "label[data-name=\"name\"] > .label-text",
+      "html": "<span class=\"label-text\">Name</span>"
+    },
+    {
+      "id": "html-has-lang",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag311"
+      ],
+      "help": "<html> element must have a lang attribute",
+      "nodes": 1,
+      "ejemplo": "html",
+      "html": "<html dir=\"ltr\">"
+    },
+    {
+      "id": "label",
+      "impact": "critical",
+      "tags": [
+        "wcag2a",
+        "wcag412"
+      ],
+      "help": "Form elements must have labels",
+      "nodes": 8,
+      "ejemplo": "input[autocomplete=\"espo-name\"]",
+      "html": "<input type=\"text\" class=\"main-element form-control\" data-name=\"name\" value=\"\" autocomplete=\"espo-name\">"
+    },
+    {
+      "id": "link-name",
+      "impact": "serious",
+      "tags": [
+        "wcag2a",
+        "wcag244",
+        "wcag412"
+      ],
+      "help": "Links must have discernible text",
+      "nodes": 12,
+      "ejemplo": "li[data-name=\"Home\"] > .nav-link[href=\"#\"]",
+      "html": "<a href=\"#\" class=\"nav-link\">"
+    },
+    {
+      "id": "meta-viewport",
+      "impact": "moderate",
+      "tags": [
+        "wcag2aa",
+        "wcag144"
+      ],
+      "help": "Zooming and scaling must not be disabled",
+      "nodes": 1,
+      "ejemplo": "meta[name=\"viewport\"]",
+      "html": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">"
+    }
+  ],
+  "passes": 18,
+  "incomplete": [
+    "color-contrast"
+  ]
+}
