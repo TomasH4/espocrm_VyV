@@ -1,4 +1,4 @@
-# Script para ejecutar pruebas de cobertura y análisis con SonarQube
+﻿# Script para ejecutar pruebas de cobertura y análisis con SonarQube
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host " 1. Ejecutando pruebas unitarias y generando cobertura..." -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
@@ -8,6 +8,10 @@ docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/And
 Write-Host "`n========================================================" -ForegroundColor Cyan
 Write-Host " 2. Extrayendo reportes de cobertura..." -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
+
+if (-not (Test-Path "$PSScriptRoot\coverage")) {
+    New-Item -ItemType Directory -Path "$PSScriptRoot\coverage" -Force | Out-Null
+}
 
 docker cp espocrm:/var/www/html/coverage/phpunit-coverage.xml "$PSScriptRoot\coverage\phpunit-coverage.xml"
 docker cp espocrm:/var/www/html/coverage/phpunit-junit.xml "$PSScriptRoot\coverage\phpunit-junit.xml"
@@ -19,7 +23,7 @@ Write-Host " 3. Ejecutando SonarScanner en Docker..." -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 
 docker run --rm `
-  --network espocrm_vyv_default `
+  --network espo-crm_default `
   -v "${PSScriptRoot}:/usr/src" `
   -e SONAR_HOST_URL="http://sonarqube:9000" `
   -e SONAR_TOKEN="$token" `
