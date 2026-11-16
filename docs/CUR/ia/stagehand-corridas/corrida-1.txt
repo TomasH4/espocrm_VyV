@@ -1,0 +1,30 @@
+Stagehand CUR — modelo google/gemini-3.1-flash-lite — http://localhost:8080
+[Auth] Sesión activa como Tomas
+
+  ▶ Ejecutando: ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+    ✖ FAIL (3266ms): la IA no localizó: Click the Run button of the Formula Sandbox
+
+  ▶ Ejecutando: ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+    ✖ FAIL (3073ms): la IA no localizó: Fill the Name field with "CUR-Stagehand 1794863172054"
+
+  ▶ Ejecutando: ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+    ✖ FAIL (4623ms): la IA no localizó: Click the button that creates a new rate in the Rates panel
+
+  ▶ Ejecutando: ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API
+    [extract] Tasa en pantalla = 0.000250
+    ✔ PASS (5446ms)
+
+========================================================
+  Resumen Suite Stagehand: CUR Moneda y tasas (Stagehand)
+========================================================
+  ✖ FAIL [3266ms] ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+       Error: la IA no localizó: Click the Run button of the Formula Sandbox
+  ✖ FAIL [3073ms] ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+       Error: la IA no localizó: Fill the Name field with "CUR-Stagehand 1794863172054"
+  ✖ FAIL [4623ms] ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+       Error: la IA no localizó: Click the button that creates a new rate in the Rates panel
+  ✔ PASS [5446ms] ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API
+
+Total: 4 | Pasaron: 1 | Fallaron: 3
+========================================================
+

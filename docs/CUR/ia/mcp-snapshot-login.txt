@@ -1,0 +1,22 @@
+### Page
+- Page URL: http://localhost:8080/
+- Page Title: EspoCRM
+### Snapshot
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e17]: Username
+      - textbox "Username" [ref=e18]
+    - generic [ref=e19]:
+      - generic [ref=e20]: Password
+      - generic [ref=e21]:
+        - textbox "Password" [ref=e22]
+        - button "" [ref=e23] [cursor=pointer]
+    - button "Log in" [ref=e26] [cursor=pointer]
+  - contentinfo [ref=e27]:
+    - paragraph [ref=e28]:
+      - text: © 2026
+      - link "EspoCRM, Inc." [ref=e29] [cursor=pointer]:
+        - /url: https://www.espocrm.com
+```

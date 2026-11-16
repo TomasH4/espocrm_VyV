@@ -1,0 +1,174 @@
+### Page
+- Page URL: http://localhost:8080/#Campaign/create
+- Page Title: Create Campaign
+### Snapshot
+```yaml
+- generic [ref=e1]:
+  - banner:
+    - navigation [ref=e30]:
+      - generic [ref=e31]:
+        - text: 
+        - button "" [ref=e32] [cursor=pointer]
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - list [ref=e36]:
+            - listitem [ref=e37]:
+              - link "" [ref=e38] [cursor=pointer]:
+                - /url: "#"
+                - generic "Home" [ref=e39]: 
+            - listitem [ref=e41]
+            - listitem [ref=e43]:
+              - link "" [ref=e44] [cursor=pointer]:
+                - /url: "#Account"
+                - generic "Accounts" [ref=e45]: 
+            - listitem [ref=e47]:
+              - link "" [ref=e48] [cursor=pointer]:
+                - /url: "#Contact"
+                - generic "Contacts" [ref=e49]: 
+            - listitem [ref=e51]:
+              - link "" [ref=e52] [cursor=pointer]:
+                - /url: "#Lead"
+                - generic "Leads" [ref=e53]: 
+            - listitem [ref=e55]:
+              - link "$" [ref=e56] [cursor=pointer]:
+                - /url: "#Opportunity"
+                - generic "Opportunities" [ref=e57]: $
+            - listitem [ref=e59]
+            - listitem [ref=e61]:
+              - link "" [ref=e62] [cursor=pointer]:
+                - /url: "#Email"
+                - generic "Emails" [ref=e63]: 
+            - listitem [ref=e65]:
+              - link "" [ref=e66] [cursor=pointer]:
+                - /url: "#Meeting"
+                - generic "Meetings" [ref=e67]: 
+            - listitem [ref=e69]:
+              - link "" [ref=e70] [cursor=pointer]:
+                - /url: "#Call"
+                - generic "Calls" [ref=e71]: 
+            - listitem [ref=e73]:
+              - link "" [ref=e74] [cursor=pointer]:
+                - /url: "#Task"
+                - generic "Tasks" [ref=e75]: 
+            - listitem [ref=e77]:
+              - link "" [ref=e78] [cursor=pointer]:
+                - /url: "#Calendar"
+                - generic "Calendar" [ref=e79]: 
+            - listitem [ref=e81]
+            - listitem [ref=e83]:
+              - link "" [ref=e84] [cursor=pointer]:
+                - /url: "#Case"
+                - generic "Cases" [ref=e85]: 
+            - listitem [ref=e87]:
+              - link "" [ref=e88] [cursor=pointer]:
+                - /url: "#KnowledgeBaseArticle"
+                - generic "Knowledge Base" [ref=e89]: 
+            - listitem [ref=e91]
+            - listitem [ref=e93]:
+              - button "" [ref=e94] [cursor=pointer]
+              - text:         
+          - button "" [ref=e96] [cursor=pointer]: 
+        - list [ref=e98]:
+          - listitem [ref=e99]:
+            - generic [ref=e100]:
+              - searchbox "Search" [ref=e101]
+              - generic "Search" [ref=e103] [cursor=pointer]: 
+          - listitem [ref=e105]:
+            - button "" [ref=e106] [cursor=pointer]
+          - listitem [ref=e108]:
+            - button "+" [ref=e109] [cursor=pointer]
+            - text:    $     
+          - listitem [ref=e111]:
+            - button "" [ref=e112] [cursor=pointer]
+          - listitem [ref=e114]:
+            - button "" [ref=e115] [cursor=pointer]
+            - text:   
+  - generic [ref=e118]:
+    - heading "Campaigns › create" [level=3] [ref=e218]:
+      - generic [ref=e219]:
+        - link "Campaigns" [ref=e222] [cursor=pointer]:
+          - /url: "#Campaign"
+        - generic [ref=e223]: ›
+        - generic [ref=e225]: create
+    - generic [active] [ref=e227]:
+      - generic [ref=e229]:
+        - group [ref=e230]:
+          - button "Save" [ref=e231] [cursor=pointer]
+          - button "Cancel" [ref=e232] [cursor=pointer]
+          - button "" [ref=e233] [cursor=pointer]
+          - text: 
+        - group
+      - generic [ref=e235]:
+        - generic [ref=e237]:
+          - generic [ref=e239]:
+            - generic [ref=e240]:
+              - generic [ref=e241]:
+                - generic [ref=e242]: Name *
+                - textbox [ref=e244]
+              - generic [ref=e245]:
+                - generic [ref=e246]: Status
+                - generic [ref=e249]:
+                  - generic [ref=e250]: Planning
+                  - textbox [ref=e251] [cursor=pointer]
+            - generic [ref=e252]:
+              - generic [ref=e253]:
+                - generic [ref=e254]: Type
+                - generic [ref=e257]:
+                  - generic [ref=e258]: Email
+                  - textbox [ref=e259] [cursor=pointer]
+              - generic [ref=e260]:
+                - generic [ref=e261]: Start Date
+                - generic [ref=e263]:
+                  - textbox [ref=e264]
+                  - button "" [ref=e266] [cursor=pointer]
+            - generic [ref=e268]:
+              - generic [ref=e269]:
+                - generic [ref=e270]: Budget
+                - generic [ref=e272]:
+                  - textbox [ref=e274]
+                  - generic [ref=e277]:
+                    - generic [ref=e278]: USD
+                    - textbox [ref=e279] [cursor=pointer]
+              - generic [ref=e280]:
+                - generic [ref=e281]: End Date
+                - generic [ref=e283]:
+                  - textbox [ref=e284]
+                  - button "" [ref=e286] [cursor=pointer]
+            - generic [ref=e288]:
+              - generic [ref=e289]:
+                - generic [ref=e290]:
+                  - text: Target Lists
+                  - button "" [ref=e291] [cursor=pointer]
+                - generic [ref=e294]:
+                  - textbox "Select" [ref=e295]
+                  - button "" [ref=e297] [cursor=pointer]
+              - generic [ref=e299]:
+                - generic [ref=e300]:
+                  - text: Excluding Target Lists
+                  - button "" [ref=e301] [cursor=pointer]
+                - generic [ref=e304]:
+                  - textbox "Select" [ref=e305]
+                  - button "" [ref=e307] [cursor=pointer]
+            - generic [ref=e310]:
+              - generic [ref=e311]: Description
+              - textbox [ref=e313]
+          - text:       
+        - generic [ref=e317]:
+          - generic [ref=e318]:
+            - generic [ref=e319]: Assigned User
+            - generic [ref=e321]:
+              - textbox "Select" [ref=e322]
+              - generic [ref=e323]:
+                - button "" [ref=e324] [cursor=pointer]
+                - button "" [ref=e326] [cursor=pointer]
+          - generic [ref=e328]:
+            - generic [ref=e329]: Teams
+            - generic [ref=e331]:
+              - textbox "Select" [ref=e332]
+              - button "" [ref=e334] [cursor=pointer]
+  - contentinfo [ref=e152]:
+    - paragraph [ref=e153]:
+      - text: © 2026
+      - link "EspoCRM, Inc." [ref=e154] [cursor=pointer]:
+        - /url: https://www.espocrm.com
+```

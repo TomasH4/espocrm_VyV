@@ -1,0 +1,199 @@
+### Page
+- Page URL: http://localhost:8080/#CurrencyRecord/view/bfce1a6a7fe932ac1
+- Page Title: COP
+### Snapshot
+```yaml
+- generic [ref=e1]:
+  - banner:
+    - navigation [ref=e30]:
+      - generic [ref=e31]:
+        - text: 
+        - button "" [ref=e32] [cursor=pointer]
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - list [ref=e36]:
+            - listitem [ref=e37]:
+              - link "" [ref=e38] [cursor=pointer]:
+                - /url: "#"
+                - generic "Home" [ref=e39]: 
+            - listitem [ref=e41]
+            - listitem [ref=e43]:
+              - link "" [ref=e44] [cursor=pointer]:
+                - /url: "#Account"
+                - generic "Accounts" [ref=e45]: 
+            - listitem [ref=e47]:
+              - link "" [ref=e48] [cursor=pointer]:
+                - /url: "#Contact"
+                - generic "Contacts" [ref=e49]: 
+            - listitem [ref=e51]:
+              - link "" [ref=e52] [cursor=pointer]:
+                - /url: "#Lead"
+                - generic "Leads" [ref=e53]: 
+            - listitem [ref=e55]:
+              - link "$" [ref=e56] [cursor=pointer]:
+                - /url: "#Opportunity"
+                - generic "Opportunities" [ref=e57]: $
+            - listitem [ref=e59]
+            - listitem [ref=e61]:
+              - link "" [ref=e62] [cursor=pointer]:
+                - /url: "#Email"
+                - generic "Emails" [ref=e63]: 
+            - listitem [ref=e65]:
+              - link "" [ref=e66] [cursor=pointer]:
+                - /url: "#Meeting"
+                - generic "Meetings" [ref=e67]: 
+            - listitem [ref=e69]:
+              - link "" [ref=e70] [cursor=pointer]:
+                - /url: "#Call"
+                - generic "Calls" [ref=e71]: 
+            - listitem [ref=e73]:
+              - link "" [ref=e74] [cursor=pointer]:
+                - /url: "#Task"
+                - generic "Tasks" [ref=e75]: 
+            - listitem [ref=e77]:
+              - link "" [ref=e78] [cursor=pointer]:
+                - /url: "#Calendar"
+                - generic "Calendar" [ref=e79]: 
+            - listitem [ref=e81]
+            - listitem [ref=e83]:
+              - link "" [ref=e84] [cursor=pointer]:
+                - /url: "#Case"
+                - generic "Cases" [ref=e85]: 
+            - listitem [ref=e87]:
+              - link "" [ref=e88] [cursor=pointer]:
+                - /url: "#KnowledgeBaseArticle"
+                - generic "Knowledge Base" [ref=e89]: 
+            - listitem [ref=e91]
+            - listitem [ref=e93]:
+              - button "" [ref=e94] [cursor=pointer]
+              - text:         
+          - button "" [ref=e96] [cursor=pointer]: 
+        - list [ref=e98]:
+          - listitem [ref=e99]:
+            - generic [ref=e100]:
+              - searchbox "Search" [ref=e101]
+              - generic "Search" [ref=e103] [cursor=pointer]: 
+          - listitem [ref=e105]:
+            - button "" [ref=e106] [cursor=pointer]
+          - listitem [ref=e108]:
+            - button "+" [ref=e109] [cursor=pointer]
+            - text:    $     
+          - listitem [ref=e111]:
+            - button "" [ref=e112] [cursor=pointer]
+          - listitem [ref=e114]:
+            - button "" [ref=e115] [cursor=pointer]
+            - text:   
+  - generic [ref=e118]:
+    - heading "Currencies › COP" [level=3] [ref=e342]:
+      - generic [ref=e343]:
+        - link "Currencies" [ref=e346] [cursor=pointer]:
+          - /url: "#CurrencyRecord"
+        - generic [ref=e347]: ›
+        - generic [ref=e349]: COP
+    - generic [ref=e351]:
+      - generic [ref=e353]:
+        - group
+      - text:  
+      - generic [ref=e355]:
+        - generic [ref=e358]:
+          - generic [ref=e359]:
+            - generic [ref=e360]:
+              - text: 
+              - generic [ref=e361]: Code
+              - generic [ref=e362]: COP
+            - generic [ref=e363]:
+              - text: 
+              - generic [ref=e364]: Status
+              - generic [ref=e365]: Active
+          - generic [ref=e366]:
+            - generic [ref=e367]:
+              - text: 
+              - generic [ref=e368]: Label
+              - generic [ref=e369]: Colombian Peso
+            - generic [ref=e370]:
+              - text: 
+              - generic [ref=e371]: Is Base
+              - checkbox [disabled] [ref=e373]
+          - generic [ref=e374]:
+            - generic [ref=e375]:
+              - text: 
+              - generic [ref=e376]: Rate
+              - generic [ref=e377]: COP = 0.000250 USD
+            - generic [ref=e378]:
+              - text: 
+              - generic [ref=e379]: Rate Date
+              - generic [ref=e380]: Today
+        - generic [ref=e382]:
+          - generic [ref=e383]:
+            - generic [ref=e384]:
+              - button "+" [ref=e385] [cursor=pointer]
+              - button "" [ref=e387] [cursor=pointer]
+              - text: 
+            - heading "Rates" [level=4] [ref=e389]:
+              - generic "Click to refresh" [ref=e390] [cursor=pointer]: Rates
+          - table [ref=e394]:
+            - rowgroup [ref=e395]:
+              - row [ref=e396]:
+                - columnheader "Date " [ref=e397]:
+                  - button "Date" [ref=e398] [cursor=pointer]
+                  - generic [ref=e399]: 
+                - columnheader [ref=e400]:
+                  - button "Rate" [ref=e401] [cursor=pointer]
+                - columnheader [ref=e402]
+            - rowgroup [ref=e403]:
+              - row [ref=e404]:
+                - cell "Today" [ref=e405]
+                - cell "COP = 0.000250 USD" [ref=e406]
+                - cell [ref=e407]:
+                  - generic [ref=e408]:
+                    - button [ref=e409] [cursor=pointer]
+                    - text:   
+              - row [ref=e411]:
+                - cell "Yesterday" [ref=e412]
+                - cell "COP = 0.000250 USD" [ref=e413]
+                - cell [ref=e414]:
+                  - generic [ref=e415]:
+                    - button [ref=e416] [cursor=pointer]
+                    - text:   
+  - contentinfo [ref=e152]:
+    - paragraph [ref=e153]:
+      - text: © 2026
+      - link "EspoCRM, Inc." [ref=e154] [cursor=pointer]:
+        - /url: https://www.espocrm.com
+  - dialog [ref=e419]:
+    - generic [ref=e421]:
+      - banner [ref=e422]:
+        - button [ref=e423] [cursor=pointer]:
+          - generic [aria-hidden] [ref=e424]: ×
+        - button "" [ref=e425] [cursor=pointer]
+        - heading [level=4] [ref=e427]:
+          - link "Create Exchange Rate" [ref=e429] [cursor=pointer]:
+            - /url: "#CurrencyRecordRate/create"
+      - contentinfo [ref=e430]:
+        - generic [ref=e431]:
+          - button "Save" [active] [ref=e432] [cursor=pointer]
+          - button "Full Form" [ref=e433] [cursor=pointer]
+          - button "Cancel" [ref=e434] [cursor=pointer]
+      - generic [ref=e442]:
+        - generic [ref=e443]:
+          - generic [ref=e444]:
+            - generic [ref=e445]: Currency
+            - link "COP" [ref=e447] [cursor=pointer]:
+              - /url: "#CurrencyRecord/view/bfce1a6a7fe932ac1"
+          - generic [ref=e448]: 
+        - generic [ref=e449]:
+          - generic [ref=e450]:
+            - generic [ref=e451]: Date *
+            - generic [ref=e453]:
+              - textbox [ref=e454]: 16.11.2026
+              - button "" [ref=e456] [cursor=pointer]
+          - generic [ref=e458]:
+            - generic [ref=e459]: Rate *
+            - generic [ref=e461]:
+              - generic [ref=e462]: 1 COP =
+              - textbox [ref=e464]: "-1.000000"
+              - generic [ref=e465]: USD
+  - tooltip [ref=e468]:
+    - paragraph [ref=e471]: Rate shouldn't be less than 0.0001
+  - generic [ref=e472]: Not valid
+```

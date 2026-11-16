@@ -1,0 +1,15 @@
+Stagehand CUR — modelo google/gemini-3.8-flash — http://localhost:8080
+[Auth] Sesión activa como Tomas
+
+  ▶ Ejecutando: ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+    [observe] Click the Run button of the Formula Sandbox → Run button in the Formula Sandbox (click)
+    ✖ FAIL (1056657ms): Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+
+  ▶ Ejecutando: ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+    ⏳ Límite de tasa Gemini (15 RPM) detectado. Esperando 35s para enfriamiento...
+    ✖ FAIL (77649ms): Failed after 3 attempts. Last error: AI_APICallError: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.8-flash, description: Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.
+Please retry in 9h7m22.098730247s.
+
+  ▶ Ejecutando: ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+    ⏳ Límite de tasa Gemini (15 RPM) detectado. Esperando 35s para enfriamiento...

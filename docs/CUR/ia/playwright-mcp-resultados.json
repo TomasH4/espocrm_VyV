@@ -1,0 +1,49 @@
+{
+  "fecha": "2026-11-16T16:14:59.270Z",
+  "mcp": "@playwright/mcp@0.0.84",
+  "resultados": [
+    {
+      "name": "MCP-CUR-01 El servidor expone las herramientas de navegador para agentes",
+      "passed": true,
+      "durationMs": 17,
+      "detalle": {
+        "herramientas": 25
+      }
+    },
+    {
+      "name": "MCP-CUR-02 Iniciar sesión usando solo el árbol de accesibilidad",
+      "passed": true,
+      "durationMs": 10609,
+      "detalle": {
+        "usuario": "(desde .env)"
+      }
+    },
+    {
+      "name": "MCP-CUR-03 CUR-F1: convertir 100 USD a COP en el Formula Sandbox y leer el Output",
+      "passed": true,
+      "durationMs": 5853,
+      "detalle": {
+        "output": "400000.00000000000000"
+      }
+    },
+    {
+      "name": "MCP-CUR-04 CUR-F3: el árbol de accesibilidad del formulario Campaign expone los campos sin nombre (A11Y-CUR-01)",
+      "passed": true,
+      "durationMs": 4116,
+      "detalle": {
+        "cuadrosDeTexto": 12,
+        "sinNombreAccesible": 8
+      }
+    },
+    {
+      "name": "MCP-CUR-05 CUR-F5: una tasa negativa no se guarda (acción por referencia y oráculo de la API)",
+      "passed": true,
+      "durationMs": 10254,
+      "detalle": {
+        "avisoEnArbol": "Rate shouldn't be less than 0.0001",
+        "tasasAntes": 2,
+        "tasasDespues": 2
+      }
+    }
+  ]
+}

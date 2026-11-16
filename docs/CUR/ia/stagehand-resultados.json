@@ -1,0 +1,30 @@
+{
+  "fecha": "2026-11-16T21:36:21.346Z",
+  "modelo": "google/gemini-3.8-flash",
+  "resultados": [
+    {
+      "name": "ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox",
+      "passed": false,
+      "durationMs": 664112,
+      "error": "Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."
+    },
+    {
+      "name": "ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP",
+      "passed": false,
+      "durationMs": 35284,
+      "error": "Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."
+    },
+    {
+      "name": "ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario",
+      "passed": false,
+      "durationMs": 63291,
+      "error": "Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."
+    },
+    {
+      "name": "ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API",
+      "passed": false,
+      "durationMs": 8402,
+      "error": "Failed after 2 attempts with non-retryable error: 'TypeError: Failed to fetch'"
+    }
+  ]
+}

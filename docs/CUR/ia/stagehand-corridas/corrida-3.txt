@@ -1,0 +1,30 @@
+Stagehand CUR — modelo google/gemini-3.8-flash — http://localhost:8080
+[Auth] Sesión activa como Tomas
+
+  ▶ Ejecutando: ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+    ✖ FAIL (664112ms): Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+
+  ▶ Ejecutando: ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+    ✖ FAIL (35284ms): Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+
+  ▶ Ejecutando: ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+    ✖ FAIL (63291ms): Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+
+  ▶ Ejecutando: ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API
+    ✖ FAIL (8402ms): Failed after 2 attempts with non-retryable error: 'TypeError: Failed to fetch'
+
+========================================================
+  Resumen Suite Stagehand: CUR Moneda y tasas (Stagehand)
+========================================================
+  ✖ FAIL [664112ms] ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+       Error: Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+  ✖ FAIL [35284ms] ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+       Error: Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+  ✖ FAIL [63291ms] ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+       Error: Failed after 3 attempts. Last error: AI_APICallError: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.
+  ✖ FAIL [8402ms] ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API
+       Error: Failed after 2 attempts with non-retryable error: 'TypeError: Failed to fetch'
+
+Total: 4 | Pasaron: 0 | Fallaron: 4
+========================================================
+
