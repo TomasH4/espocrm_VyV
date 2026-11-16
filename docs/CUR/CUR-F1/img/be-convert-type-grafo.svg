@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1420 1294" width="1420" height="1294" font-family="Segoe UI, Arial, sans-serif">
+<title>Backend — ConvertType::process() (función de fórmula ext\currency\convert)</title>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c3e50"/></marker><marker id="arrY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker><marker id="arrN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="710.0" y="31.2" font-size="15" font-weight="600" text-anchor="middle" fill="#1b2631">Backend — ConvertType::process() (función de fórmula ext\currency\convert)</text>
+<line x1="520.0" y1="128.0" x2="520.0" y2="182.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="537.9" y1="204.2" x2="1260.1" y2="291.6" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="575.7" y="207.1" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<line x1="503.8" y1="209.8" x2="348.0" y2="285.3" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="468.4" y="221.0" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<line x1="1270.5" y1="309.3" x2="720.5" y2="1197.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="330.0" y1="312.0" x2="330.0" y2="366.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="346.2" y1="393.8" x2="502.0" y2="469.3" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="381.6" y="405.0" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<line x1="313.8" y1="393.8" x2="158.0" y2="469.3" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="278.4" y="405.0" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<line x1="503.8" y1="485.8" x2="348.0" y2="561.3" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="156.2" y1="485.8" x2="312.0" y2="561.3" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="346.2" y1="577.8" x2="502.0" y2="653.3" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="381.6" y="589.0" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<line x1="313.8" y1="577.8" x2="158.0" y2="653.3" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="278.4" y="589.0" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<line x1="152.9" y1="674.5" x2="695.6" y2="1200.1" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="536.2" y1="669.8" x2="692.0" y2="745.3" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="571.6" y="681.0" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<line x1="503.8" y1="669.8" x2="348.0" y2="745.3" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="468.4" y="681.0" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<line x1="341.5" y1="767.9" x2="697.3" y2="1198.6" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="726.2" y1="761.8" x2="882.0" y2="837.3" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="761.6" y="773.0" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<line x1="693.8" y1="761.8" x2="538.0" y2="837.3" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="658.4" y="773.0" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<line x1="528.3" y1="862.0" x2="700.8" y2="1196.2" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="916.2" y1="853.8" x2="1072.0" y2="929.3" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="951.6" y="865.0" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<line x1="883.8" y1="853.8" x2="728.0" y2="929.3" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="848.4" y="865.0" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<line x1="710.0" y1="956.0" x2="710.0" y2="1194.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="1090.0" y1="956.0" x2="1090.0" y2="1010.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="1073.8" y1="1037.8" x2="728.0" y2="1205.3" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<circle cx="520" cy="110" r="18" fill="#ffffff" stroke="#1e8449" stroke-width="1.6"/>
+<text x="520.0" y="114.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">1</text>
+<circle cx="520" cy="202" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="2.4"/>
+<text x="520.0" y="206.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">2</text>
+<circle cx="1280" cy="294" r="18" fill="#ffffff" stroke="#c0392b" stroke-width="1.6"/>
+<text x="1280.0" y="298.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">3</text>
+<circle cx="330" cy="294" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="330.0" y="298.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">4</text>
+<circle cx="330" cy="386" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="2.4"/>
+<text x="330.0" y="390.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">5</text>
+<circle cx="520" cy="478" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="520.0" y="482.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">6</text>
+<circle cx="140" cy="478" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="140.0" y="482.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">7</text>
+<circle cx="330" cy="570" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="2.4"/>
+<text x="330.0" y="574.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">8</text>
+<circle cx="140" cy="662" r="18" fill="#ffffff" stroke="#c0392b" stroke-width="1.6"/>
+<text x="140.0" y="666.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">9</text>
+<circle cx="520" cy="662" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="2.4"/>
+<text x="520.0" y="666.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">10</text>
+<circle cx="330" cy="754" r="18" fill="#ffffff" stroke="#c0392b" stroke-width="1.6"/>
+<text x="330.0" y="758.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">11</text>
+<circle cx="710" cy="754" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="2.4"/>
+<text x="710.0" y="758.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">12</text>
+<circle cx="520" cy="846" r="18" fill="#ffffff" stroke="#c0392b" stroke-width="1.6"/>
+<text x="520.0" y="850.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">13</text>
+<circle cx="900" cy="846" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="2.4"/>
+<text x="900.0" y="850.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">14</text>
+<circle cx="710" cy="938" r="18" fill="#ffffff" stroke="#c0392b" stroke-width="1.6"/>
+<text x="710.0" y="942.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">15</text>
+<circle cx="1090" cy="938" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="1090.0" y="942.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">16</text>
+<circle cx="1090" cy="1030" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="1090.0" y="1034.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">17</text>
+<circle cx="710" cy="1214" r="18" fill="#ffffff" stroke="#1e8449" stroke-width="1.6"/>
+<text x="710.0" y="1218.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">18</text>
+<text x="710.0" y="1279.8" font-size="11" font-weight="normal" text-anchor="middle" fill="#566573">E = 23 aristas · N = 18 nodos · P = 6 decisiones (círculo grueso) · V(G) = E − N + 2 = 7 = P + 1</text>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 834" width="660" height="834" font-family="Segoe UI, Arial, sans-serif">
+<title>Backend — Converter::convert()</title>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c3e50"/></marker><marker id="arrY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker><marker id="arrN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="330.0" y="31.2" font-size="15" font-weight="600" text-anchor="middle" fill="#1b2631">Backend — Converter::convert()</text>
+<path d="M330.0,131.0 L330.0,167.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M415.0,202.0 L520.0,202.0 L520.0,269.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="434.6" y="196.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M245.0,202.0 L140.0,202.0 L140.0,269.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="225.4" y="196.8" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M140.0,319.0 L140.0,717.0 L330.0,717.0 L330.0,733.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M520.0,319.0 L520.0,361.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M520.0,411.0 L520.0,453.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M520.0,503.0 L520.0,545.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M520.0,595.0 L520.0,717.0 L330.0,717.0 L330.0,733.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="255.0" y="89.0" width="150" height="42" rx="21.0" fill="#e8f8f5" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="330.0" y="107.0" font-size="11" font-weight="normal" text-anchor="middle" fill="#1b2631">Inicio convert(value,</text><text x="330.0" y="120.7" font-size="11" font-weight="normal" text-anchor="middle" fill="#1b2631">targetCode)</text>
+<text x="257.0" y="86.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">1</text>
+<polygon points="330,167.0 415.0,202 330,237.0 245.0,202" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="330.0" y="205.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿hasCurrency(targetCode)?</text>
+<text x="247.0" y="164.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">2</text>
+<rect x="60.0" y="269.0" width="160" height="50" rx="4" fill="#fdedec" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="140.0" y="284.6" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">throw RuntimeException</text><text x="140.0" y="297.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">«unknown currency»</text><text x="140.0" y="310.8" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">(DEF-CUR-01)</text>
+<text x="62.0" y="266.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">3</text>
+<rect x="440.0" y="269.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="284.6" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">rate =</text><text x="520.0" y="297.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">getCurrencyRate(moneda</text><text x="520.0" y="310.8" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">origen)</text>
+<text x="442.0" y="266.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">4</text>
+<rect x="440.0" y="361.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="383.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">targetRate =</text><text x="520.0" y="396.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">getCurrencyRate(targetCode)</text>
+<text x="442.0" y="358.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">5</text>
+<rect x="440.0" y="453.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="463.5" font-size="9.5" font-weight="normal" text-anchor="middle" fill="#1b2631">monto =</text><text x="520.0" y="475.4" font-size="9.5" font-weight="normal" text-anchor="middle" fill="#1b2631">divide(multiply(monto,</text><text x="520.0" y="487.3" font-size="9.5" font-weight="normal" text-anchor="middle" fill="#1b2631">rate), targetRate) —</text><text x="520.0" y="499.1" font-size="9.5" font-weight="normal" text-anchor="middle" fill="#1b2631">CUR-F2</text>
+<text x="442.0" y="450.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">6</text>
+<rect x="440.0" y="545.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="567.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">return new Currency(monto,</text><text x="520.0" y="580.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">targetCode)</text>
+<text x="442.0" y="542.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">7</text>
+<rect x="255.0" y="733.0" width="150" height="42" rx="21.0" fill="#e8f8f5" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="330.0" y="757.9" font-size="11" font-weight="normal" text-anchor="middle" fill="#1b2631">Fin</text>
+<text x="257.0" y="730.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">8</text>
+</svg>

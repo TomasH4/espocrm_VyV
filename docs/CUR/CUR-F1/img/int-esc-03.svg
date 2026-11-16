@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1310 793" width="1310" height="793" font-family="Segoe UI, Arial, sans-serif">
+<title>Integración ESC-CUR-F1-03 — Valores límite del monto</title>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c3e50"/></marker><marker id="arrY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker><marker id="arrN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="655.0" y="31.2" font-size="15" font-weight="600" text-anchor="middle" fill="#1b2631">Integración ESC-CUR-F1-03 — Valores límite del monto</text>
+<rect x="45" y="60" width="170" height="32" rx="4" fill="#eaf2f8" stroke="#2c3e50"/>
+<text x="130.0" y="79.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1b2631">Administrador</text>
+<rect x="255" y="60" width="170" height="46" rx="4" fill="#eaf2f8" stroke="#2c3e50"/>
+<text x="340.0" y="80.0" font-size="11" font-weight="600" text-anchor="middle" fill="#1b2631">Formula Sandbox</text><text x="340.0" y="93.7" font-size="11" font-weight="600" text-anchor="middle" fill="#1b2631">(index.js)</text>
+<rect x="465" y="60" width="170" height="46" rx="4" fill="#eaf2f8" stroke="#2c3e50"/>
+<text x="550.0" y="80.0" font-size="11" font-weight="600" text-anchor="middle" fill="#1b2631">FormulaController y</text><text x="550.0" y="93.7" font-size="11" font-weight="600" text-anchor="middle" fill="#1b2631">Formula Service</text>
+<rect x="675" y="60" width="170" height="32" rx="4" fill="#eaf2f8" stroke="#2c3e50"/>
+<text x="760.0" y="79.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1b2631">ConvertType (fórmula)</text>
+<rect x="885" y="60" width="170" height="32" rx="4" fill="#eaf2f8" stroke="#2c3e50"/>
+<text x="970.0" y="79.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1b2631">Converter</text>
+<rect x="1095" y="60" width="170" height="32" rx="4" fill="#eaf2f8" stroke="#2c3e50"/>
+<text x="1180.0" y="79.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1b2631">ConfigDataProvider</text>
+<line x1="130" y1="110" x2="130" y2="773" stroke="#566573" stroke-dasharray="3 4"/>
+<line x1="340" y1="110" x2="340" y2="773" stroke="#566573" stroke-dasharray="3 4"/>
+<line x1="550" y1="110" x2="550" y2="773" stroke="#566573" stroke-dasharray="3 4"/>
+<line x1="760" y1="110" x2="760" y2="773" stroke="#566573" stroke-dasharray="3 4"/>
+<line x1="970" y1="110" x2="970" y2="773" stroke="#566573" stroke-dasharray="3 4"/>
+<line x1="1180" y1="110" x2="1180" y2="773" stroke="#566573" stroke-dasharray="3 4"/>
+<line x1="130" y1="164" x2="334" y2="164" stroke="#2c3e50" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="235.0" y="144.6" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">Escribe ext\currency\convert(-100,</text><text x="235.0" y="157.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">'USD', 'COP') y pulsa Run</text>
+<line x1="340" y1="210" x2="544" y2="210" stroke="#2c3e50" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="445.0" y="190.6" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">POST /api/v1/Formula/action/run</text><text x="445.0" y="203.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">{expression}</text>
+<path d="M550,243 h40 v18 h-38" fill="none" stroke="#2c3e50" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="596.0" y="242.7" font-size="10.5" font-weight="normal" text-anchor="start" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">checkSyntax: sintaxis correcta</text>
+<line x1="550" y1="298" x2="754" y2="298" stroke="#2c3e50" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="655.0" y="291.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">Manager::run → process(argumentos)</text>
+<rect x="850" y="316" width="240" height="38" rx="3" fill="#fef9e7" stroke="#566573"/>
+<text x="970.0" y="332.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">La aritmética decimal conserva signo y</text><text x="970.0" y="345.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">escala (CUR-F2)</text>
+<line x1="760" y1="383" x2="964" y2="383" stroke="#2c3e50" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="865.0" y="376.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">convert(Currency, destino)</text>
+<line x1="970" y1="416" x2="1174" y2="416" stroke="#2c3e50" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="1075.0" y="409.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">hasCurrency(destino)</text>
+<line x1="1180" y1="449" x2="976" y2="449" stroke="#566573" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="1075.0" y="442.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">true</text>
+<line x1="970" y1="495" x2="1174" y2="495" stroke="#2c3e50" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="1075.0" y="475.6" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">getCurrencyRate(origen),</text><text x="1075.0" y="488.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">getCurrencyRate(destino)</text>
+<line x1="1180" y1="528" x2="976" y2="528" stroke="#566573" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="1075.0" y="521.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">tasas</text>
+<path d="M970,574 h40 v18 h-38" fill="none" stroke="#2c3e50" stroke-width="1.4" marker-end="url(#arr)"/>
+<text x="1016.0" y="554.1" font-size="10.5" font-weight="normal" text-anchor="start" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">divide(multiply(monto, tasa),</text><text x="1016.0" y="567.2" font-size="10.5" font-weight="normal" text-anchor="start" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">tasaDestino)</text>
+<line x1="970" y1="629" x2="766" y2="629" stroke="#566573" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="865.0" y="622.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">Currency convertido</text>
+<line x1="760" y1="662" x2="556" y2="662" stroke="#566573" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="655.0" y="655.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">monto como texto</text>
+<line x1="550" y1="695" x2="346" y2="695" stroke="#566573" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="445.0" y="688.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">200 {isSuccess: true, output}</text>
+<line x1="340" y1="741" x2="136" y2="741" stroke="#566573" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="235.0" y="721.6" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">Output -400000.00000000000000;</text><text x="235.0" y="734.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631" stroke="#ffffff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">aviso «Executed successfully.»</text>
+</svg>

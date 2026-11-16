@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1344 1662" width="1344" height="1662" font-family="Segoe UI, Arial, sans-serif">
+<title>Frontend — index.js::run() del Formula Sandbox</title>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c3e50"/></marker><marker id="arrY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker><marker id="arrN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="672.0" y="31.2" font-size="15" font-weight="600" text-anchor="middle" fill="#1b2631">Frontend — index.js::run() del Formula Sandbox</text>
+<path d="M1014.0,131.0 L1014.0,177.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M1014.0,227.0 L1014.0,259.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M1099.0,294.0 L1204.0,294.0 L1204.0,361.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="1118.6" y="288.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M929.0,294.0 L824.0,294.0 L824.0,361.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="909.4" y="288.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M1204.0,411.0 L1204.0,1545.0 L1014.0,1545.0 L1014.0,1561.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M824.0,411.0 L824.0,443.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M909.0,478.0 L1014.0,478.0 L1014.0,545.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="928.6" y="472.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M739.0,478.0 L634.0,478.0 L634.0,545.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="719.4" y="472.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M1014.0,595.0 L1014.0,1561.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M634.0,595.0 L634.0,627.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M719.0,662.0 L824.0,662.0 L824.0,729.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="738.6" y="656.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M549.0,662.0 L444.0,662.0 L444.0,729.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="529.4" y="656.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M824.0,779.0 L824.0,805.0 L634.0,805.0 L634.0,821.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M444.0,779.0 L444.0,805.0 L634.0,805.0 L634.0,821.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M634.0,871.0 L634.0,903.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M719.0,938.0 L957.0,938.0 L957.0,1005.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="738.6" y="932.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M549.0,938.0 L444.0,938.0 L444.0,995.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="529.4" y="932.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M957.0,1055.0 L957.0,1545.0 L1014.0,1545.0 L1014.0,1561.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M529.0,1030.0 L634.0,1030.0 L634.0,1097.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="548.6" y="1024.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M359.0,1030.0 L254.0,1030.0 L254.0,1097.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="339.4" y="1024.8" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M634.0,1147.0 L634.0,1179.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M719.0,1214.0 L824.0,1214.0 L824.0,1281.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="738.6" y="1208.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M549.0,1214.0 L539.0,1214.0 L539.0,1373.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="529.4" y="1208.8" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M824.0,1331.0 L824.0,1357.0 L539.0,1357.0 L539.0,1373.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M539.0,1423.0 L539.0,1545.0 L1014.0,1545.0 L1014.0,1561.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M254.0,1147.0 L254.0,1179.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M339.0,1214.0 L387.0,1214.0 L387.0,1281.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="358.6" y="1208.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M169.0,1214.0 L140.0,1214.0 L140.0,1373.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="149.4" y="1208.8" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M387.0,1331.0 L387.0,1357.0 L140.0,1357.0 L140.0,1373.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M140.0,1423.0 L140.0,1545.0 L1014.0,1545.0 L1014.0,1561.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="938.9999999999999" y="89.0" width="150" height="42" rx="21.0" fill="#e8f8f5" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1014.0" y="113.8" font-size="11" font-weight="normal" text-anchor="middle" fill="#1b2631">Inicio run()</text>
+<text x="941.0" y="86.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">1</text>
+<rect x="933.9999999999999" y="177.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1014.0" y="192.6" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Limpiar output y</text><text x="1014.0" y="205.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">errorMessage; leer el</text><text x="1014.0" y="218.8" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">script</text>
+<text x="936.0" y="174.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">2</text>
+<polygon points="1013.9999999999999,259.0 1099.0,294 1013.9999999999999,329.0 928.9999999999999,294" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1014.0" y="297.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿El script está vacío?</text>
+<text x="931.0" y="256.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">3</text>
+<rect x="1124.0" y="361.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1204.0" y="389.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Aviso «emptyScript»</text>
+<text x="1126.0" y="358.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">4</text>
+<rect x="743.9999999999999" y="361.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="824.0" y="383.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Deshabilitar acciones;</text><text x="824.0" y="396.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">POST Formula/action/run</text>
+<text x="746.0" y="358.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">5</text>
+<polygon points="823.9999999999999,443.0 908.9999999999999,478 823.9999999999999,513.0 738.9999999999999,478" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="824.0" y="475.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿La petición respondió</text><text x="824.0" y="488.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">con error HTTP?</text>
+<text x="741.0" y="440.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">6</text>
+<rect x="933.9999999999999" y="545.0" width="160" height="50" rx="4" fill="#fdedec" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1014.0" y="560.5" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Habilitar acciones; aviso</text><text x="1014.0" y="573.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">global «Internal server</text><text x="1014.0" y="586.8" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">error»</text>
+<text x="936.0" y="542.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">7</text>
+<rect x="554.0" y="545.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="634.0" y="567.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Habilitar acciones; output</text><text x="634.0" y="580.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">= response.output</text>
+<text x="556.0" y="542.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">8</text>
+<polygon points="634.0,627.0 719.0,662 634.0,697.0 549.0,662" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="634.0" y="665.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿response.isSuccess?</text>
+<text x="551.0" y="624.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">9</text>
+<rect x="743.9999999999999" y="729.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="824.0" y="757.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">errorMessage queda en null</text>
+<text x="746.0" y="726.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">10</text>
+<rect x="363.99999999999994" y="729.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="444.0" y="751.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">errorMessage =</text><text x="444.0" y="764.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">response.message</text>
+<text x="366.0" y="726.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">11</text>
+<rect x="554.0" y="821.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="634.0" y="843.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Mostrar errorMessage en el</text><text x="634.0" y="856.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">formulario</text>
+<text x="556.0" y="818.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">12</text>
+<polygon points="634.0,903.0 719.0,938 634.0,973.0 549.0,938" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="634.0" y="941.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿response.isSuccess?</text>
+<text x="551.0" y="900.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">13</text>
+<rect x="877.0" y="1005.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="957.0" y="1027.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Aviso «Executed</text><text x="957.0" y="1040.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">successfully.»</text>
+<text x="879.0" y="1002.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">14</text>
+<polygon points="443.99999999999994,995.0 529.0,1030 443.99999999999994,1065.0 358.99999999999994,1030" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="444.0" y="1033.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿response.isSyntaxError?</text>
+<text x="361.0" y="992.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">15</text>
+<rect x="554.0" y="1097.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="634.0" y="1125.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">msg = «Syntax error»</text>
+<text x="556.0" y="1094.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">16</text>
+<polygon points="634.0,1179.0 719.0,1214 634.0,1249.0 549.0,1214" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="634.0" y="1217.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿response.message?</text>
+<text x="551.0" y="1176.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">17</text>
+<rect x="743.9999999999999" y="1281.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="824.0" y="1309.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">msg += response.message</text>
+<text x="746.0" y="1278.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">18</text>
+<rect x="459.0" y="1373.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="539.0" y="1395.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Aviso de error de sintaxis</text><text x="539.0" y="1408.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">(msg)</text>
+<text x="461.0" y="1370.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">19</text>
+<rect x="173.99999999999994" y="1097.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="254.0" y="1125.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">msg = «Error.»</text>
+<text x="176.0" y="1094.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">20</text>
+<polygon points="253.99999999999994,1179.0 338.99999999999994,1214 253.99999999999994,1249.0 168.99999999999994,1214" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="254.0" y="1217.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿response.message?</text>
+<text x="171.0" y="1176.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">21</text>
+<rect x="307.0" y="1281.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="387.0" y="1309.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">msg += response.message</text>
+<text x="309.0" y="1278.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">22</text>
+<rect x="60.0" y="1373.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="140.0" y="1395.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Aviso de error de</text><text x="140.0" y="1408.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">ejecución (msg)</text>
+<text x="62.0" y="1370.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">23</text>
+<rect x="938.9999999999999" y="1561.0" width="150" height="42" rx="21.0" fill="#e8f8f5" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1014.0" y="1585.8" font-size="11" font-weight="normal" text-anchor="middle" fill="#1b2631">Fin</text>
+<text x="941.0" y="1558.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">24</text>
+</svg>

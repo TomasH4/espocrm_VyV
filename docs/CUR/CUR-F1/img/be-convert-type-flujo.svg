@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1420 1294" width="1420" height="1294" font-family="Segoe UI, Arial, sans-serif">
+<title>Backend — ConvertType::process() (función de fórmula ext\currency\convert)</title>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c3e50"/></marker><marker id="arrY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker><marker id="arrN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="710.0" y="31.2" font-size="15" font-weight="600" text-anchor="middle" fill="#1b2631">Backend — ConvertType::process() (función de fórmula ext\currency\convert)</text>
+<path d="M520.0,131.0 L520.0,167.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M605.0,202.0 L1280.0,202.0 L1280.0,269.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="624.6" y="196.8" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M435.0,202.0 L330.0,202.0 L330.0,269.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="415.4" y="196.8" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M1280.0,319.0 L1280.0,1177.0 L710.0,1177.0 L710.0,1193.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M330.0,319.0 L330.0,351.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M415.0,386.0 L520.0,386.0 L520.0,453.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="434.6" y="380.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M245.0,386.0 L140.0,386.0 L140.0,453.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="225.4" y="380.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M520.0,503.0 L520.0,519.0 L330.0,519.0 L330.0,535.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M140.0,503.0 L140.0,519.0 L330.0,519.0 L330.0,535.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M415.0,570.0 L520.0,570.0 L520.0,627.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="434.6" y="564.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M245.0,570.0 L140.0,570.0 L140.0,637.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="225.4" y="564.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M140.0,687.0 L140.0,1177.0 L710.0,1177.0 L710.0,1193.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M605.0,662.0 L710.0,662.0 L710.0,719.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="624.6" y="656.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M435.0,662.0 L330.0,662.0 L330.0,729.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="415.4" y="656.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M330.0,779.0 L330.0,1177.0 L710.0,1177.0 L710.0,1193.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M795.0,754.0 L900.0,754.0 L900.0,811.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="814.6" y="748.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M625.0,754.0 L520.0,754.0 L520.0,821.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="605.4" y="748.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M520.0,871.0 L520.0,1177.0 L710.0,1177.0 L710.0,1193.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M985.0,846.0 L1090.0,846.0 L1090.0,913.0" fill="none" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="1004.6" y="840.9" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<path d="M815.0,846.0 L710.0,846.0 L710.0,913.0" fill="none" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="795.4" y="840.9" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<path d="M710.0,963.0 L710.0,1193.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M1090.0,963.0 L1090.0,1005.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M1090.0,1055.0 L1090.0,1177.0 L710.0,1177.0 L710.0,1193.0" fill="none" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="445.0" y="89.0" width="150" height="42" rx="21.0" fill="#e8f8f5" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="107.0" font-size="11" font-weight="normal" text-anchor="middle" fill="#1b2631">Inicio</text><text x="520.0" y="120.7" font-size="11" font-weight="normal" text-anchor="middle" fill="#1b2631">process(arguments)</text>
+<text x="447.0" y="86.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">1</text>
+<polygon points="520,167.0 605.0,202 520,237.0 435.0,202" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="199.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿Hay menos de 2</text><text x="520.0" y="212.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">argumentos?</text>
+<text x="437.0" y="164.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">2</text>
+<rect x="1200.0" y="269.0" width="160" height="50" rx="4" fill="#fdedec" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1280.0" y="297.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">throw TooFewArguments</text>
+<text x="1202.0" y="266.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">3</text>
+<rect x="250.0" y="269.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="330.0" y="291.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">amount = arg 1; fromCode =</text><text x="330.0" y="304.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">arg 2</text>
+<text x="252.0" y="266.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">4</text>
+<polygon points="330,351.0 415.0,386 330,421.0 245.0,386" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="330.0" y="383.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿Existe el argumento</text><text x="330.0" y="396.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">3?</text>
+<text x="247.0" y="348.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">5</text>
+<rect x="440.0" y="453.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="481.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">toCode = arg 3</text>
+<text x="442.0" y="450.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">6</text>
+<rect x="60.0" y="453.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="140.0" y="475.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">toCode = moneda por</text><text x="140.0" y="488.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">defecto</text>
+<text x="62.0" y="450.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">7</text>
+<polygon points="330,535.0 415.0,570 330,605.0 245.0,570" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="330.0" y="567.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿amount es string, int</text><text x="330.0" y="580.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">o float?</text>
+<text x="247.0" y="532.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">8</text>
+<rect x="60.0" y="637.0" width="160" height="50" rx="4" fill="#fdedec" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="140.0" y="659.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">throw BadArgumentType</text><text x="140.0" y="672.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">(posición 1)</text>
+<text x="62.0" y="634.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">9</text>
+<polygon points="520,627.0 605.0,662 520,697.0 435.0,662" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="665.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿fromCode es string?</text>
+<text x="437.0" y="624.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">10</text>
+<rect x="250.0" y="729.0" width="160" height="50" rx="4" fill="#fdedec" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="330.0" y="751.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">throw BadArgumentType</text><text x="330.0" y="764.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">(posición 2)</text>
+<text x="252.0" y="726.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">11</text>
+<polygon points="710,719.0 795.0,754 710,789.0 625.0,754" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="710.0" y="757.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿toCode es string?</text>
+<text x="627.0" y="716.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">12</text>
+<rect x="440.0" y="821.0" width="160" height="50" rx="4" fill="#fdedec" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="520.0" y="843.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">throw BadArgumentType</text><text x="520.0" y="856.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">(posición 3)</text>
+<text x="442.0" y="818.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">13</text>
+<polygon points="900,811.0 985.0,846 900,881.0 815.0,846" fill="#fef9e7" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="900.0" y="843.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">¿is_numeric(amount)?</text><text x="900.0" y="856.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">(assert)</text>
+<text x="817.0" y="808.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">14</text>
+<rect x="630.0" y="913.0" width="160" height="50" rx="4" fill="#fdedec" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="710.0" y="935.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">AssertionError → HTTP 500</text><text x="710.0" y="948.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">(DEF-CUR-02)</text>
+<text x="632.0" y="910.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">15</text>
+<rect x="1010.0" y="913.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1090.0" y="928.5" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">value = Currency::create;</text><text x="1090.0" y="941.7" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">Converter::convert(value,</text><text x="1090.0" y="954.8" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">toCode)</text>
+<text x="1012.0" y="910.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">16</text>
+<rect x="1010.0" y="1005.0" width="160" height="50" rx="4" fill="#eaf2f8" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="1090.0" y="1027.1" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">return monto convertido</text><text x="1090.0" y="1040.2" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#1b2631">como texto</text>
+<text x="1012.0" y="1002.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">17</text>
+<rect x="635.0" y="1193.0" width="150" height="42" rx="21.0" fill="#e8f8f5" stroke="#2c3e50" stroke-width="1.4"/>
+<text x="710.0" y="1217.8" font-size="11" font-weight="normal" text-anchor="middle" fill="#1b2631">Fin</text>
+<text x="637.0" y="1190.3" font-size="9.5" font-weight="normal" text-anchor="start" fill="#566573">18</text>
+</svg>

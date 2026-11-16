@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 834" width="660" height="834" font-family="Segoe UI, Arial, sans-serif">
+<title>Backend — Converter::convert()</title>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2c3e50"/></marker><marker id="arrY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker><marker id="arrN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="330.0" y="31.2" font-size="15" font-weight="600" text-anchor="middle" fill="#1b2631">Backend — Converter::convert()</text>
+<line x1="330.0" y1="128.0" x2="330.0" y2="182.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="346.2" y1="209.8" x2="502.0" y2="285.3" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrY)"/>
+<text x="381.6" y="221.0" font-size="11" font-weight="600" text-anchor="middle" fill="#1e8449">Sí</text>
+<line x1="313.8" y1="209.8" x2="158.0" y2="285.3" stroke="#c0392b" stroke-width="1.6" marker-end="url(#arrN)"/>
+<text x="278.4" y="221.0" font-size="11" font-weight="600" text-anchor="middle" fill="#c0392b">No</text>
+<line x1="146.9" y1="310.6" x2="322.4" y2="735.5" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="520.0" y1="312.0" x2="520.0" y2="366.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="520.0" y1="404.0" x2="520.0" y2="458.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="520.0" y1="496.0" x2="520.0" y2="550.0" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="507.1" y1="582.5" x2="344.4" y2="740.1" stroke="#2c3e50" stroke-width="1.6" marker-end="url(#arr)"/>
+<circle cx="330" cy="110" r="18" fill="#ffffff" stroke="#1e8449" stroke-width="1.6"/>
+<text x="330.0" y="114.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">1</text>
+<circle cx="330" cy="202" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="2.4"/>
+<text x="330.0" y="206.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">2</text>
+<circle cx="140" cy="294" r="18" fill="#ffffff" stroke="#c0392b" stroke-width="1.6"/>
+<text x="140.0" y="298.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">3</text>
+<circle cx="520" cy="294" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="520.0" y="298.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">4</text>
+<circle cx="520" cy="386" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="520.0" y="390.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">5</text>
+<circle cx="520" cy="478" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="520.0" y="482.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">6</text>
+<circle cx="520" cy="570" r="18" fill="#ffffff" stroke="#2c3e50" stroke-width="1.6"/>
+<text x="520.0" y="574.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">7</text>
+<circle cx="330" cy="754" r="18" fill="#ffffff" stroke="#1e8449" stroke-width="1.6"/>
+<text x="330.0" y="758.2" font-size="12" font-weight="600" text-anchor="middle" fill="#1b2631">8</text>
+<text x="330.0" y="819.9" font-size="11" font-weight="normal" text-anchor="middle" fill="#566573">E = 8 aristas · N = 8 nodos · P = 1 decisiones (círculo grueso) · V(G) = E − N + 2 = 2 = P + 1</text>
+</svg>
