@@ -27,7 +27,8 @@ pipeline {
             steps {
                 // Ejecuta la suite de pruebas unitarias generando el reporte de cobertura Clover y JUnit
                 sh '''
-                    docker exec espocrm sh -c "mkdir -p coverage && phpunit tests/unit/Espo/VyV/ --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml"
+                    docker exec espocrm sh -c "rm -rf /var/www/html/coverage && mkdir -p /var/www/html/coverage && phpunit tests/unit/Espo/VyV/ --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml"
+                    rm -rf ./coverage
                     docker cp espocrm:/var/www/html/coverage ./coverage
                 '''
             }
