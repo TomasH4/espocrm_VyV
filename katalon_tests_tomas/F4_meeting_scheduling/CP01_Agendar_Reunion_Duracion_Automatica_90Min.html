@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:8080" />
+<title>CP01_Agendar_Reunion_Duracion_Automatica_90Min</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">CP01_Agendar_Reunion_Duracion_Automatica_90Min</td></tr>
+</thead>
+<tbody>
+<tr>
+	<td>open</td>
+	<td>http://localhost:8080/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>localStorage.clear(); sessionStorage.clear();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>300</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=field-userName</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=field-userName</td>
+	<td>Tomas</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.getElementById('field-userName'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=field-password</td>
+	<td>tomas12345</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.getElementById('field-password'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=btn-login</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=#navbar, .navbar</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>600</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=a[href="#Meeting"], li[data-name="Meeting"] a, a[href="#Activity"], li[data-name="Activity"] a, #nav-quick-create-dropdown</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var meetLink = document.querySelector('a[href="#Meeting"], li[data-name="Meeting"] a'); if(meetLink){ meetLink.click(); return; } var dd = document.getElementById('nav-quick-create-dropdown'); if(dd) dd.click(); })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>250</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var item = document.querySelector('a[data-name="Meeting"], li[data-name="Meeting"] a[href="#Meeting/create"]'); if(item) item.click(); })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>250</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ if(!window.location.hash.includes('Meeting/create')){   var createBtn = document.querySelector('a[data-action="create"], a[href="#Meeting/create"]');   if(createBtn) createBtn.click(); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>400</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=input[data-name="name"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=input[data-name="name"]</td>
+	<td>Comite Tecnico Katalon</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.querySelector('input[data-name="name"]'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ function sv(sel,val){   var el=document.querySelector(sel); if(!el) return;   el.value=val;   el.dispatchEvent(new Event('input',{bubbles:true}));   el.dispatchEvent(new Event('change',{bubbles:true}));   el.dispatchEvent(new Event('blur',{bubbles:true})); } sv('input[data-name="dateEnd"]','11/20/2026'); sv('input[data-name="dateEnd-time"]','11:30'); sv('input[data-name="dateStart"]','11/20/2026'); sv('input[data-name="dateStart-time"]','10:00'); })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>400</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button[data-action="save"], [data-action="save"], button.btn-primary</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button[data-action="save"], [data-action="save"], button.btn-primary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>var btn = document.querySelector('button[data-action="save"], [data-action="save"], button.btn-primary'); if (btn) btn.click();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=.header-title, .page-header, h3</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=.header-title, .page-header, h3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertEval</td>
+	<td>!window.location.hash.includes('Meeting/create')</td>
+	<td>true</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

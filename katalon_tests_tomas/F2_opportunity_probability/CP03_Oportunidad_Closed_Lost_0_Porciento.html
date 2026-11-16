@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:8080" />
+<title>CP03_Oportunidad_Closed_Lost_0_Porciento</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">CP03_Oportunidad_Closed_Lost_0_Porciento</td></tr>
+</thead>
+<tbody>
+<tr>
+	<td>open</td>
+	<td>http://localhost:8080/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>localStorage.clear(); sessionStorage.clear();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>300</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=field-userName</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=field-userName</td>
+	<td>Tomas</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.getElementById('field-userName'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=field-password</td>
+	<td>tomas12345</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.getElementById('field-password'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=btn-login</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=#navbar, .navbar</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>600</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=a[href="#Opportunity"], li[data-name="Opportunity"] a</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=a[href="#Opportunity"], li[data-name="Opportunity"] a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=a[data-action="create"], [data-action="create"], a[href="#Opportunity/create"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=a[data-action="create"], [data-action="create"], a[href="#Opportunity/create"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>400</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=input[data-name="name"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=input[data-name="name"]</td>
+	<td>Oportunidad Perdida Katalon</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.querySelector('input[data-name="name"]'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=input[data-name="amount"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.querySelector('input[data-name="amount"]'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=input[data-name="closeDate"]</td>
+	<td>12/31/2026</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.querySelector('input[data-name="closeDate"]'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=select[data-name="stage"], [data-name="stage"]</td>
+	<td>10000</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var s = document.querySelector('select[data-name="stage"]'); if(!s) return; if(s.selectize) { s.selectize.setValue('Closed Lost'); } else { s.value = 'Closed Lost'; } s.dispatchEvent(new Event('change', {bubbles:true})); if(window.jQuery) { window.jQuery(s).trigger('change'); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>300</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button[data-action="save"], [data-action="save"], button.btn-primary</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button[data-action="save"], [data-action="save"], button.btn-primary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>var btn = document.querySelector('button[data-action="save"], [data-action="save"], button.btn-primary'); if (btn) btn.click();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=[data-name="probability"], .field-probability</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>assertEval</td>
+	<td>(function(){ var el = document.querySelector('.field[data-name="probability"], [data-name="probability"] .numeric-text, [data-name="probability"]'); if(!el) return ''; var m = el.textContent.match(/\d+/); return m ? m[0] : ''; })()</td>
+	<td>0</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=[data-name="stage"], .field-stage</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

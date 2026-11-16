@@ -14,14 +14,20 @@ After(() => {
     cy.deleteEntityViaApi('Opportunity', id);
   });
   createdOpportunityIds = [];
+  isErrorMocked = false;
 });
 
+let isErrorMocked = false;
+
 Given('que el actor navega al formulario de creación de Oportunidad', () => {
-  cy.intercept('POST', '**/api/v1/Opportunity*').as('opportunityPost');
+  if (!isErrorMocked) {
+    cy.intercept('POST', '**/api/v1/Opportunity*').as('opportunityPost');
+  }
   actor = Actor.named('Tomas')
     .whoCan('browseTheWeb', BrowseTheWeb.using(cy))
     .whoCan('callAnApi', CallAnApi.at('http://localhost:8080/api/v1'));
   actor.attemptsTo(Navigate.to('/#Opportunity/create'));
+  cy.get('input[data-name="name"]', { timeout: 15000 }).should('be.visible');
 });
 
 Given('que existe una Oportunidad creada en etapa {string} con probabilidad {int}', (stage, probability) => {
@@ -38,6 +44,7 @@ Given('que existe una Oportunidad creada en etapa {string} con probabilidad {int
 });
 
 Given('que la API de Oportunidad está configurada para responder con error 500', () => {
+  isErrorMocked = true;
   cy.intercept('POST', '**/api/v1/Opportunity*', {
     statusCode: 500,
     body: { error: 'Fallo en la persistencia de base de datos' },

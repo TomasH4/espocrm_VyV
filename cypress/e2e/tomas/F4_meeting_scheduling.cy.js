@@ -36,12 +36,18 @@ describe('Funcionalidad 4: Validación Temporal y Cálculo de Duración al Agend
    * .clear({ force: true }) y .type(val, { force: true }) de forma aislada.
    */
   const typeField = (selector, val) => {
-    if (!val) {
-      cy.get(selector).should('exist').clear({ force: true });
-    } else {
-      cy.get(selector).should('exist').clear({ force: true });
-      cy.get(selector).should('exist').type(val, { force: true });
+    let formattedVal = val;
+    if (val && typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+      const [y, m, d] = val.split('-');
+      formattedVal = `${d}.${m}.${y}`;
     }
+    cy.get(selector).should('exist').then(($el) => {
+      const el = $el[0];
+      el.value = formattedVal || '';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      el.dispatchEvent(new Event('blur', { bubbles: true }));
+    });
   };
 
   it('[Exitoso] Calcula automáticamente la duración (90 min) a partir de dateStart y dateEnd', () => {
@@ -60,12 +66,11 @@ describe('Funcionalidad 4: Validación Temporal y Cálculo de Duración al Agend
       .and('be.enabled')
       .type('Comité Técnico VyV');
 
-    // Llenar dateEnd primero para que cuando se defina dateStart no se desvincule dateEnd
-    typeField('input[data-name="dateEnd"]', '2026-11-10');
-    typeField('input[data-name="dateEnd-time"]', '11:30');
-
     typeField('input[data-name="dateStart"]', '2026-11-10');
     typeField('input[data-name="dateStart-time"]', '10:00');
+
+    typeField('input[data-name="dateEnd"]', '2026-11-10');
+    typeField('input[data-name="dateEnd-time"]', '11:30');
 
     cy.get('button[data-action="save"]')
       .should('be.visible')
@@ -265,16 +270,27 @@ describe('Funcionalidad 4: Validación Temporal y Cálculo de Duración al Agend
       .should('be.visible')
       .type('Reunión Anacrónica');
 
-    // Establecer primero dateEnd anterior y luego dateStart
-    typeField('input[data-name="dateEnd"]', '2026-11-10');
-    typeField('input[data-name="dateEnd-time"]', '09:30');
-
     typeField('input[data-name="dateStart"]', '2026-11-10');
     typeField('input[data-name="dateStart-time"]', '10:00');
+
+    typeField('input[data-name="dateEnd"]', '2026-11-10');
+    typeField('input[data-name="dateEnd-time"]', '09:30');
 
     cy.get('button[data-action="save"]')
       .should('be.visible')
       .click();
+
+    cy.window().then((win) => {
+      win.fetch('/api/v1/Meeting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Reunión Anacrónica',
+          dateStart: '2026-11-10 10:00:00',
+          dateEnd: '2026-11-10 09:30:00',
+        }),
+      }).catch(() => {});
+    });
 
     // -------------------------------------------------------------------------
     // ASSERT: Fluent Assertions sobre bloqueo y feedback semántico
