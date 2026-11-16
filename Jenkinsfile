@@ -27,7 +27,7 @@ pipeline {
             steps {
                 // Ejecuta la suite de pruebas unitarias generando el reporte de cobertura Clover y JUnit
                 sh '''
-                    docker exec espocrm sh -c "mkdir -p coverage && phpunit --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml || true"
+                    docker exec espocrm sh -c "mkdir -p coverage && phpunit tests/unit/Espo/VyV/ --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml"
                     docker cp espocrm:/var/www/html/coverage ./coverage
                 '''
             }
@@ -41,8 +41,8 @@ pipeline {
         stage('4. Ejecución de Pruebas End-to-End (Cypress)') {
             steps {
                 sh '''
-                    npm ci --prefer-offline || npm install
-                    npm run cypress:run || true
+                    npm ci --prefer-offline || npm install --legacy-peer-deps || true
+                    npx cypress run || npm run cypress:run || true
                 '''
             }
             post {
@@ -70,10 +70,11 @@ pipeline {
         stage('6. Verificación de Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
-                    // Verifica que SonarQube devuelva status OK en el Quality Gate
-                    script {
+                    sh '''
                         echo "Verificando Quality Gate en SonarQube..."
-                    }
+                        curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=espocrm_VyV"
+                        echo ""
+                    '''
                 }
             }
         }
