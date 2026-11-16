@@ -1,10 +1,10 @@
 import { Given, When, Then, After } from '@badeball/cypress-cucumber-preprocessor';
-import { Actor } from '../screenplay/actor/Actor';
-import { BrowseTheWeb } from '../screenplay/abilities/BrowseTheWeb';
-import { CallAnApi } from '../screenplay/abilities/CallAnApi';
-import { Navigate } from '../screenplay/interactions/Interactions';
-import { SearchContact } from '../screenplay/tasks/Tasks';
-import { ContactList } from '../screenplay/questions/Questions';
+import { Actor } from '../../screenplay/actor/Actor';
+import { BrowseTheWeb } from '../../screenplay/abilities/BrowseTheWeb';
+import { CallAnApi } from '../../screenplay/abilities/CallAnApi';
+import { Navigate } from '../../screenplay/interactions/Interactions';
+import { SearchContact } from '../../screenplay/tasks/Tasks';
+import { ContactList } from '../../screenplay/questions/Questions';
 
 let actor;
 let createdContactIds = [];
@@ -84,4 +84,5 @@ Then('el mensaje de error de contactos contiene {string}', (message) => {
   const response = actor.recall('mockSearchResponse');
   expect(response.body).to.be.an('object').that.has.property('error').which.includes(message);
 });
+
 

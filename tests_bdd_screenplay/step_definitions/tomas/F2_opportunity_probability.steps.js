@@ -1,10 +1,10 @@
 import { Given, When, Then, After } from '@badeball/cypress-cucumber-preprocessor';
-import { Actor } from '../screenplay/actor/Actor';
-import { BrowseTheWeb } from '../screenplay/abilities/BrowseTheWeb';
-import { CallAnApi } from '../screenplay/abilities/CallAnApi';
-import { Navigate, Click, Fill, SelectOption } from '../screenplay/interactions/Interactions';
-import { Login, CreateOpportunityForm } from '../screenplay/tasks/Tasks';
-import { CurrentUrl } from '../screenplay/questions/Questions';
+import { Actor } from '../../screenplay/actor/Actor';
+import { BrowseTheWeb } from '../../screenplay/abilities/BrowseTheWeb';
+import { CallAnApi } from '../../screenplay/abilities/CallAnApi';
+import { Navigate, Click, Fill, SelectOption } from '../../screenplay/interactions/Interactions';
+import { Login, CreateOpportunityForm } from '../../screenplay/tasks/Tasks';
+import { CurrentUrl } from '../../screenplay/questions/Questions';
 
 let actor;
 let createdOpportunityIds = [];
@@ -110,4 +110,5 @@ Then('el campo {string} muestra el valor {string}', (field, value) => {
     .should('be.visible')
     .and('contain.text', value);
 });
+
 

@@ -15,8 +15,8 @@ import {
   getUrl,
   navigateTo,
   extractData,
-} from "./helpers/testRunner.js";
-import { createEntityViaApi, deleteEntityViaApi } from "./helpers/api.js";
+} from "../helpers/testRunner.js";
+import { createEntityViaApi, deleteEntityViaApi } from "../helpers/api.js";
 
 /**
  * Ejecuta la conversión en la página #Lead/convert/:
@@ -297,3 +297,4 @@ async function main() {
 }
 
 main().catch(console.error);
+

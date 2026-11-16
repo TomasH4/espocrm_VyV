@@ -21,8 +21,8 @@ import {
   setInputValue,
   selectEspoOption,
   clickSaveAction,
-} from "./helpers/testRunner.js";
-import { deleteEntityViaApi } from "./helpers/api.js";
+} from "../helpers/testRunner.js";
+import { deleteEntityViaApi } from "../helpers/api.js";
 
 /**
  * Llena los campos de fecha/hora de una reunión via DOM directo.
@@ -262,3 +262,4 @@ async function main() {
 }
 
 main().catch(console.error);
+

@@ -12,11 +12,11 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const suites = [
-  { name: "F1: Creación de Lead", file: "F1_lead_creation.stagehand.ts" },
-  { name: "F2: Probabilidad Oportunidades", file: "F2_opportunity_probability.stagehand.ts" },
-  { name: "F3: Búsqueda de Contactos", file: "F3_contact_search.stagehand.ts" },
-  { name: "F4: Programación de Reuniones", file: "F4_meeting_scheduling.stagehand.ts" },
-  { name: "F5: Conversión de Lead", file: "F5_lead_conversion.stagehand.ts" },
+  { name: "F1: Creación de Lead", file: "tomas/F1_lead_creation.stagehand.ts" },
+  { name: "F2: Probabilidad Oportunidades", file: "tomas/F2_opportunity_probability.stagehand.ts" },
+  { name: "F3: Búsqueda de Contactos", file: "tomas/F3_contact_search.stagehand.ts" },
+  { name: "F4: Programación de Reuniones", file: "tomas/F4_meeting_scheduling.stagehand.ts" },
+  { name: "F5: Conversión de Lead", file: "tomas/F5_lead_conversion.stagehand.ts" },
 ];
 
 console.log(`\n================================================================`);

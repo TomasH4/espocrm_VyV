@@ -16,9 +16,9 @@ import {
   navigateTo,
   extractData,
   clickSaveAction,
-} from "./helpers/testRunner.js";
-import { deleteEntityViaApi } from "./helpers/api.js";
-import { config } from "./stagehand.config.js";
+} from "../helpers/testRunner.js";
+import { deleteEntityViaApi } from "../helpers/api.js";
+import { config } from "../stagehand.config.js";
 
 async function main() {
   const ctx = new StagehandTestContext();
@@ -178,3 +178,4 @@ async function main() {
 }
 
 main().catch(console.error);
+

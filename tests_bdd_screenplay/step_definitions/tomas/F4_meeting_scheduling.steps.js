@@ -1,9 +1,9 @@
 import { Given, When, Then, After } from '@badeball/cypress-cucumber-preprocessor';
-import { Actor } from '../screenplay/actor/Actor';
-import { BrowseTheWeb } from '../screenplay/abilities/BrowseTheWeb';
-import { CallAnApi } from '../screenplay/abilities/CallAnApi';
-import { Navigate, TypeField, SelectOption } from '../screenplay/interactions/Interactions';
-import { CreateMeetingForm } from '../screenplay/tasks/Tasks';
+import { Actor } from '../../screenplay/actor/Actor';
+import { BrowseTheWeb } from '../../screenplay/abilities/BrowseTheWeb';
+import { CallAnApi } from '../../screenplay/abilities/CallAnApi';
+import { Navigate, TypeField, SelectOption } from '../../screenplay/interactions/Interactions';
+import { CreateMeetingForm } from '../../screenplay/tasks/Tasks';
 
 let actor;
 let createdMeetingIds = [];
@@ -115,4 +115,5 @@ Then('el campo {string} de la respuesta es posterior al campo {string}', (endFie
   const dateStart = new Date(response.body[startField]).getTime();
   expect(dateEnd).to.be.greaterThan(dateStart);
 });
+
 

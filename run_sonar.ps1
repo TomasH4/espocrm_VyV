@@ -3,7 +3,7 @@ Write-Host "========================================================" -Foregroun
 Write-Host " 1. Ejecutando pruebas unitarias y generando cobertura..." -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 
-docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/ --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml"
+docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/Tomas/ --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml"
 
 Write-Host "`n========================================================" -ForegroundColor Cyan
 Write-Host " 2. Extrayendo reportes de cobertura..." -ForegroundColor Cyan
