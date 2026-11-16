@@ -11,6 +11,7 @@
     "test:andres:blackbox": "powershell -ExecutionPolicy Bypass -File .\\run_blackbox_andres.ps1",
     "test:andres:unit": "powershell -ExecutionPolicy Bypass -File .\\run_tests_andres.ps1 -All",
     "test:andres:e2e": "cypress run --spec \"cypress/e2e/andres/F*.cy.js\"",
+    "test:andres:bdd": "cypress run --spec \"tests_bdd_screenplay/features/andres/*.feature\"",
     "test:tomas:unit": "powershell -ExecutionPolicy Bypass -File .\\run_tests.ps1",
     "test:tomas:regression": "run_regression.bat",
     "test:tomas:e2e": "cypress run --spec \"cypress/e2e/tomas/F*.cy.js\"",
