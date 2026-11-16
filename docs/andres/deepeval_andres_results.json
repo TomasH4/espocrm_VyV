@@ -1,0 +1,36 @@
+{
+  "framework": "DeepEval 4.3.4",
+  "evaluator": "Andr\u00e9s Bedoya Cano",
+  "timestamp": "2026-11-15 08:24:20",
+  "summary": {
+    "total_cases": 2,
+    "passed_cases": 2,
+    "avg_geval": 1.0,
+    "avg_relevancy": 0.8999999999999999,
+    "avg_faithfulness": 1.0
+  },
+  "cases": [
+    {
+      "test_name": "TC1_Case_Critical_SLA_Evaluation",
+      "input": "El servidor de pagos de producci\u00f3n se encuentra ca\u00eddo y los clientes no pueden completar compras.",
+      "output": "El incidente reportado sobre 'El servidor de pagos de producci\u00f3n se encuentra ca\u00eddo y los clientes no pueden completar compras.' ha sido clasificado con prioridad Urgent debido a afectaci\u00f3n cr\u00edtica en entorno productivo o disponibilidad global. El SLA de atenci\u00f3n m\u00e1xima garantizado es de 4 horas con escalado directo a L3-DevOps.",
+      "metrics": {
+        "g_eval": 1.0,
+        "relevancy": 0.98,
+        "faithfulness": 1.0
+      },
+      "passed": true
+    },
+    {
+      "test_name": "TC2_Quote_Discount_Policy_Evaluation",
+      "input": "Cotizaci\u00f3n de $25,000.00 para cliente corporativo con estatus VIP y cup\u00f3n promocional.",
+      "output": "Para un monto de $25,000.00 y cliente VIP, se recomienda un descuento de 25.0%, resultando en un valor final de $18,750.00.",
+      "metrics": {
+        "g_eval": 1.0,
+        "relevancy": 0.82,
+        "faithfulness": 1.0
+      },
+      "passed": true
+    }
+  ]
+}

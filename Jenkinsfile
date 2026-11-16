@@ -57,7 +57,7 @@ pipeline {
                 // Ejecuta sonar-scanner mediante contenedor conectado a la red docker
                 sh '''
                     docker run --rm \
-                      --network espocrm_vyv_default \
+                      --network espo-crm_default \
                       -v "$PWD:/usr/src" \
                       -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                       -e SONAR_TOKEN="$SONAR_TOKEN" \

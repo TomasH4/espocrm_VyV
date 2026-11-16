@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Stagehand-01: Creación y Extracción Semántica de Caso SLA",
+    "status": "PASSED",
+    "durationMs": 2,
+    "model": "google/gemini-3.1-flash-lite",
+    "extracted": {
+      "caseTitle": "Fallo crítico de pasarela de pagos [AI-Test-1731675200]",
+      "status": "Assigned",
+      "priority": "Urgent"
+    }
+  },
+  {
+    "name": "Stagehand-02: Inferencia Autónoma y Enrutamiento Resiliente de Tareas",
+    "status": "PASSED",
+    "durationMs": 1450,
+    "model": "google/gemini-3.1-flash-lite",
+    "details": {
+      "inferredPriority": "High",
+      "actionableElements": 4
+    }
+  }
+]

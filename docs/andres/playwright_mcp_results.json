@@ -1,0 +1,27 @@
+{
+  "tool": "Microsoft Playwright MCP (@playwright/mcp)",
+  "author": "Andrés Bedoya Cano",
+  "timestamp": "2026-11-15T13:29:08.307Z",
+  "durationMs": 3647,
+  "allPassed": true,
+  "steps": [
+    {
+      "step": "MCP-01: Listado de Herramientas",
+      "status": "PASSED",
+      "toolCount": 25
+    },
+    {
+      "step": "MCP-02: Navegación Web Declarativa",
+      "status": "PASSED",
+      "url": "http://localhost:8080",
+      "navSummary": "### Ran Playwright code\n```js\nawait page.goto('http://localhost:8080');\n```\n### Page\n- Page URL: http://localhost:8080/\n- Page Title: EspoCRM\n### Snapshot\n- [Snapshot](.playwright-mcp\\page-2026-11-15T13-29-08-291Z.yml)"
+    },
+    {
+      "step": "MCP-03: Snapshot de Accesibilidad y Análisis Semántico",
+      "status": "PASSED",
+      "snapshotLength": 305,
+      "hasInputs": true,
+      "hasButtons": true
+    }
+  ]
+}

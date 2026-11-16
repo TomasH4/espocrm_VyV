@@ -1,5 +1,6 @@
 /**
  * F1_lead_creation.cy.js
+ * hola
  *
  * Suite de pruebas E2E automatizadas para la Funcionalidad 1: Creación de un Cliente Potencial (Lead Creation)
  *
