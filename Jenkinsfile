@@ -16,10 +16,10 @@ pipeline {
 
         stage('2. Preparar Entorno Docker') {
             steps {
-                // Levanta la base de datos MariaDB, EspoCRM y SonarQube
-                sh 'docker compose up -d'
+                // Asegura que los contenedores estén activos
+                sh 'docker compose up -d || docker-compose up -d || true'
                 echo 'Esperando que los contenedores estén listos...'
-                sh 'sleep 15'
+                sh 'sleep 5'
             }
         }
 
@@ -54,11 +54,12 @@ pipeline {
 
         stage('5. Análisis de Código y Cobertura con SonarQube') {
             steps {
-                // Ejecuta sonar-scanner mediante contenedor conectado a la red docker
+                // Ejecuta sonar-scanner mediante contenedor conectado a la red docker y volumen de Jenkins
                 sh '''
                     docker run --rm \
                       --network espo-crm_default \
-                      -v "$PWD:/usr/src" \
+                      --volumes-from jenkins \
+                      -w "$PWD" \
                       -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                       -e SONAR_TOKEN="$SONAR_TOKEN" \
                       sonarsource/sonar-scanner-cli:latest
