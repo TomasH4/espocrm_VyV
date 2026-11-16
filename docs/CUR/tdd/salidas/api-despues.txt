@@ -1,0 +1,13 @@
+inicial        GET                     -> HTTP 200  {"USD":1,"COP":0.00025}
+CN-CUR-F4-07   PUT  {"COP":0}          -> HTTP 400  
+CN-CUR-F4-08   PUT  {"COP":"abc"}      -> HTTP 400  
+nuevo-true     PUT  {"COP":true}       -> HTTP 400  
+bajo-minimo    PUT  {"COP":0.00009}    -> HTTP 400  
+CN-CUR-F4-06   PUT  {"COP":-0.5}       -> HTTP 400  
+CN-CUR-F4-09   PUT  {"EUR":0.9}        -> HTTP 200  true
+limite-minimo  PUT  {"COP":0.0001}     -> HTTP 200  true
+tras-limite    GET                     -> HTTP 200  {"USD":1,"COP":0.0001}
+restaurar      PUT  {"COP":0.00025}    -> HTTP 200  true
+final          GET                     -> HTTP 200  {"USD":1,"COP":0.00025}
+{"COP":0}        X-Status-Reason: Bad value for 'COP': the rate must not be less than 0.0001.
+{"COP":"abc"}    X-Status-Reason: Bad value for 'COP': the rate must be a number.

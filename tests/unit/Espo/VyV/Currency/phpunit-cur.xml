@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Proyecto VyV 2026-2 — Módulo Moneda y tasas (CUR). Suite y cobertura solo de las clases del módulo.
+  Ejecutar dentro del contenedor espocrm:
+    XDEBUG_MODE=coverage phpunit -c tests/unit/Espo/VyV/Currency/phpunit-cur.xml (con la opción coverage-text)
+-->
+<phpunit bootstrap="/var/www/html/vendor/autoload.php" colors="false">
+  <testsuites>
+    <testsuite name="cur">
+      <directory>/var/www/html/tests/unit/Espo/VyV/Currency</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <file>/var/www/html/application/Espo/Core/Currency/CalculatorUtil.php</file>
+      <file>/var/www/html/application/Espo/Classes/FieldValidators/CurrencyType.php</file>
+      <file>/var/www/html/application/Espo/Tools/Currency/RateService.php</file>
+      <file>/var/www/html/application/Espo/Tools/Currency/SyncManager.php</file>
+      <file>/var/www/html/application/Espo/Classes/RecordHooks/CurrencyRecordRate/AfterSave.php</file>
+      <file>/var/www/html/application/Espo/Classes/RecordHooks/CurrencyRecordRate/AfterDelete.php</file>
+    </include>
+  </source>
+</phpunit>

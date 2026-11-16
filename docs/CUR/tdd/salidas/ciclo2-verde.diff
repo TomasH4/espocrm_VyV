@@ -1,0 +1,13 @@
+diff --git a/application/Espo/Tools/Currency/RateService.php b/application/Espo/Tools/Currency/RateService.php
+index 066bf13060..820f0df95c 100644
+--- a/application/Espo/Tools/Currency/RateService.php
++++ b/application/Espo/Tools/Currency/RateService.php
+@@ -82,7 +82,7 @@ class RateService
+         $base = $this->configDataProvider->getBaseCurrency();
+ 
+         foreach ($rates->toAssoc() as $code => $value) {
+-            if ($value < 0) {
++            if (!is_numeric($value) || $value < 0.0001) {
+                 throw new BadRequest("Bad value.");
+             }
+ 

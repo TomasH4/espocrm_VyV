@@ -536,12 +536,12 @@ Entrada C1; checkEditAccess C1/C2.
 | :--- | :--- | :--- | :--- | :--- |
 | CB-CUR-F4-01 | check…Access C1 y C2 | Doble de `Acl`: `check()` falso; `check()` verdadero con nivel `no` | `Forbidden` en ambos, desde nodos distintos | Pasó: `RateServiceTest::testSinAccesoAlAmbitoEsForbidden` y `testNivelDeEdicionNoEsForbidden` |
 | CB-CUR-F4-02 | writeOne C3 | PUT de COP en un día sin tasa | Se crea una tasa nueva con fecha de hoy | Pasó: `RateServiceTest::testCreaLaTasaDelDiaSiNoExiste` |
-| CB-CUR-F4-03 | set nodo 5 (límite) | `{"COP":0}` | 400 (comportamiento esperado tras corregir DEF-CUR-04) | Candidato para el ciclo TDD; hoy `RateServiceTest::testDefCur04LaTasaCeroSeGuarda` documenta el defecto |
+| CB-CUR-F4-03 | set nodo 5 (límite) | `{"COP":0}` | 400 (comportamiento esperado tras corregir DEF-CUR-04) | Pasó tras el ciclo TDD: `RateServiceTest::testTasaPorDebajoDelMinimoEsBadRequest` ([docs/CUR/tdd](../tdd/README.md)) |
 
 ## 6. Hallazgos del análisis de código
 
-- **DEF-CUR-04:** el nodo 5 de `set()` solo rechaza `valor < 0`; el cero pasa, aunque el formulario de tasas exige como mínimo 0.0001. Corregirlo a `valor < 0.0001` (o `<= 0`) alinea la API con la pantalla.
-- **DEF-CUR-03:** `set()` no comprueba que el valor sea numérico antes de llamar `writeOne(string, float)`; el `TypeError` resultante sale como 500.
+- **DEF-CUR-04 (corregido en el [ciclo TDD](../tdd/README.md)):** el nodo 5 de `set()` solo rechaza `valor < 0`; el cero pasa, aunque el formulario de tasas exige como mínimo 0.0001. Corregirlo a `valor < 0.0001` (o `<= 0`) alinea la API con la pantalla.
+- **DEF-CUR-03 (corregido en el [ciclo TDD](../tdd/README.md)):** `set()` no comprueba que el valor sea numérico antes de llamar `writeOne(string, float)`; el `TypeError` resultante sale como 500.
 - **OBS-CUR-06:** un cuerpo que no es objeto llega a `set()` solo con la base ficticia `'___'` y devuelve `true`; la entrada debería responder 400.
 
 ## 7. Ejecución de las pruebas unitarias
@@ -568,8 +568,10 @@ docker exec espocrm sh -c "cd /var/www/html && php -n /usr/local/bin/phpunit tes
 | `AfterSave` / `AfterDelete` | 2/2 cada uno | 7/7 cada uno (100 %) |
 | `CalculatorUtil` | — | 18/28 (64 %) con bcmath. Nueve de las diez líneas restantes son las ramas sin bcmath, que se ejecutan con `php -n` (sin Xdebug, así que no se miden). La décima es la línea 98, código muerto |
 
+Estos números son del 15-nov-2026, antes del [ciclo TDD sobre `RateService`](../tdd/README.md). Después del TDD la suite del módulo tiene 66 pruebas y 199 aserciones, todas pasan (7 omitidas), y `RateService` sigue al 100 % (38/38 líneas). Desde entonces se ejecuta con `phpunit -c tests/unit/Espo/VyV/Currency/phpunit-cur.xml`.
+
 | Prueba | Pruebas | Caminos que recorre |
 | :--- | :--- | :--- |
 | `RateServiceTest` | 13 | checkEditAccess C1 y C2 por separado; checkReadAccess C1, C2 y C3; get C2; set C2, C3 y C4; writeOne C1, C2 y C3; DEF-CUR-03 y DEF-CUR-04 documentados |
 
-**Cobertura de caminos tras las pruebas unitarias:** permisos 3/3 (ahora se distingue C1 de C2), `get` 1/1 factible, `set` 3/3 factibles y `writeOne` 3/3 (C1 con un doble que lanza `NotEnabled`). Las pruebas `testDefCur03…` y `testDefCur04…` pasan porque describen el comportamiento actual. En el ciclo TDD se reescriben para esperar `BadRequest`: primero fallan (rojo) y pasan cuando se corrige `set()`.
+**Cobertura de caminos tras las pruebas unitarias:** permisos 3/3 (ahora se distingue C1 de C2), `get` 1/1 factible, `set` 3/3 factibles y `writeOne` 3/3 (C1 con un doble que lanza `NotEnabled`). En el [ciclo TDD](../tdd/README.md) las pruebas `testDefCur03…` y `testDefCur04…`, que describían el comportamiento defectuoso, se reemplazaron por pruebas que esperan `BadRequest`. Fallaron (rojo), pasaron tras corregir `set()` (verde) y la validación se refactorizó: ahora son 22 pruebas.

@@ -37,12 +37,15 @@ use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Acl;
 use Espo\Core\Utils\Currency\DatabasePopulator;
 use Espo\Core\Utils\DateTime;
+use Espo\Core\Utils\Metadata;
+use Espo\Entities\CurrencyRecordRate;
 use Espo\ORM\EntityManager;
 use RuntimeException;
 
 class RateService
 {
     private const string SCOPE = 'Currency';
+    private const float DEFAULT_MIN_RATE = 0.0001;
 
     public function __construct(
         private Acl $acl,
@@ -52,6 +55,7 @@ class RateService
         private RateEntryProvider $rateEntryProvider,
         private DateTime $dateTime,
         private EntityManager $entityManager,
+        private Metadata $metadata,
     ) {}
 
     /**
@@ -81,10 +85,10 @@ class RateService
         $codeList = $this->configDataProvider->getCurrencyList();
         $base = $this->configDataProvider->getBaseCurrency();
 
+        $minRate = $this->getMinRate();
+
         foreach ($rates->toAssoc() as $code => $value) {
-            if ($value < 0) {
-                throw new BadRequest("Bad value.");
-            }
+            $this->validateRate($code, $value, $minRate);
 
             if (!in_array($code, $codeList) || $code === $base) {
                 continue;
@@ -95,6 +99,30 @@ class RateService
 
         $this->syncManager->refreshCache();
         $this->databasePopulator->process();
+    }
+
+    /**
+     * A rate must be a number not less than the minimum of the CurrencyRecordRate.rate field,
+     * the same rule the rate form applies.
+     *
+     * @throws BadRequest
+     */
+    private function validateRate(string $code, mixed $value, float $minRate): void
+    {
+        if (!is_numeric($value)) {
+            throw new BadRequest("Bad value for '$code': the rate must be a number.");
+        }
+
+        if ($value < $minRate) {
+            throw new BadRequest("Bad value for '$code': the rate must not be less than $minRate.");
+        }
+    }
+
+    private function getMinRate(): float
+    {
+        $min = $this->metadata->get(['entityDefs', CurrencyRecordRate::ENTITY_TYPE, 'fields', 'rate', 'min']);
+
+        return is_numeric($min) ? (float) $min : self::DEFAULT_MIN_RATE;
     }
 
     private function writeOne(string $code, float $value): void

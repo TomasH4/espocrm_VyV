@@ -1,0 +1,50 @@
+PHPUnit 11.5.58 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+...........FFF..                                                  16 / 16 (100%)
+
+Time: 00:00.195, Memory: 31.52 MB
+
+Rate Service (tests\unit\Espo\VyV\Currency\RateService)
+ ✔ Sin acceso al ambito es forbidden
+ ✔ Nivel de edicion no es forbidden
+ ✔ Consulta sin acceso al ambito es forbidden
+ ✔ Consulta sin nivel de lectura es forbidden
+ ✔ Consulta devuelve las tasas de la configuracion
+ ✔ Tasa negativa es bad request
+ ✔ Monedas no aplicables se omiten
+ ✔ El cuerpo vacio igual recorre la base
+ ✔ Actualiza la tasa del dia existente
+ ✔ Crea la tasa del dia si no existe
+ ✔ Moneda no habilitada es runtime exception
+ ✘ Tasa por debajo del minimo es bad request with data set "cero (CN-CUR-F4-07)"
+   │
+   │ Espo\ORM\EntityManager::saveEntity(TestStub_CurrencyRecordRate_8087d9ad Object (...), []): void was not expected to be called.
+   │
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:113
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:93
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/RateServiceTest.php:252
+   │
+ ✘ Tasa por debajo del minimo es bad request with data set "justo debajo del mínimo"
+   │
+   │ Espo\ORM\EntityManager::saveEntity(TestStub_CurrencyRecordRate_8087d9ad Object (...), []): void was not expected to be called.
+   │
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:113
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:93
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/RateServiceTest.php:252
+   │
+ ✘ Tasa por debajo del minimo es bad request with data set "muy pequeña"
+   │
+   │ Espo\ORM\EntityManager::saveEntity(TestStub_CurrencyRecordRate_8087d9ad Object (...), []): void was not expected to be called.
+   │
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:113
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:93
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/RateServiceTest.php:252
+   │
+ ✔ Tasa igual al minimo se guarda
+ ✔ Def cur 03 texto provoca type error
+
+FAILURES!
+Tests: 16, Assertions: 57, Failures: 3.

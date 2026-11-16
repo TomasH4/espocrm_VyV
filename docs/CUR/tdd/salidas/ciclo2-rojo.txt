@@ -1,0 +1,64 @@
+PHPUnit 11.5.58 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+...............FFFF.                                              20 / 20 (100%)
+
+Time: 00:00.176, Memory: 31.52 MB
+
+Rate Service (tests\unit\Espo\VyV\Currency\RateService)
+ ✔ Sin acceso al ambito es forbidden
+ ✔ Nivel de edicion no es forbidden
+ ✔ Consulta sin acceso al ambito es forbidden
+ ✔ Consulta sin nivel de lectura es forbidden
+ ✔ Consulta devuelve las tasas de la configuracion
+ ✔ Tasa negativa es bad request
+ ✔ Monedas no aplicables se omiten
+ ✔ El cuerpo vacio igual recorre la base
+ ✔ Actualiza la tasa del dia existente
+ ✔ Crea la tasa del dia si no existe
+ ✔ Moneda no habilitada es runtime exception
+ ✔ Tasa por debajo del minimo es bad request with data set "cero (CN-CUR-F4-07)"
+ ✔ Tasa por debajo del minimo es bad request with data set "justo debajo del mínimo"
+ ✔ Tasa por debajo del minimo es bad request with data set "muy pequeña"
+ ✔ Tasa igual al minimo se guarda
+ ✘ Tasa no numerica es bad request with data set "texto 'abc' (CN-CUR-F4-08)"
+   │
+   │ Failed asserting that exception of type "TypeError" matches expected exception "Espo\Core\Exceptions\BadRequest". Message was: "Espo\Tools\Currency\RateService::writeOne(): Argument #2 ($value) must be of type float, string given, called in /var/www/html/application/Espo/Tools/Currency/RateService.php on line 93" at
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:100
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:93
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/RateServiceTest.php:296
+   │ .
+
+   │
+ ✘ Tasa no numerica es bad request with data set "booleano true"
+   │
+   │ Espo\ORM\EntityManager::saveEntity(TestStub_CurrencyRecordRate_2829beb3 Object (...), []): void was not expected to be called.
+   │
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:113
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:93
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/RateServiceTest.php:296
+   │
+ ✘ Tasa no numerica es bad request with data set "arreglo"
+   │
+   │ Failed asserting that exception of type "TypeError" matches expected exception "Espo\Core\Exceptions\BadRequest". Message was: "Espo\Tools\Currency\RateService::writeOne(): Argument #2 ($value) must be of type float, array given, called in /var/www/html/application/Espo/Tools/Currency/RateService.php on line 93" at
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:100
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:93
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/RateServiceTest.php:296
+   │ .
+
+   │
+ ✘ Tasa no numerica es bad request with data set "objeto JSON"
+   │
+   │ Failed asserting that exception of type "TypeError" matches expected exception "Espo\Core\Exceptions\BadRequest". Message was: "Espo\Tools\Currency\RateService::writeOne(): Argument #2 ($value) must be of type float, stdClass given, called in /var/www/html/application/Espo/Tools/Currency/RateService.php on line 93" at
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:100
+   │ /var/www/html/application/Espo/Tools/Currency/RateService.php:93
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/RateServiceTest.php:296
+   │ .
+
+   │
+ ✔ Tasa en texto numerico se guarda
+
+FAILURES!
+Tests: 20, Assertions: 71, Failures: 4, Notices: 1.

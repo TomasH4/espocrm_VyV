@@ -1,0 +1,32 @@
+PHPUnit 11.5.58 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+....................                                              20 / 20 (100%)
+
+Time: 00:00.241, Memory: 31.52 MB
+
+Rate Service (tests\unit\Espo\VyV\Currency\RateService)
+ ✔ Sin acceso al ambito es forbidden
+ ✔ Nivel de edicion no es forbidden
+ ✔ Consulta sin acceso al ambito es forbidden
+ ✔ Consulta sin nivel de lectura es forbidden
+ ✔ Consulta devuelve las tasas de la configuracion
+ ✔ Tasa negativa es bad request
+ ✔ Monedas no aplicables se omiten
+ ✔ El cuerpo vacio igual recorre la base
+ ✔ Actualiza la tasa del dia existente
+ ✔ Crea la tasa del dia si no existe
+ ✔ Moneda no habilitada es runtime exception
+ ✔ Tasa por debajo del minimo es bad request with data set "cero (CN-CUR-F4-07)"
+ ✔ Tasa por debajo del minimo es bad request with data set "justo debajo del mínimo"
+ ✔ Tasa por debajo del minimo es bad request with data set "muy pequeña"
+ ✔ Tasa igual al minimo se guarda
+ ✔ Tasa no numerica es bad request with data set "texto 'abc' (CN-CUR-F4-08)"
+ ✔ Tasa no numerica es bad request with data set "booleano true"
+ ✔ Tasa no numerica es bad request with data set "arreglo"
+ ✔ Tasa no numerica es bad request with data set "objeto JSON"
+ ✔ Tasa en texto numerico se guarda
+
+OK (20 tests, 75 assertions)

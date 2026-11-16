@@ -21,16 +21,17 @@ use Espo\Core\Exceptions\Forbidden;
 use Espo\Core\Field\Date;
 use Espo\Core\Utils\Currency\DatabasePopulator;
 use Espo\Core\Utils\DateTime;
+use Espo\Core\Utils\Metadata;
 use Espo\Entities\CurrencyRecordRate;
 use Espo\ORM\EntityManager;
 use Espo\Tools\Currency\Exceptions\NotEnabled;
 use Espo\Tools\Currency\RateEntryProvider;
 use Espo\Tools\Currency\RateService;
 use Espo\Tools\Currency\SyncManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use TypeError;
 
 class RateServiceTest extends TestCase
 {
@@ -61,7 +62,18 @@ class RateServiceTest extends TestCase
         $this->config->method('getCurrencyList')->willReturn(['USD', 'COP']);
         $this->dateTime->method('getToday')->willReturn($this->today);
 
-        $this->sut = new RateService(
+        $this->sut = $this->service(0.0001);
+    }
+
+    /** Construye el servicio con un doble de Metadata cuyo campo Rate tiene el mínimo dado (null = sin definir). */
+    private function service(?float $minRate): RateService
+    {
+        $metadata = $this->createMock(Metadata::class);
+        $metadata->method('get')
+            ->with(['entityDefs', 'CurrencyRecordRate', 'fields', 'rate', 'min'])
+            ->willReturn($minRate);
+
+        return new RateService(
             $this->acl,
             $this->populator,
             $this->config,
@@ -69,6 +81,7 @@ class RateServiceTest extends TestCase
             $this->entryProvider,
             $this->dateTime,
             $this->entityManager,
+            $metadata,
         );
     }
 
@@ -222,31 +235,123 @@ class RateServiceTest extends TestCase
         $this->sut->set($this->body(['COP' => 0.0003]));
     }
 
-    /**
-     * Documenta DEF-CUR-04 (CN-CUR-F4-07): la tasa 0 pasa el nodo 5 y se guarda, aunque la pantalla exige 0.0001.
-     * Cuando se corrija el defecto (ciclo TDD), esta prueba debe cambiar a esperar BadRequest.
-     */
-    public function testDefCur04LaTasaCeroSeGuarda(): void
+    /** @return array<string, array{float|int}> */
+    public static function tasasPorDebajoDelMinimo(): array
     {
+        return [
+            'cero (CN-CUR-F4-07)' => [0],
+            'justo debajo del mínimo' => [0.00009],
+            'muy pequeña' => [0.000001],
+        ];
+    }
+
+    /**
+     * TDD ciclo 1 — DEF-CUR-04: la API debe rechazar, igual que el formulario, las tasas menores que el
+     * mínimo del campo Rate (0.0001), y no guardar nada.
+     */
+    #[DataProvider('tasasPorDebajoDelMinimo')]
+    public function testTasaPorDebajoDelMinimoEsBadRequest(float|int $value): void
+    {
+        // Arrange
+        $this->asAdmin();
+        $this->entityManager->expects($this->never())->method('saveEntity');
+        $this->syncManager->expects($this->never())->method('refreshCache');
+
+        // Assert (esperado)
+        $this->expectException(BadRequest::class);
+
+        // Act
+        $this->sut->set($this->body(['COP' => $value]));
+    }
+
+    /** TDD ciclo 1 — valor límite: la tasa igual al mínimo (0.0001) sí se guarda (CN-CUR-F5-11 por la pantalla). */
+    public function testTasaIgualAlMinimoSeGuarda(): void
+    {
+        // Arrange
         $this->asAdmin();
 
         $entry = $this->createMock(CurrencyRecordRate::class);
-        $entry->expects($this->once())->method('setRate')->with('0');
+        $entry->expects($this->once())->method('setRate')->with('0.0001');
 
         $this->entryProvider->method('getRateEntryOnDate')->willReturn($entry);
-        $this->entityManager->expects($this->once())->method('saveEntity');
+        $this->entityManager->expects($this->once())->method('saveEntity')->with($entry);
 
-        $this->sut->set($this->body(['COP' => 0]));
+        // Act
+        $this->sut->set($this->body(['COP' => 0.0001]));
     }
 
-    /** Documenta DEF-CUR-03 (CN-CUR-F4-08): 'abc' pasa el nodo 5 y falla al llamar writeOne(string, float). */
-    public function testDefCur03TextoProvocaTypeError(): void
+    /** Refactor — el mínimo se lee de la definición del campo Rate: si cambia allí, la API lo respeta. */
+    public function testElMinimoSaleDeLaDefinicionDelCampo(): void
     {
+        // Arrange
+        $this->asAdmin();
+        $sut = $this->service(0.001);
+        $this->entityManager->expects($this->never())->method('saveEntity');
+
+        // Assert (esperado)
+        $this->expectException(BadRequest::class);
+        $this->expectExceptionMessage("Bad value for 'COP': the rate must not be less than 0.001.");
+
+        // Act
+        $sut->set($this->body(['COP' => 0.0005]));
+    }
+
+    /** Refactor — sin mínimo en la definición del campo se usa 0.0001. */
+    public function testSinMinimoDefinidoSeUsaElValorPorDefecto(): void
+    {
+        // Arrange
+        $this->asAdmin();
+        $sut = $this->service(null);
+
+        // Assert (esperado)
+        $this->expectException(BadRequest::class);
+        $this->expectExceptionMessage('the rate must not be less than 0.0001');
+
+        // Act
+        $sut->set($this->body(['COP' => 0.00009]));
+    }
+
+    /** @return array<string, array{mixed}> */
+    public static function tasasNoNumericas(): array
+    {
+        return [
+            "texto 'abc' (CN-CUR-F4-08)" => ['abc'],
+            'booleano true' => [true],
+            'arreglo' => [[1]],
+            'objeto JSON' => [(object) ['a' => 1]],
+        ];
+    }
+
+    /**
+     * TDD ciclo 2 — DEF-CUR-03: un valor que no es numérico debe responder 400 (BadRequest),
+     * no 500 (TypeError) ni guardarse convertido.
+     */
+    #[DataProvider('tasasNoNumericas')]
+    public function testTasaNoNumericaEsBadRequest(mixed $value): void
+    {
+        // Arrange
         $this->asAdmin();
         $this->entityManager->expects($this->never())->method('saveEntity');
 
-        $this->expectException(TypeError::class);
+        // Assert (esperado)
+        $this->expectException(BadRequest::class);
 
-        $this->sut->set($this->body(['COP' => 'abc']));
+        // Act
+        $this->sut->set($this->body(['COP' => $value]));
+    }
+
+    /** TDD ciclo 2 — se sigue aceptando un texto numérico, como lo envía un cliente JSON con comillas. */
+    public function testTasaEnTextoNumericoSeGuarda(): void
+    {
+        // Arrange
+        $this->asAdmin();
+
+        $entry = $this->createMock(CurrencyRecordRate::class);
+        $entry->expects($this->once())->method('setRate')->with('0.0003');
+
+        $this->entryProvider->method('getRateEntryOnDate')->willReturn($entry);
+
+        // Act
+        $this->sut->set($this->body(['COP' => '0.0003']));
     }
 }

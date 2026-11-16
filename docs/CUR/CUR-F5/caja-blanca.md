@@ -547,6 +547,8 @@ docker exec espocrm sh -c "cd /var/www/html && php -n /usr/local/bin/phpunit tes
 | `AfterSave` / `AfterDelete` | 2/2 cada uno | 7/7 cada uno (100 %) |
 | `CalculatorUtil` | — | 18/28 (64 %) con bcmath. Nueve de las diez líneas restantes son las ramas sin bcmath, que se ejecutan con `php -n` (sin Xdebug, así que no se miden). La décima es la línea 98, código muerto |
 
+Estos números son del 15-nov-2026, antes del [ciclo TDD sobre `RateService`](../tdd/README.md). Después del TDD la suite del módulo tiene 66 pruebas y 199 aserciones, todas pasan (7 omitidas), y `RateService` sigue al 100 % (38/38 líneas). Desde entonces se ejecuta con `phpunit -c tests/unit/Espo/VyV/Currency/phpunit-cur.xml`.
+
 | Prueba | Pruebas | Caminos que recorre |
 | :--- | :--- | :--- |
 | `RateSyncTest` | 10 | Hooks AfterSave y AfterDelete C1 y C2; updateCode C1 y C2; clearCache con y sin caché; syncCode C1 y C2 dentro de `sync()`; refreshCache |
