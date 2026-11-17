@@ -23,8 +23,6 @@ pipeline {
                     docker cp application/Espo/Tools/Currency espocrm:/var/www/html/application/Espo/Tools/ || true
                     docker cp application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup espocrm:/var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/ || true
                     docker cp application/Espo/VyV espocrm:/var/www/html/application/Espo/ || true
-                    docker cp tests espocrm:/var/www/html/ || true
-                    docker cp phpunit.xml espocrm:/var/www/html/phpunit.xml || true
                 '''
                 echo 'Esperando que los contenedores estén listos...'
                 sh 'sleep 5'
