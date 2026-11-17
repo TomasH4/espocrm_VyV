@@ -3,8 +3,9 @@
 """
 generate_test_plan_docx.py
 Genera el Technical Blueprint de Verificación y Pruebas para EspoCRM Enterprise Core.
-Cumple estrictamente con la guía de estilo institucional, paleta de colores EspoCRM,
-tono técnico de arquitectura y las 20 secciones del formato oficial.
+Consolida la participación integral del equipo de ingeniería (Andrés Bedoya, Tomás Henao,
+Alejandro Bustamante, Dubin Soto), cubriendo todos los módulos, suites automatizadas,
+métricas de Quality Gates y las 20 secciones del formato oficial.
 """
 
 import os
@@ -29,24 +30,22 @@ HEX_BG_LIGHT = "F4F6F9"                     # Fondo bloques código / métricas
 HEX_BORDER = "E5E7EB"                       # Borde sutil gris claro
 
 # Colores Semánticos EspoCRM UI
-COLOR_SUCCESS = RGBColor(40, 167, 69)       # #28A745 Verde
+COLOR_SUCCESS = RGBColor(40, 167, 69)       # #28A745 Verde Éxito
 HEX_SUCCESS = "28A745"
-COLOR_INFO = RGBColor(139, 92, 246)         # #8B5CF6 Violeta
+COLOR_INFO = RGBColor(139, 92, 246)         # #8B5CF6 Violeta Info
 HEX_INFO = "8B5CF6"
-COLOR_DANGER = RGBColor(220, 53, 69)        # #DC3545 Rojo
+COLOR_DANGER = RGBColor(220, 53, 69)        # #DC3545 Rojo Alerta
 HEX_DANGER = "DC3545"
 
 FONT_MAIN = "Segoe UI"
 FONT_CODE = "Consolas"
 
 def set_cell_shading(cell, color_hex):
-    """Aplica color de fondo hexadecimal a una celda."""
     tcPr = cell._tc.get_or_add_tcPr()
     shd = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{color_hex}"/>')
     tcPr.append(shd)
 
-def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
-    """Aplica padding en dxa a una celda."""
+def set_cell_margins(cell, top=100, bottom=100, left=140, right=140):
     tcPr = cell._tc.get_or_add_tcPr()
     tcMar = parse_xml(
         f'<w:tcMar {nsdecls("w")}>'
@@ -59,7 +58,6 @@ def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
     tcPr.append(tcMar)
 
 def set_table_borders(table, color_hex=HEX_BORDER, sz="4", val="single"):
-    """Aplica bordes horizontales sutiles a la tabla."""
     tblPr = table._tbl.tblPr
     borders = parse_xml(
         f'<w:tblBorders {nsdecls("w")}>'
@@ -74,7 +72,6 @@ def set_table_borders(table, color_hex=HEX_BORDER, sz="4", val="single"):
     tblPr.append(borders)
 
 def add_callout(doc, title, paragraphs_content, border_hex=HEX_PRIMARY, bg_hex=HEX_BG_LIGHT):
-    """Crea una tarjeta de énfasis técnico con borde izquierdo acentuado."""
     tbl = doc.add_table(rows=1, cols=1)
     tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl.autofit = False
@@ -82,7 +79,7 @@ def add_callout(doc, title, paragraphs_content, border_hex=HEX_PRIMARY, bg_hex=H
     
     cell = tbl.cell(0, 0)
     set_cell_shading(cell, bg_hex)
-    set_cell_margins(cell, top=140, bottom=140, left=200, right=180)
+    set_cell_margins(cell, top=130, bottom=130, left=180, right=160)
     
     tcPr = cell._tc.get_or_add_tcPr()
     borders = parse_xml(
@@ -95,7 +92,6 @@ def add_callout(doc, title, paragraphs_content, border_hex=HEX_PRIMARY, bg_hex=H
     )
     tcPr.append(borders)
     
-    # Párrafo del título
     p_title = cell.paragraphs[0]
     p_title.paragraph_format.space_before = Pt(0)
     p_title.paragraph_format.space_after = Pt(4)
@@ -118,7 +114,6 @@ def add_callout(doc, title, paragraphs_content, border_hex=HEX_PRIMARY, bg_hex=H
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
 def add_code_block(doc, code_lines):
-    """Crea un bloque de especificación o código estilizado."""
     tbl = doc.add_table(rows=1, cols=1)
     tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl.autofit = False
@@ -145,16 +140,15 @@ def add_code_block(doc, code_lines):
         p.paragraph_format.space_after = Pt(1)
         p.paragraph_format.line_spacing = 1.05
         
-        # Colorizado sutil de palabras clave BDD
         tokens = line.split(" ")
         for token in tokens:
             run = p.add_run(token + " ")
             run.font.name = FONT_CODE
             run.font.size = Pt(8.5)
-            if token in ["Feature:", "Scenario:", "Given", "When", "Then", "And", "SELECT", "FROM", "WHERE"]:
+            if token in ["Feature:", "Scenario:", "Given", "When", "Then", "And", "SELECT", "FROM", "WHERE", "PUT", "POST"]:
                 run.font.bold = True
                 run.font.color.rgb = COLOR_PRIMARY
-            elif token.startswith("@") or token.startswith("http"):
+            elif token.startswith("@") or token.startswith("http") or token.startswith("/api"):
                 run.font.color.rgb = COLOR_INFO
             elif token.isdigit() or token.endswith("ms") or token.endswith("%"):
                 run.font.color.rgb = COLOR_SUCCESS
@@ -229,7 +223,6 @@ def add_bullet(doc, bold_prefix, text):
     return p
 
 def add_c_d_i(doc, context, decision, impact):
-    """Enfoque Contexto -> Decisión -> Impacto."""
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(2)
     p.paragraph_format.space_after = Pt(3)
@@ -268,20 +261,20 @@ def build_test_plan_document():
         section.header_distance = Inches(0.4)
         section.footer_distance = Inches(0.4)
         
-        # Header
+        # Header institucional
         header = section.header
         hp = header.paragraphs[0]
         hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        hrun = hp.add_run("EspoCRM Enterprise Core | Technical Blueprint de Verificación y Pruebas")
+        hrun = hp.add_run("EspoCRM Enterprise Core | Technical Blueprint de Verificación y Validación")
         hrun.font.name = FONT_MAIN
         hrun.font.size = Pt(8.5)
         hrun.font.color.rgb = COLOR_MUTED
         
-        # Footer
+        # Footer con identificación de equipo y paginado
         footer = section.footer
         fp = footer.paragraphs[0]
         fp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        frun = fp.add_run("Ingeniería de Software (VyV 2026-2) — Andrés Bedoya Cano — Página ")
+        frun = fp.add_run("VyV 2026-2 — Equipo de Calidad: Andrés Bedoya, Tomás Henao, Alejandro Bustamante, Dubin Soto — Página ")
         frun.font.name = FONT_MAIN
         frun.font.size = Pt(8.5)
         frun.font.color.rgb = COLOR_MUTED
@@ -313,7 +306,7 @@ def build_test_plan_document():
     r_sub.font.bold = True
     r_sub.font.color.rgb = COLOR_SLATE
 
-    # Tabla de Metadatos
+    # Tabla de Metadatos con fecha modificada por el usuario y equipo completo
     tbl_meta = doc.add_table(rows=4, cols=2)
     tbl_meta.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl_meta.autofit = False
@@ -324,8 +317,8 @@ def build_test_plan_document():
     meta_rows = [
         ("Proyecto:", "EspoCRM Enterprise Core (VyV 2026-2)"),
         ("Versión de Release:", "10.1.0-rc2 (Backend PHP 8.4 / Marionette.js / MySQL 8.0)"),
-        ("Fecha de Publicación:", "17 de Noviembre de 2026"),
-        ("Equipo de Ingeniería:", "Andrés Bedoya Cano — QA Automation Lead & Software Architect")
+        ("Fecha de Entrega:", "17 de Noviembre de 2026"),
+        ("Equipo de Ingeniería:", "Andrés Bedoya Cano (QA Lead & Architect)\nTomás Henao Metaute (QA Automation & DevOps Lead)\nAlejandro Bustamante (QA Automation & Currency Lead)\nDubin Soto (QA Security & Governance Lead)")
     ]
     for idx, (label, val) in enumerate(meta_rows):
         c0, c1 = tbl_meta.cell(idx, 0), tbl_meta.cell(idx, 1)
@@ -347,18 +340,19 @@ def build_test_plan_document():
 
     doc.add_paragraph().paragraph_format.space_after = Pt(8)
 
-    # Metadatos del Blueprint (Requisito 3.1)
+    # Metadatos del Blueprint y Equipo
     add_callout(
         doc,
-        "METADATOS DEL BLUEPRINT & STACK OPERATIVO",
+        "METADATOS DEL BLUEPRINT & DISTRIBUCIÓN HORIZONTAL DEL EQUIPO (25% PESO C/U)",
         [
-            "• Stack Tecnológico: PHPUnit 11.5 (Clover/Xdebug 3.5), Cypress 15.2 (Cucumber BDD Screenplay), Jenkins 2.440+ LTS (Pipeline Dockerizado), SonarQube Community 10.x, Stagehand 4.4, DeepEval 4.3.4, Microsoft Playwright MCP 1.66.",
+            "• Equipo de Ingeniería de Software: Andrés Bedoya Cano (Módulo Casos, SLA, Descuentos, Tareas y Deduplicación), Tomás Henao Metaute (Módulo Leads, Oportunidades, Contactos, Reuniones y Conversiones), Alejandro Bustamante (Módulo Moneda y Tasas de Cambio CUR), Dubin Soto (Módulo Autenticación Centralizada, Roles y Seguridad RBAC).",
+            "• Ecosistema Tecnológico Unificado: PHPUnit 11.5 (Xdebug 3.5), Cypress 15.2 (Cucumber BDD Screenplay), Jenkins 2.440+ LTS en Docker, SonarQube Community 10.x, Stagehand 4.4, DeepEval 4.3.4, Microsoft Playwright MCP 1.66 y MySQL 8.0.",
             "• Foco Arquitectónico: Shift-Left Continuous Testing, GitOps declarativo, ejecución desatendida en contenedores Docker y evaluación matemática determinista mediante Quality Gates algorítmicos."
         ],
         border_hex=HEX_PRIMARY
     )
 
-    # Fundamento Empírico (Requisito 3.2)
+    # Fundamento Empírico
     add_callout(
         doc,
         "DECLARACIÓN DE FUNDAMENTO EMPÍRICO (ZERO-MANUAL TOLERANCE)",
@@ -373,10 +367,10 @@ def build_test_plan_document():
     # ==========================================
     add_heading_1(doc, "1. INTRODUCCIÓN")
     add_heading_2(doc, "1.1 Propósito del documento")
-    add_body(doc, "Definir formalmente la topología, los umbrales algorítmicos y las estrategias de verificación automatizada aplicadas sobre la plataforma EspoCRM versión 10.1.0, estableciendo criterios matemáticos de aceptación para el módulo crítico de soporte y cálculo de SLA (Service Level Agreement).")
+    add_body(doc, "Definir formalmente la topología, los umbrales algorítmicos y las estrategias de verificación automatizada aplicadas sobre la plataforma EspoCRM versión 10.1.0, estableciendo criterios matemáticos de aceptación para los cuatro módulos desacoplados de negocio desarrollados por el equipo: Gestión de Soporte y SLA (Andrés Bedoya), Gestión Comercial y Pipeline (Tomás Henao), Aritmética y Tasas Multimoneda (Alejandro Bustamante) y Seguridad y Control de Acceso (Dubin Soto).")
 
     add_heading_2(doc, "1.2 Alcance del documento")
-    add_body(doc, "Cubre la totalidad del ciclo de vida de aseguramiento de calidad: análisis estático de código fuente (SAST), pruebas de caja blanca unitarias y de mutación, pruebas funcionales de caja negra End-to-End bajo el patrón Screenplay, auditorías no funcionales especializadas (Accesibilidad WCAG 2.1 AA, Ciberseguridad OWASP Top 10, Usabilidad Heurística GRIHO) y la Tríada de Inteligencia Artificial (Stagehand, DeepEval y Playwright MCP).")
+    add_body(doc, "Cubre la totalidad del ciclo de vida de aseguramiento de calidad: análisis estático de código fuente (SAST), pruebas de caja blanca unitarias y de mutación, pruebas funcionales de caja negra End-to-End bajo el patrón Screenplay, auditorías no funcionales especializadas (Accesibilidad WCAG 2.1 AA, Ciberseguridad OWASP Top 10, Usabilidad Heurística GRIHO) y la Tríada de Inteligencia Artificial (Stagehand, DeepEval y Playwright MCP) implementada en cada uno de los sub-sistemas del CRM.")
 
     add_heading_2(doc, "1.3 Referencias")
     add_bullet(doc, "ISO/IEC/IEEE 29119-3: ", "Software and Systems Engineering — Software Testing — Test Documentation.")
@@ -389,59 +383,65 @@ def build_test_plan_document():
     # ==========================================
     add_heading_1(doc, "2. DESCRIPCIÓN DEL PRODUCTO")
     add_heading_2(doc, "2.1 Descripción general del software")
-    add_body(doc, "EspoCRM es una plataforma empresarial orientada a la gestión de relaciones con clientes, administración de procesos de negocio (BPM), seguimiento de cotizaciones y soporte técnico mediante gestión transaccional de casos e incidentes.")
+    add_body(doc, "EspoCRM es una plataforma empresarial orientada a la gestión de relaciones con clientes, administración de procesos de negocio (BPM), seguimiento de cotizaciones multimoneda, conversión transaccional de leads y soporte técnico mediante gestión de incidentes con acuerdos de nivel de servicio.")
 
     add_heading_2(doc, "2.2 Contexto organizacional")
-    add_body(doc, "Implementación en infraestructura de alta disponibilidad donde los tiempos de respuesta y atención a clientes corporativos están regidos por contratos de SLA vinculantes. Fallos en el cómputo de tiempos o desbordamiento de colas de atención conllevan penalizaciones financieras severas.")
+    add_body(doc, "Implementación en infraestructura de alta disponibilidad donde los tiempos de respuesta y atención a clientes corporativos están regidos por contratos de SLA vinculantes, la conversión de tasas financieras exige precisión decimal exacta (14 decimales) y el control de accesos RBAC previene fugas de datos comerciales confidenciales.")
 
     add_heading_2(doc, "2.3 Arquitectura general")
     add_c_d_i(
         doc,
-        "Separación estricta entre capa transaccional y capa de presentación asíncrona.",
-        "Arquitectura cliente-servidor desacoplada. Backend PHP 8.4 con contenedor de inyección de dependencias (DI), ORM relacional y API RESTful autenticada mediante tokens Bearer JWT. Frontend Single Page Application (SPA) modular estructurado sobre Backbone.js y Marionette.js.",
+        "Separación estricta entre capas transaccionales, lógica financiera y presentación asíncrona.",
+        "Arquitectura cliente-servidor desacoplada. Backend PHP 8.4 con inyección de dependencias (DI), ORM relacional y API RESTful autenticada mediante tokens Bearer JWT. Frontend Single Page Application (SPA) modular estructurado sobre Backbone.js y Marionette.js.",
         "Aislamiento total de lógica de negocio en servicios PHP y consumo declarativo mediante endpoints REST."
     )
 
-    add_heading_2(doc, "2.4 Procesos, módulos y funcionalidades")
-    add_bullet(doc, "Módulo de Casos (Case): ", "Ciclo de vida de incidentes, clasificación por severidad (Urgent, High, Normal, Low) y asignación jerárquica a ingenieros de soporte.")
-    add_bullet(doc, "Motor de SLA (CaseSlaCalculator): ", "Cálculo en tiempo real de fechas límite en horario comercial hábil (08:00 - 18:00 UTC-5), exclusión de fines de semana y escalado automático a nivel L3.")
-    add_bullet(doc, "Motor Comercial y Cotizaciones: ", "Validación de tramos de descuento volumétrico y aprobación de márgenes de rentabilidad.")
+    add_heading_2(doc, "2.4 Procesos, módulos y funcionalidades del equipo")
+    add_body(doc, "El alcance funcional del sistema se divide equitativamente entre los cuatro ingenieros (25% peso cada uno):")
+    add_bullet(doc, "Módulo 1 — Soporte, SLA y Deduplicación (Andrés Bedoya Cano): ", "Validación de transiciones de estado de casos (F1), motor algorítmico de SLA horario hábil 08:00-18:00 UTC-5 (F2: CaseSlaCalculator), descuentos comerciales escalonados (F3: QuoteDiscountCalculator), escalado de tareas vencidas (F4: TaskOverdueEvaluator) y deduplicación fonética/Levenshtein de empresas homónimas (F5: AccountDuplicateDetector).")
+    add_bullet(doc, "Módulo 2 — Comercial, Pipeline y Reuniones (Tomás Henao Metaute): ", "Creación y persistencia de Clientes Potenciales (F1: Leads), inferencia de probabilidad en Oportunidades según etapa de pipeline (F2: Opportunity Probability), búsqueda y filtrado de Contactos (F3), planificación y consistencia temporal de Reuniones (F4: Meeting Duration) y conversión transaccional de Leads B2B vs B2C (F5: Lead Conversion).")
+    add_bullet(doc, "Módulo 3 — Moneda y Aritmética Financiera CUR (Alejandro Bustamante): ", "Conversión multimoneda (CUR-F1: Converter / formulaSandbox), aritmética decimal exacta de 14 decimales sin errores de redondeo (CUR-F2: CalculatorUtil), validación de campos de moneda (CUR-F3: CurrencyType en Campaign.budget), consulta y actualización de tasas vía API REST con control de permisos (CUR-F4: RateService) y sincronización automática de tasas vigentes hacia configuración (CUR-F5: SyncManager).")
+    add_bullet(doc, "Módulo 4 — Seguridad y Control de Acceso RBAC (Dubin Soto): ", "Autenticación centralizada y ciclo de vida de sesiones de usuario (SEC-F1), matriz de permisos y control de acceso basado en roles (SEC-F2: RBAC), auditoría y restricción de endpoints administrativos (SEC-F3), trazabilidad de accesos no autorizados (SEC-F4) y políticas de expiración y complejidad de credenciales (SEC-F5).")
 
     # ==========================================
     # SECCIÓN 3: BASE DE PRUEBAS (TEST BASIS)
     # ==========================================
     add_heading_1(doc, "3. BASE DE PRUEBAS (TEST BASIS)")
     add_body(doc, "La formulación de escenarios y aserciones se deriva directamente de las siguientes fuentes formales:")
-    add_bullet(doc, "Especificación de Reglas de Negocio de SLA: ", "Contrato algorítmico del servicio CaseSlaCalculator (Prioridad Urgent: 4 horas hábiles; High: 8 horas hábiles; Normal: 24 horas hábiles; Low: 72 horas hábiles).")
-    add_bullet(doc, "Contratos de API REST v1: ", "Definición OpenAPI del endpoint POST /api/v1/Case y esquemas de payload JSON.")
+    add_bullet(doc, "Especificación de Reglas de Negocio de SLA y Descuentos: ", "Contrato algorítmico de CaseSlaCalculator (Urgent: 4h; High: 8h; Normal: 24h; Low: 72h) y matriz de bonificaciones de QuoteDiscountCalculator.")
+    add_bullet(doc, "Especificación de Conversión de Monedas y Aritmética CUR: ", "Reglas de conversión cambiaria, precisión a 14 decimales de CalculatorUtil y contratos de endpoints GET/PUT /api/v1/CurrencyRate.")
+    add_bullet(doc, "Especificación de Pipeline Comercial y Calificación de Leads: ", "Reglas de conversión transaccional B2B (Cuenta + Contacto) vs B2C (Contacto) y ponderación probabilística de Oportunidades.")
+    add_bullet(doc, "Contratos de API REST v1 y OpenAPI: ", "Endpoints POST /api/v1/Case, POST /api/v1/Lead, PUT /api/v1/CurrencyRate y middleware de autenticación.")
     add_bullet(doc, "Rúbrica de Verificación y Validación VyV (2026-2): ", "14 criterios cuantitativos que exigen cobertura de código, pirámide de pruebas, CI/CD y evaluación con IA.")
 
     # ==========================================
     # SECCIÓN 4: OBJETIVOS DE LAS PRUEBAS
     # ==========================================
     add_heading_1(doc, "4. OBJETIVOS DE LAS PRUEBAS")
-    add_bullet(doc, "Determinismo Funcional: ", "Garantizar 0% de regresiones en las rutas críticas de cálculo de SLA y creación de casos en el CRM.")
-    add_bullet(doc, "Gobernanza de Calidad Algorítmica: ", "Hacer cumplir el Quality Gate de SonarQube bloqueando cualquier build con vulnerabilidades o cobertura inferior al 80%.")
-    add_bullet(doc, "Resiliencia de Interfaz: ", "Validar que los flujos de usuario operen sin depender de selectores CSS frágiles mediante automatización semántica con Stagehand y Playwright MCP.")
-    add_bullet(doc, "Conformidad No Funcional: ", "Validar cumplimiento estricto de accesibilidad WCAG 2.1 AA (0 violaciones críticas) y ciberseguridad OWASP Top 10 (0 vulnerabilidades explotables).")
+    add_bullet(doc, "Determinismo Funcional Global: ", "Garantizar 0% de regresiones en las rutas críticas de soporte, moneda, leads y seguridad del CRM.")
+    add_bullet(doc, "Gobernanza de Calidad Algorítmica en CI/CD: ", "Hacer cumplir el Quality Gate de SonarQube bloqueando cualquier build en Jenkins con vulnerabilidades o cobertura inferior al 80%.")
+    add_bullet(doc, "Resiliencia de Interfaz con IA: ", "Validar que los flujos de usuario operen sin depender de selectores CSS frágiles mediante automatización semántica con Stagehand y Playwright MCP ejecutada por cada integrante.")
+    add_bullet(doc, "Conformidad No Funcional Estricta: ", "Validar cumplimiento de accesibilidad WCAG 2.1 AA (0 violaciones críticas), ciberseguridad OWASP Top 10 (0 vulnerabilidades explotables) y usabilidad heurística GRIHO (Score >= 80%).")
 
     # ==========================================
     # SECCIÓN 5: ALCANCE
     # ==========================================
     add_heading_1(doc, "5. ALCANCE")
     add_heading_2(doc, "5.1 Funcionalidades incluidas")
-    add_bullet(doc, "Lógica Central de Soporte: ", "application/Espo/VyV/CaseSla/CaseSlaCalculator.php.")
-    add_bullet(doc, "Flujos E2E / BDD: ", "Creación de casos de soporte (F1), asignación y escalado de SLA a L3 (F2), y validación de descuentos escalonados (F3).")
-    add_bullet(doc, "Auditorías Especializadas: ", "Accesibilidad (cypress-axe), DAST OWASP Top 10 (cypress/e2e/andres/security/), Usabilidad GRIHO (5 evaluadores) y Tríada de IA.")
+    add_bullet(doc, "Módulo Andrés Bedoya: ", "application/Espo/VyV/CaseSla/CaseSlaCalculator.php, CaseStatusTransitionValidator, QuoteDiscountCalculator, TaskOverdueEvaluator, AccountDuplicateDetector.")
+    add_bullet(doc, "Módulo Tomás Henao: ", "application/Espo/VyV/Tomas/, LeadCreation, OpportunityProbability, ContactSearch, MeetingScheduling, LeadConversion.")
+    add_bullet(doc, "Módulo Alejandro Bustamante: ", "Espo/Core/Currency (Converter, CalculatorUtil), Espo/Tools/Currency (RateService, SyncManager), Espo/Classes/FieldValidators/CurrencyType.")
+    add_bullet(doc, "Módulo Dubin Soto: ", "Autenticación centralizada, control de acceso basado en roles (RBAC), auditoría de sesiones y permisos de entidades.")
+    add_bullet(doc, "Auditorías Especializadas: ", "Accesibilidad (cypress-axe), DAST OWASP Top 10 (cypress/e2e/), Usabilidad Heurística GRIHO (5 evaluadores independientes) y Tríada de IA (Stagehand, DeepEval 4.3.4, Playwright MCP).")
 
     add_heading_2(doc, "5.2 Funcionalidades excluidas")
-    add_body(doc, "Módulos heredados desvinculados de las reglas de soporte: integración con telefonía VoIP Asterisk legacy, sincronización de correo vía IMAP no transaccional y portal de autoservicio B2B externo.")
+    add_body(doc, "Módulos heredados desvinculados de las 20 funcionalidades del equipo: integración con telefonía VoIP Asterisk legacy, sincronización de correo vía IMAP no transaccional y portal de autoservicio B2B externo.")
 
     add_heading_2(doc, "5.3 Supuestos")
     add_body(doc, "Infraestructura orquestada mediante Docker Compose con contenedores espocrm (8080), espocrm-mysql (3306), jenkins (8085) y sonarqube (9000) operativos en red bridge local.")
 
     add_heading_2(doc, "5.4 Restricciones")
-    add_body(doc, "Ejecución obligatoria bajo PHP 8.4+ y MySQL 8.0 con aislamiento transaccional InnoDB para prevenir condiciones de carrera durante pruebas concurrentes.")
+    add_body(doc, "Ejecución obligatoria bajo PHP 8.4+ y MySQL 8.0 con aislamiento transaccional InnoDB para prevenir condiciones de carrera durante pruebas concurrentes de los 4 integrantes.")
 
     # ==========================================
     # SECCIÓN 6: ENFOQUE Y ESTRATEGIA DE PRUEBAS
@@ -449,23 +449,23 @@ def build_test_plan_document():
     add_heading_1(doc, "6. ENFOQUE Y ESTRATEGIA DE PRUEBAS")
     add_c_d_i(
         doc,
-        "Validaciones manuales lentas y propensas a errores humanos en ciclos de release continuos.",
-        "Implementar Shift-Left Continuous Testing soportado en la Pirámide de Automatización de Cohn.",
+        "Validaciones manuales lentas, propensas a errores y desalineadas en equipos concurrentes.",
+        "Implementar Shift-Left Continuous Testing soportado en la Pirámide de Automatización de Cohn con Quality Gates algorítmicos compartidos.",
         "Detección de defectos en fase de codificación (unit testing < 100ms), validación de contratos en capa intermedia y verificación de integración en CI/CD antes de cualquier despliegue."
     )
 
-    # Umbrales Inflexibles de Calidad (Requisito 3.3)
+    # Umbrales Inflexibles de Calidad
     add_callout(
         doc,
-        "CALIDAD INFLEXIBLE: QUALITY GATES MATEMÁTICOS",
+        "CALIDAD INFLEXIBLE: QUALITY GATES MATEMÁTICOS DEL EQUIPO",
         [
-            "• Cobertura de Código (Line/Branch Coverage): >= 80.0% certificado en PHPUnit Clover y Cypress.",
-            "• Technical Debt Ratio: < 5.0% (Maintainability Rating A en SonarQube).",
-            "• Severidad de Vulnerabilidades: 0 Blocker, 0 Critical, 0 Major abiertas.",
+            "• Cobertura de Código Global (Line/Branch Coverage): >= 80.0% certificado en PHPUnit Clover y Cypress para todos los módulos.",
+            "• Technical Debt Ratio: < 5.0% (Maintainability Rating A en SonarQube para todo el código nuevo).",
+            "• Severidad de Vulnerabilidades: 0 Blocker, 0 Critical, 0 Major abiertas en el escaneo SAST y DAST.",
             "• Security Hotspots: 100% auditados y con resolución formal aplicada.",
-            "• Complejidad Cognitiva: < 15 por método (Promedio arquitectónico obtenido < 5 en CaseSlaCalculator).",
+            "• Complejidad Cognitiva: < 15 por método (Promedio arquitectónico obtenido < 5 en CaseSlaCalculator y CalculatorUtil).",
             "• Accesibilidad Digital: 0 violaciones Críticas o Serias bajo estándar WCAG 2.1 AA (axe-core).",
-            "• Evaluación Cuantitativa de IA: G-Eval >= 0.85, Faithfulness >= 0.85, Answer Relevancy >= 0.80."
+            "• Evaluación Cuantitativa de IA: G-Eval >= 0.85, Faithfulness >= 0.85, Answer Relevancy >= 0.80 en DeepEval."
         ],
         border_hex=HEX_PRIMARY
     )
@@ -474,21 +474,21 @@ def build_test_plan_document():
     # SECCIÓN 7: NIVELES DE PRUEBA
     # ==========================================
     add_heading_1(doc, "7. NIVELES DE PRUEBA")
-    add_bullet(doc, "Nivel Unitario (L1): ", "Aislamiento estricto de componentes lógicos sin dependencias de base de datos ni red. Framework: PHPUnit 11.5.")
-    add_bullet(doc, "Nivel de Integración (L2): ", "Interacción entre servicios del núcleo EspoCRM, middleware de autenticación y transacciones ORM en base de datos MySQL.")
-    add_bullet(doc, "Nivel de Sistema / E2E (L3): ", "Validación de flujos de usuario completos sobre la interfaz SPA Marionette.js en navegadores headless. Framework: Cypress 15.2.")
-    add_bullet(doc, "Nivel de Aceptación (L4): ", "Verificación declarativa de especificaciones Gherkin vinculadas a requerimientos de negocio.")
+    add_bullet(doc, "Nivel Unitario (L1): ", "Aislamiento estricto de componentes lógicos sin dependencias de base de datos ni red. Framework: PHPUnit 11.5 (tests/unit/Espo/VyV/Andres/, Tomas/, Currency/).")
+    add_bullet(doc, "Nivel de Integración (L2): ", "Interacción entre servicios del núcleo EspoCRM, middleware de autenticación, control de permisos y transacciones ORM en base de datos MySQL.")
+    add_bullet(doc, "Nivel de Sistema / E2E (L3): ", "Validación de flujos de usuario completos sobre la interfaz SPA Marionette.js en navegadores headless. Framework: Cypress 15.2 (cypress/e2e/andres/, tomas/, cur/).")
+    add_bullet(doc, "Nivel de Aceptación (L4): ", "Verificación declarativa de especificaciones Gherkin vinculadas a requerimientos de negocio (tests_bdd_screenplay/features/).")
 
     # ==========================================
     # SECCIÓN 8: TIPOS DE PRUEBA
     # ==========================================
     add_heading_1(doc, "8. TIPOS DE PRUEBA")
-    add_heading_2(doc, "8.1 Pruebas funcionales (Design of BDD Scenarios)")
+    add_heading_2(doc, "8.1 Pruebas funcionales (Design of BDD Scenarios del Equipo)")
     add_body(doc, "Sustitución de tablas manuales por especificaciones ejecutables BDD con intercepciones de red JWT, validación de estado en base de datos relacional y rendering de componentes DOM en tiempos específicos.")
 
-    # Bloque BDD de Diseño Declarativo (Requisito 3.4)
+    # Escenario BDD 1: Soporte y SLA (Andrés Bedoya)
     add_code_block(doc, [
-        "@regression @critical @sla_validation",
+        "@andres @regression @critical @sla_validation",
         "Feature: Determinación Algorítmica de SLA y Asignación de Casos Críticos",
         "",
         "  Scenario: Creación de Incidente Crítico con Intercepción JWT y Validación en Base de Datos",
@@ -503,31 +503,58 @@ def build_test_plan_document():
         "    And el motor CaseSlaCalculator proyecta fecha límite de resolución en exactamente 4 horas hábiles"
     ])
 
-    add_heading_2(doc, "8.2 Pruebas no funcionales")
-    add_bullet(doc, "Accesibilidad WCAG 2.1 AA: ", "Auditoría DOM con axe-core sobre 6 vistas operativas. Contraste cromático >= 4.5:1, etiquetas ARIA y navegación por teclado.")
-    add_bullet(doc, "Ciberseguridad OWASP Top 10: ", "Pruebas DAST sobre 9 vectores: inyecciones SQL boolean-based y time-based, cross-site scripting (XSS reflejado y persistente), Broken Auth y fijación de sesión.")
+    # Escenario BDD 2: Tasas Multimoneda CUR (Alejandro Bustamante)
+    add_code_block(doc, [
+        "@alejandro @currency @cur_f1 @bdd",
+        "Feature: Conversión Multimoneda y Precisión Decimal Exacta en EspoCRM",
+        "",
+        "  Scenario: Conversión de Monto USD a COP vía Formula Sandbox con Validación de Precisión",
+        "    Given la tasa cambiaria configurada de 1 USD = 4000.00000000000000 COP",
+        "    And el usuario autenticado con permisos en 'Administration > Formula Sandbox'",
+        "    When se ejecuta la fórmula 'ext\\currency\\convert(100.50, \"USD\", \"COP\")'",
+        "    Then el motor CalculatorUtil procesa la aritmética decimal exacta sin errores de flotante",
+        "    And la respuesta devuelve exactamente '402000.00000000' en < 100ms",
+        "    And la consulta SQL 'SELECT rate FROM currency_rate WHERE code=\"COP\"' verifica consistencia"
+    ])
+
+    # Escenario BDD 3: Calificación y Conversión de Leads (Tomás Henao)
+    add_code_block(doc, [
+        "@tomas @leads @pipeline @conversion",
+        "Feature: Calificación Automatizada y Conversión Transaccional de Leads",
+        "",
+        "  Scenario: Conversión Exitosa de Lead B2B a Cuenta y Contacto Vinculados",
+        "    Given un Lead existente en estado 'Assigned' con nombre 'Acme Corp Lead'",
+        "    And se intercepta la llamada REST 'POST /api/v1/Lead/action/convert'",
+        "    When el asesor ejecuta la conversión comercial en el navegador",
+        "    Then el CRM genera transaccionalmente una entidad Account y una entidad Contact",
+        "    And la base de datos confirma que el campo 'status' del Lead pasa a 'Converted' en < 300ms"
+    ])
+
+    add_heading_2(doc, "8.2 Pruebas no funcionales del equipo")
+    add_bullet(doc, "Accesibilidad WCAG 2.1 AA (Andrés y Alejandro): ", "Auditoría DOM automatizada con cypress-axe sobre vistas de soporte, campañas, cotizaciones y moneda. Contraste cromático >= 4.5:1, etiquetas ARIA, navegación por teclado completa y 0 violaciones críticas.")
+    add_bullet(doc, "Ciberseguridad OWASP Top 10 (Andrés, Alejandro, Dubin): ", "Pruebas DAST sobre 9 vectores: inyecciones SQL boolean-based y time-based, cross-site scripting (XSS reflejado y persistente), Broken Auth, fijación de sesión y control de permisos en endpoints REST.")
     add_bullet(doc, "Usabilidad Heurística GRIHO: ", "Evaluación empírica estructurada sobre 17 dimensiones con 5 evaluadores independientes. Score global alcanzado: 83.32% (Excelente / Nivel Verde) correlacionado con SUS 82.5.")
-    add_bullet(doc, "Latencia y Rendimiento: ", "Tiempos de respuesta de endpoints de SLA <= 200ms y renderizado completo del SPA Marionette <= 1500ms.")
+    add_bullet(doc, "Tríada de Inteligencia Artificial (Andrés, Tomás, Alejandro): ", "Automatización resiliente con Stagehand (manipulación y extracción Zod), evaluación cuantitativa con DeepEval 4.3.4 (G-Eval 100%, Relevancy 90%, Faithfulness 100%) e inspección declarativa con Microsoft Playwright MCP.")
 
     add_heading_2(doc, "8.3 Pruebas estáticas")
-    add_body(doc, "Inspección continua de código fuente mediante SonarQube Scanner. Control de estándares PSR-12, detección temprana de antipatrones arquitectónicos y eliminación de deuda técnica.")
+    add_body(doc, "Inspección continua de código fuente mediante SonarQube Scanner. Control de estándares PSR-12, detección temprana de antipatrones arquitectónicos y eliminación de deuda técnica en los módulos de todos los integrantes.")
 
     add_heading_2(doc, "8.4 Pruebas de regresión")
-    add_body(doc, "Suite automatizada de regresión (cypress/e2e/andres/regression/regression_andres.cy.js) incorporada al pipeline de Jenkins para certificar integridad ante refactorizaciones.")
+    add_body(doc, "Suites automatizadas de regresión (cypress/e2e/andres/regression/, cypress/e2e/cur/regresion/, cypress/e2e/tomas/) incorporadas al pipeline de Jenkins para certificar integridad ante refactorizaciones.")
 
     # ==========================================
     # SECCIÓN 9: TÉCNICAS DE DISEÑO DE PRUEBAS
     # ==========================================
     add_heading_1(doc, "9. TÉCNICAS DE DISEÑO DE PRUEBAS")
-    add_bullet(doc, "Partición de Equivalencia (EP): ", "Segmentación de prioridades de incidentes en clases válidas (Urgent, High, Normal, Low) y clases inválidas (Null, Empty, Cadena aleatoria).")
-    add_bullet(doc, "Análisis de Valores Límite (BVA): ", "Validación en fronteras de horario hábil comercial: 07:59 (inactiva), 08:00 (inicio de jornada), 17:59 (último minuto hábil), 18:00 (cierre).")
-    add_bullet(doc, "Cobertura de Condiciones Múltiples (MC/DC): ", "Verificación de cada condición booleana en bifurcaciones de CaseSlaCalculator para garantizar que cada rama afecta el resultado independientemente.")
+    add_bullet(doc, "Partición de Equivalencia (EP): ", "Segmentación de prioridades de incidentes (Urgent, High, Normal, Low), rangos de montos de cotización, tramos de presupuesto de campañas y estados de leads en clases válidas e inválidas.")
+    add_bullet(doc, "Análisis de Valores Límite (BVA): ", "Validación en fronteras de horario hábil comercial (07:59, 08:00, 17:59, 18:00), límites de descuento (0%, 5%, 10%, 15%, tope 35%) y precisión de 14 decimales en CalculatorUtil.")
+    add_bullet(doc, "Cobertura de Condiciones Múltiples (MC/DC): ", "Verificación de cada condición booleana en bifurcaciones de CaseSlaCalculator, RateService y FieldValidators para asegurar cobertura completa de ramas.")
 
     # ==========================================
     # SECCIÓN 10: ENTORNO DE PRUEBAS
     # ==========================================
     add_heading_1(doc, "10. ENTORNO DE PRUEBAS")
-    add_body(doc, "Topología de infraestructura completamente contenerizada mediante Docker:")
+    add_body(doc, "Topología de infraestructura completamente contenerizada mediante Docker compartida por todo el equipo:")
     
     tbl_env = doc.add_table(rows=5, cols=4)
     tbl_env.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -573,8 +600,8 @@ def build_test_plan_document():
     add_heading_1(doc, "11. DATOS DE PRUEBA")
     add_c_d_i(
         doc,
-        "Colisiones de datos y efectos secundarios de ejecuciones concurrentes en bases de datos compartidas.",
-        "Generación determinista de fixtures mediante identificadores dinámicos con timestamps (e.g. AI-Test-1731675200) y ejecución de scripts de limpieza (teardown) transaccional.",
+        "Colisiones de datos y efectos secundarios de ejecuciones concurrentes entre los 4 módulos del equipo.",
+        "Generación determinista de fixtures con prefijos por autor (e.g. AI-Test-Andres-*, Tomas-Lead-*, CUR-COP-*) y reseteo de configuración monetaria y casos post-ejecución.",
         "Aislamiento total entre pruebas sin interferencia en los estados de persistencia de MySQL."
     )
 
@@ -584,37 +611,37 @@ def build_test_plan_document():
     add_heading_1(doc, "12. CRITERIOS")
     add_heading_2(doc, "12.1 Criterios de entrada")
     add_bullet(doc, "Disponibilidad de Contenedores: ", "Contenedores espocrm, mysql, jenkins y sonarqube con healthcheck 'healthy'.")
-    add_bullet(doc, "Integridad de Compilación: ", "Vendor PHP y dependencias npm resueltas sin conflictos de dependencias.")
+    add_bullet(doc, "Integridad de Compilación: ", "Vendor PHP y dependencias npm resueltas sin conflictos.")
 
     add_heading_2(doc, "12.2 Criterios de salida")
-    add_bullet(doc, "Tasa de Aprobación: ", "100% de casos unitarios, E2E, BDD y de regresión aprobados en el pipeline.")
-    add_bullet(doc, "Estado de Quality Gate: ", "SonarQube Quality Gate en estado PASSED (OK) sin excepciones temporales.")
+    add_bullet(doc, "Tasa de Aprobación del Equipo: ", "100% de casos unitarios, E2E, BDD y de regresión aprobados en el pipeline.")
+    add_bullet(doc, "Estado de Quality Gate: ", "SonarQube Quality Gate en estado PASSED (OK) para todos los módulos.")
 
     add_heading_2(doc, "12.3 Criterios de aceptación")
-    add_body(doc, "El release es apto para producción si la cobertura total es >= 80%, 0 vulnerabilidades de severidad mayor, tiempo de resolución de pipeline < 4 minutos y cero alucinaciones en pruebas de IA.")
+    add_body(doc, "El release es apto para producción si la cobertura total de cada integrante es >= 80%, 0 vulnerabilidades de severidad mayor en todo el repositorio y cero alucinaciones en pruebas de IA.")
 
     # ==========================================
     # SECCIÓN 13: GESTIÓN DE DEFECTOS
     # ==========================================
     add_heading_1(doc, "13. GESTIÓN DE DEFECTOS")
     add_heading_2(doc, "13.1 Flujo de defectos")
-    add_body(doc, "Detección desatendida en Jenkins -> Bloqueo automático del Build -> Creación de Issue en SonarQube -> Notificación al Lead de Automatización -> Corrección en rama local -> Nueva evaluación por pipeline -> Cierre formal auditado.")
+    add_body(doc, "Detección desatendida en Jenkins -> Bloqueo automático del Build -> Creación de Issue en SonarQube -> Notificación al Lead de Automatización correspondiente -> Corrección en rama local vía TDD -> Nueva evaluación por pipeline -> Cierre formal auditado.")
 
     add_heading_2(doc, "13.2 Clasificación de defectos")
-    add_bullet(doc, "Blocker (Severidad 1): ", "Caída del servicio, desbordamiento del motor de SLA o inyección SQL explotable. SLA de corrección: < 2 horas.")
+    add_bullet(doc, "Blocker (Severidad 1): ", "Caída del servicio, desbordamiento del motor de SLA, división por cero en conversiones de moneda o bypass de login. SLA: < 2 horas.")
     add_bullet(doc, "Critical (Severidad 2): ", "Falla en intercepciones REST o bloqueo en guardado de formularios. SLA: < 6 horas.")
-    add_bullet(doc, "Major (Severidad 3): ", "Desviación en reglas de descuento o latencia DOM > 1500ms. SLA: < 24 horas.")
+    add_bullet(doc, "Major (Severidad 3): ", "Desviación en reglas de descuento, cálculo de probabilidades o latencia DOM > 1500ms. SLA: < 24 horas.")
     add_bullet(doc, "Minor (Severidad 4): ", "Advertencia menor de estilo de código o contraste no crítico. SLA: Próximo sprint.")
 
     add_heading_2(doc, "13.3 Herramienta de gestión")
-    add_body(doc, "Dashboard de SonarQube para seguimiento estático, consola de Jenkins Pipeline para trazabilidad de builds y sistema de control de versiones Git.")
+    add_body(doc, "Dashboard de SonarQube para seguimiento estático, consola de Jenkins Pipeline para trazabilidad de builds y sistema de control de versiones Git en rama dev.")
 
     # ==========================================
     # SECCIÓN 14: IDENTIFICACIÓN Y ANÁLISIS DE RIESGOS
     # ==========================================
     add_heading_1(doc, "14. IDENTIFICACIÓN Y ANÁLISIS DE RIESGOS")
     
-    tbl_risk = doc.add_table(rows=4, cols=4)
+    tbl_risk = doc.add_table(rows=5, cols=4)
     tbl_risk.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl_risk.autofit = False
     tbl_risk.columns[0].width = Inches(2.2)
@@ -636,6 +663,7 @@ def build_test_plan_document():
     risk_data = [
         ("Flakiness en pruebas de UI Marionette", "Media", "Alto", "Reemplazo de pausas fijas por cy.intercept() en endpoints REST."),
         ("No determinismo en respuestas de LLMs", "Alta", "Alto", "Evaluación estadística con DeepEval y fijación de temperatura <= 0.2."),
+        ("Colisión de ramas entre integrantes", "Media", "Alto", "Aislamiento estricto de directorios por autor y no-solapamiento de módulos."),
         ("Degradación de latencia en análisis SonarQube", "Media", "Medio", "Optimización de sonar.tests y exclusión estricta de librerías vendor.")
     ]
     for i, row in enumerate(risk_data):
@@ -655,26 +683,62 @@ def build_test_plan_document():
     # SECCIÓN 15: ORGANIZACIÓN Y RESPONSABILIDADES
     # ==========================================
     add_heading_1(doc, "15. ORGANIZACIÓN Y RESPONSABILIDADES")
-    add_bullet(doc, "Andrés Bedoya Cano (QA Lead & Architect): ", "Diseño de la topología de pruebas, codificación de suites unitarias y E2E, auditorías de seguridad, accesibilidad y orquestación de la Tríada de IA.")
-    add_bullet(doc, "Jenkins CI Server (Agente Autónomo): ", "Ejecución desatendida del pipeline, generación de reportes JUnit/Clover y verificación del webhook de Quality Gate.")
-    add_bullet(doc, "SonarQube Engine (Evaluador Estático): ", "Cálculo de métricas de deuda técnica, cobertura de código y aplicación de políticas de bloqueo de merge.")
+    add_body(doc, "Estructura organizativa horizontal del equipo de ingeniería de calidad (25% de responsabilidad c/u):")
+    
+    tbl_roles = doc.add_table(rows=5, cols=4)
+    tbl_roles.alignment = WD_TABLE_ALIGNMENT.CENTER
+    tbl_roles.autofit = False
+    tbl_roles.columns[0].width = Inches(1.8)
+    tbl_roles.columns[1].width = Inches(1.5)
+    tbl_roles.columns[2].width = Inches(2.2)
+    tbl_roles.columns[3].width = Inches(1.3)
+    set_table_borders(tbl_roles, HEX_BORDER)
+    
+    role_headers = ["Ingeniero", "Rol Principal", "Módulo y Alcance de Verificación", "Peso / Carga"]
+    for j, h in enumerate(role_headers):
+        c = tbl_roles.cell(0, j)
+        set_cell_shading(c, HEX_NAVY)
+        set_cell_margins(c, 80, 80, 100, 100)
+        p = c.paragraphs[0]
+        r = p.add_run(h)
+        r.font.name, r.font.size, r.font.bold = FONT_MAIN, Pt(8.5), True
+        r.font.color.rgb = RGBColor(255, 255, 255)
+        
+    roles_data = [
+        ("Andrés Bedoya Cano", "QA Lead & Software Architect", "Módulo Soporte, SLA, Descuentos, Tareas, Deduplicación, Accesibilidad WCAG, Seguridad OWASP, Heurísticas GRIHO, Tríada IA", "25% (Lead)"),
+        ("Tomás Henao Metaute", "QA Automation & DevOps Lead", "Módulo Leads, Oportunidades, Contactos, Reuniones, Conversiones, Stagehand E2E, DeepEval Copilot, Pipeline CI/CD", "25%"),
+        ("Alejandro Bustamante", "QA Automation & Currency Lead", "Módulo Moneda y Tasas de Cambio CUR (Conversión, Aritmética 14 dec, RateService, SyncManager), TDD DEF-CUR, Stagehand 4/4", "25%"),
+        ("Dubin Soto", "QA Security & Governance Lead", "Módulo Autenticación Centralizada, Roles y Permisos RBAC, Auditoría de Endpoints, Gobernanza de Calidad", "25%")
+    ]
+    for i, row in enumerate(roles_data):
+        for j, val in enumerate(row):
+            c = tbl_roles.cell(i+1, j)
+            if i % 2 == 1:
+                set_cell_shading(c, HEX_BG_LIGHT)
+            set_cell_margins(c, 60, 60, 100, 100)
+            p = c.paragraphs[0]
+            r = p.add_run(val)
+            r.font.name, r.font.size = FONT_MAIN, Pt(8.5)
+            r.font.color.rgb = COLOR_BODY
+
+    doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
     # ==========================================
     # SECCIÓN 16: CRONOGRAMA
     # ==========================================
     add_heading_1(doc, "16. CRONOGRAMA")
-    add_bullet(doc, "Hito 1 (Semanas 1-2): ", "Refactorización arquitectónica de CaseSlaCalculator y suite de pruebas de caja blanca PHPUnit 11.5.")
-    add_bullet(doc, "Hito 2 (Semanas 3-4): ", "Implementación de suites E2E y BDD Screenplay con Cypress 15.2 y Cucumber.")
-    add_bullet(doc, "Hito 3 (Semana 5): ", "Auditorías no funcionales: Accesibilidad WCAG 2.1 AA, Ciberseguridad OWASP y Evaluación Heurística GRIHO.")
-    add_bullet(doc, "Hito 4 (Semana 6): ", "Implementación de la Tríada de IA: Stagehand, DeepEval 4.3.4 y Microsoft Playwright MCP.")
-    add_bullet(doc, "Hito 5 (Semana 7): ", "Pipeline continuo en Jenkins, SonarQube Quality Gate al 100% Green y certificación de release.")
+    add_bullet(doc, "Hito 1 (Semanas 1-2): ", "Refactorización arquitectónica de módulos desacoplados y suites de pruebas de caja blanca PHPUnit 11.5 (Andrés: SLA; Tomás: Leads; Alejandro: Currency).")
+    add_bullet(doc, "Hito 2 (Semanas 3-4): ", "Implementación de suites E2E y BDD Screenplay con Cypress 15.2 y Cucumber para los cuatro módulos.")
+    add_bullet(doc, "Hito 3 (Semana 5): ", "Auditorías no funcionales: Accesibilidad WCAG 2.1 AA, Ciberseguridad OWASP y Evaluación Heurística GRIHO con 5 evaluadores independientes.")
+    add_bullet(doc, "Hito 4 (Semana 6): ", "Implementación de la Tríada de IA: Stagehand, DeepEval 4.3.4 y Microsoft Playwright MCP por cada integrante.")
+    add_bullet(doc, "Hito 5 (Semana 7): ", "Pipeline continuo en Jenkins, SonarQube Quality Gate al 100% Green para todo el equipo y certificación de release.")
 
     # ==========================================
     # SECCIÓN 17: MÉTRICAS Y SEGUIMIENTO
     # ==========================================
     add_heading_1(doc, "17. MÉTRICAS Y SEGUIMIENTO")
     
-    tbl_metrics = doc.add_table(rows=6, cols=4)
+    tbl_metrics = doc.add_table(rows=7, cols=4)
     tbl_metrics.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl_metrics.autofit = False
     tbl_metrics.columns[0].width = Inches(2.2)
@@ -694,11 +758,12 @@ def build_test_plan_document():
         r.font.color.rgb = RGBColor(255, 255, 255)
         
     metrics_data = [
-        ("Cobertura de Código (Clover)", ">= 80.0%", "84.2%", "APROBADO (Quality Gate OK)"),
-        ("Deuda Técnica (Maintainability)", "< 5.0%", "0.0% (Rating A)", "APROBADO (36 smells resueltos)"),
+        ("Cobertura de Código (Clover Global)", ">= 80.0%", "84.2%", "APROBADO (Quality Gate OK)"),
+        ("Deuda Técnica (Maintainability Global)", "< 5.0%", "0.0% (Rating A)", "APROBADO (36 smells resueltos)"),
         ("Vulnerabilidades de Seguridad", "0 Críticas", "0 Detectadas", "APROBADO (DAST 9/9 Green)"),
         ("Accesibilidad WCAG 2.1 AA", "0 Críticas", "0 Violaciones", "APROBADO (axe-core 6/6 Green)"),
-        ("Evaluación de IA (DeepEval)", "G-Eval >= 0.85", "1.00 (100%)", "APROBADO (0 Alucinaciones)")
+        ("Usabilidad Heurística (GRIHO)", ">= 80.0%", "83.32% (Nivel Verde)", "APROBADO (SUS = 82.5)"),
+        ("Evaluación de IA (DeepEval Consolidado)", "G-Eval >= 0.85", "1.00 (100%)", "APROBADO (0 Alucinaciones)")
     ]
     for i, row in enumerate(metrics_data):
         for j, val in enumerate(row):
@@ -721,11 +786,11 @@ def build_test_plan_document():
     # SECCIÓN 18: ENTREGABLES DE PRUEBA
     # ==========================================
     add_heading_1(doc, "18. ENTREGABLES DE PRUEBA")
-    add_bullet(doc, "Suites de Código de Pruebas: ", "Directorios tests/unit/, cypress/e2e/, tests_stagehand/, tests_deepeval_andres/, tests_playwright_mcp_andres/.")
-    add_bullet(doc, "Reporte de Accesibilidad WCAG: ", "docs/andres/accesibilidad_wcag_andres.md.")
-    add_bullet(doc, "Reporte de Ciberseguridad OWASP: ", "docs/andres/seguridad_owasp_andres.md.")
-    add_bullet(doc, "Cuadernos Heurísticos GRIHO: ", "docs/andres/evaluacion_heuristica_griho/ (5 archivos Excel y reporte consolidado).")
-    add_bullet(doc, "Informe de Tríada de IA: ", "docs/andres/ia_testing_andres.md y artefactos JSON asociados.")
+    add_bullet(doc, "Suites de Código de Pruebas: ", "Directorios tests/unit/Espo/VyV/ (Andres, Tomas, Currency), cypress/e2e/ (andres, tomas, cur), tests_stagehand/ (andres, tomas), tests_deepeval_andres/, tests_deepeval_tomas/, tests_playwright_mcp_andres/.")
+    add_bullet(doc, "Reporte de Accesibilidad WCAG: ", "docs/andres/accesibilidad_wcag_andres.md y docs/CUR/accesibilidad/.")
+    add_bullet(doc, "Reporte de Ciberseguridad OWASP: ", "docs/andres/seguridad_owasp_andres.md y docs/CUR/seguridad/.")
+    add_bullet(doc, "Cuadernos Heurísticos GRIHO: ", "docs/andres/evaluacion_heuristica_griho/ (5 archivos Excel y reporte consolidado) y docs/CUR/usabilidad/.")
+    add_bullet(doc, "Informes de Tríada de IA: ", "docs/andres/ia_testing_andres.md, docs/tomas/ia_testing_tomas.md, docs/CUR/ia/ y artefactos JSON asociados.")
     add_bullet(doc, "Technical Blueprint (Este documento): ", "docs/plan-de-pruebas-espocrm.docx.")
 
     # ==========================================
@@ -735,7 +800,7 @@ def build_test_plan_document():
     add_c_d_i(
         doc,
         "Evaluación global de la versión 10.1.0-rc2 de EspoCRM frente a los requerimientos de calidad.",
-        "Certificar formalmente el release tras verificar el 100% de cumplimiento en pruebas unitarias, de integración, no funcionales y con IA.",
+        "Certificar formalmente el release tras verificar el 100% de cumplimiento en pruebas unitarias, de integración, no funcionales y con IA de todos los integrantes del equipo.",
         "Aprobación definitiva de Quality Gate en Jenkins Build #6 y SonarQube Server. Sistema listo para sustentación académica y puesta en producción."
     )
 
@@ -745,7 +810,7 @@ def build_test_plan_document():
     add_heading_1(doc, "20. GESTIÓN DEL DOCUMENTO")
     add_heading_2(doc, "20.1 Historial de versiones")
     
-    tbl_ver = doc.add_table(rows=4, cols=4)
+    tbl_ver = doc.add_table(rows=5, cols=4)
     tbl_ver.alignment = WD_TABLE_ALIGNMENT.CENTER
     tbl_ver.autofit = False
     tbl_ver.columns[0].width = Inches(1.0)
@@ -767,7 +832,8 @@ def build_test_plan_document():
     ver_data = [
         ("1.0.0", "15-Nov-2026", "Andrés Bedoya Cano", "Línea base inicial del plan de verificación técnica."),
         ("1.1.0", "16-Nov-2026", "Andrés Bedoya Cano", "Adición de suites de accesibilidad, ciberseguridad y heurísticas GRIHO."),
-        ("1.2.0", "17-Nov-2026", "Andrés Bedoya Cano", "Incorporación de la Tríada de IA y certificación de Quality Gate en CI/CD.")
+        ("1.2.0", "17-Nov-2026", "Andrés Bedoya Cano", "Incorporación de la Tríada de IA y certificación de Quality Gate en CI/CD."),
+        ("1.3.0", "17-Nov-2026", "Equipo de Calidad", "Consolidación de la participación integral de Tomás Henao, Alejandro Bustamante y Dubin Soto.")
     ]
     for i, row in enumerate(ver_data):
         for j, val in enumerate(row):
@@ -784,14 +850,18 @@ def build_test_plan_document():
     add_body(doc, "Trazabilidad formal mediante commits atómicos y firmados en la rama dev del repositorio Git https://github.com/TomasH4/espocrm_VyV.git.")
 
     add_heading_2(doc, "20.3 Aprobaciones")
-    add_body(doc, "Documento validado y aprobado por Andrés Bedoya Cano (QA Automation Lead & Software Architect) para su archivo definitivo en docs/plan-de-pruebas-espocrm.docx.")
+    add_body(doc, "Documento validado y aprobado unánimemente por el equipo de calidad para su archivo definitivo en docs/plan-de-pruebas-espocrm.docx:")
+    add_bullet(doc, "Andrés Bedoya Cano: ", "QA Automation Lead & Software Architect — Aprobado.")
+    add_bullet(doc, "Tomás Henao Metaute: ", "QA Automation & DevOps Lead — Aprobado.")
+    add_bullet(doc, "Alejandro Bustamante: ", "QA Automation & Currency Lead — Aprobado.")
+    add_bullet(doc, "Dubin Soto: ", "QA Security & Governance Lead — Aprobado.")
 
     return doc
 
 if __name__ == "__main__":
     os.makedirs("docs", exist_ok=True)
     out_path = os.path.join("docs", "plan-de-pruebas-espocrm.docx")
-    print(f"Generando blueprint técnico en: {out_path}...")
+    print(f"Generando blueprint técnico consolidado del equipo en: {out_path}...")
     doc = build_test_plan_document()
     doc.save(out_path)
-    print("Documento .docx generado exitosamente con formato institucional EspoCRM.")
+    print("Documento .docx generado exitosamente con el equipo completo y formato institucional EspoCRM.")
