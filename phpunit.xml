@@ -19,6 +19,15 @@
     <include>
       <directory suffix=".php">application/Espo/VyV</directory>
       <directory suffix=".php">custom</directory>
+      <file>application/Espo/Tools/Currency/RateService.php</file>
+      <file>application/Espo/Tools/Currency/SyncManager.php</file>
+      <file>application/Espo/Tools/Currency/Exceptions/NotEnabled.php</file>
+      <file>application/Espo/Core/Currency/CalculatorUtil.php</file>
+      <file>application/Espo/Core/Currency/Rates.php</file>
+      <file>application/Espo/Classes/FieldValidators/CurrencyType.php</file>
+      <file>application/Espo/Classes/RecordHooks/CurrencyRecordRate/AfterSave.php</file>
+      <file>application/Espo/Classes/RecordHooks/CurrencyRecordRate/AfterDelete.php</file>
+      <file>application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php</file>
     </include>
     <exclude>
       <directory>vendor</directory>

@@ -16,8 +16,16 @@ pipeline {
 
         stage('2. Preparar Entorno Docker') {
             steps {
-                // Asegura que los contenedores estén activos
-                sh 'docker compose up -d || docker-compose up -d || true'
+                // Asegura que los contenedores estén activos (sin conflicto con sonarqube)
+                sh 'docker compose up -d mysql espocrm espocrm-daemon || docker-compose up -d mysql espocrm espocrm-daemon || true'
+                echo 'Sincronizando archivos del repositorio en el contenedor espocrm...'
+                sh '''
+                    docker cp application/Espo/Tools/Currency espocrm:/var/www/html/application/Espo/Tools/ || true
+                    docker cp application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup espocrm:/var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/ || true
+                    docker cp application/Espo/VyV espocrm:/var/www/html/application/Espo/ || true
+                    docker cp tests espocrm:/var/www/html/ || true
+                    docker cp phpunit.xml espocrm:/var/www/html/phpunit.xml || true
+                '''
                 echo 'Esperando que los contenedores estén listos...'
                 sh 'sleep 5'
             }

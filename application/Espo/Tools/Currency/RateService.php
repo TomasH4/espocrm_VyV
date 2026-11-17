@@ -40,6 +40,7 @@ use Espo\Core\Utils\DateTime;
 use Espo\Core\Utils\Metadata;
 use Espo\Entities\CurrencyRecordRate;
 use Espo\ORM\EntityManager;
+use Espo\Tools\Currency\Exceptions\NotEnabled;
 use RuntimeException;
 
 class RateService
@@ -132,7 +133,7 @@ class RateService
         try {
             $rateEntry = $this->rateEntryProvider->getRateEntryOnDate($code, $date) ??
                 $this->rateEntryProvider->prepareNew($code, $date);
-        } catch (Exceptions\NotEnabled $e) {
+        } catch (NotEnabled $e) {
             throw new RuntimeException($e->getMessage(), previous: $e);
         }
 
