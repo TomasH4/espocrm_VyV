@@ -44,7 +44,13 @@ When('Andres registra un nuevo caso con nombre {string} y estado {string}', (nam
   cy.requestAsAndres({
     method: 'POST',
     url: 'http://localhost:8080/api/v1/Case',
-    body: { name: caseName, status: status, priority: 'Normal' },
+    body: {
+      name: caseName,
+      status: status,
+      priority: 'Normal',
+      assignedUserId: '62c52bf3add0f226f',
+      assignedUserName: 'Andres Bedoya'
+    },
   }).then((res) => {
     expect(res.status).to.eq(200);
     actor.remember('currentCaseId', res.body.id);
@@ -57,7 +63,10 @@ When('actualiza el estado del caso a {string}', (targetStatus) => {
   cy.requestAsAndres({
     method: 'PUT',
     url: `http://localhost:8080/api/v1/Case/${caseId}`,
-    body: { status: targetStatus },
+    body: {
+      status: targetStatus,
+      assignedUserId: '62c52bf3add0f226f'
+    },
   }).then((res) => {
     expect(res.status).to.eq(200);
     actor.remember('lastStatus', res.body.status);

@@ -1,10 +1,10 @@
 import { Given, When, Then, After } from '@badeball/cypress-cucumber-preprocessor';
-import { Actor } from '../screenplay/actor/Actor';
-import { BrowseTheWeb } from '../screenplay/abilities/BrowseTheWeb';
-import { CallAnApi } from '../screenplay/abilities/CallAnApi';
-import { Navigate, Click } from '../screenplay/interactions/Interactions';
-import { Login, CreateLeadForm } from '../screenplay/tasks/Tasks';
-import { CurrentUrl, PageHeader } from '../screenplay/questions/Questions';
+import { Actor } from '../../screenplay/actor/Actor';
+import { BrowseTheWeb } from '../../screenplay/abilities/BrowseTheWeb';
+import { CallAnApi } from '../../screenplay/abilities/CallAnApi';
+import { Navigate, Click } from '../../screenplay/interactions/Interactions';
+import { Login, CreateLeadForm } from '../../screenplay/tasks/Tasks';
+import { CurrentUrl, PageHeader } from '../../screenplay/questions/Questions';
 
 let actor;
 let createdLeadIds = [];
@@ -117,4 +117,5 @@ Then('el mensaje de error contiene {string}', (message) => {
 Then('aparece una notificación de error en la interfaz', () => {
   cy.get('.notify, .notification, .alert-danger, .modal-dialog').should('be.visible').and('exist');
 });
+
 

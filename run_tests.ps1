@@ -5,27 +5,27 @@ param(
 $features = @{
     "F1" = @{
         "Name"   = "F1: Creacion de Lead (Lead Creation)"
-        "Test"   = "tests/unit/Espo/VyV/Lead/LeadCreatorTest.php"
+        "Test"   = "tests/unit/Espo/VyV/Tomas/Lead/LeadCreatorTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/Lead"
     }
     "F2" = @{
         "Name"   = "F2: Calculo de Probabilidad en Oportunidades (Opportunity Probability)"
-        "Test"   = "tests/unit/Espo/VyV/Opportunity/OpportunityProbabilityCalculatorTest.php"
+        "Test"   = "tests/unit/Espo/VyV/Tomas/Opportunity/OpportunityProbabilityCalculatorTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/Opportunity"
     }
     "F3" = @{
         "Name"   = "F3: Busqueda y Filtrado de Contactos (Contact Search)"
-        "Test"   = "tests/unit/Espo/VyV/Contact/ContactSearcherTest.php"
+        "Test"   = "tests/unit/Espo/VyV/Tomas/Contact/ContactSearcherTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/Contact"
     }
     "F4" = @{
         "Name"   = "F4: Validacion Temporal en Reuniones (Meeting Scheduling)"
-        "Test"   = "tests/unit/Espo/VyV/Meeting/MeetingSchedulerTest.php"
+        "Test"   = "tests/unit/Espo/VyV/Tomas/Meeting/MeetingSchedulerTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/Meeting"
     }
     "F5" = @{
         "Name"   = "F5: Conversion Transaccional de Lead (Lead Conversion)"
-        "Test"   = "tests/unit/Espo/VyV/LeadConversion/LeadConverterTest.php"
+        "Test"   = "tests/unit/Espo/VyV/Tomas/LeadConversion/LeadConverterTest.php"
         "Filter" = "/var/www/html/application/Espo/VyV/LeadConversion"
     }
 }
@@ -36,7 +36,7 @@ if ($key -eq "ALL" -or [string]::IsNullOrWhiteSpace($Feature)) {
     Write-Host "=================================================================" -ForegroundColor Cyan
     Write-Host " Ejecutando TODAS las pruebas unitarias TDD de VyV (F1 a F5)" -ForegroundColor Cyan
     Write-Host "=================================================================" -ForegroundColor Cyan
-    docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/ --coverage-text --coverage-filter /var/www/html/application/Espo/VyV/ --colors=always"
+    docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/Tomas/ --coverage-text --coverage-filter /var/www/html/application/Espo/VyV/ --colors=always"
 }
 elseif ($features.ContainsKey($key)) {
     $target = $features[$key]

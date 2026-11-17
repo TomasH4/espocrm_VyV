@@ -22,8 +22,8 @@ import {
   clickSaveAction,
   selectEspoOption,
   setInputValue,
-} from "./helpers/testRunner.js";
-import { createEntityViaApi, deleteEntityViaApi } from "./helpers/api.js";
+} from "../helpers/testRunner.js";
+import { createEntityViaApi, deleteEntityViaApi } from "../helpers/api.js";
 
 async function fillOpportunityForm(
   page: any,
@@ -236,3 +236,4 @@ async function main() {
 }
 
 main().catch(console.error);
+

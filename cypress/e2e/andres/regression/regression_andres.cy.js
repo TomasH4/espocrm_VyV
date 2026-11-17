@@ -31,7 +31,10 @@ describe('Suite de Regresión Automatizada — Andrés Bedoya (5 Funcionalidades
                     method: 'PUT',
                     url: `${baseUrl}/api/v1/Case/${caseId}`,
                     headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                    body: { status: 'Assigned' }
+                    body: { 
+                        status: 'Assigned',
+                        assignedUserId: '62c52bf3add0f226f'
+                    }
                 }).then((assignRes) => {
                     expect(assignRes.status).to.eq(200);
                     expect(assignRes.body.status).to.eq('Assigned');

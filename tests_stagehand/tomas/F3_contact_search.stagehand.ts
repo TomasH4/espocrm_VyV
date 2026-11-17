@@ -13,8 +13,8 @@ import {
   StagehandTestContext,
   navigateTo,
   extractData,
-} from "./helpers/testRunner.js";
-import { createEntityViaApi, deleteEntityViaApi } from "./helpers/api.js";
+} from "../helpers/testRunner.js";
+import { createEntityViaApi, deleteEntityViaApi } from "../helpers/api.js";
 
 async function main() {
   const ctx = new StagehandTestContext();
@@ -223,3 +223,4 @@ async function main() {
 }
 
 main().catch(console.error);
+

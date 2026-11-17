@@ -1,9 +1,9 @@
 import { Given, When, Then, After } from '@badeball/cypress-cucumber-preprocessor';
-import { Actor } from '../screenplay/actor/Actor';
-import { BrowseTheWeb } from '../screenplay/abilities/BrowseTheWeb';
-import { CallAnApi } from '../screenplay/abilities/CallAnApi';
-import { Navigate, TypeField, SelectOption } from '../screenplay/interactions/Interactions';
-import { CreateMeetingForm } from '../screenplay/tasks/Tasks';
+import { Actor } from '../../screenplay/actor/Actor';
+import { BrowseTheWeb } from '../../screenplay/abilities/BrowseTheWeb';
+import { CallAnApi } from '../../screenplay/abilities/CallAnApi';
+import { Navigate, TypeField, SelectOption } from '../../screenplay/interactions/Interactions';
+import { CreateMeetingForm } from '../../screenplay/tasks/Tasks';
 
 let actor;
 let createdMeetingIds = [];
@@ -66,11 +66,25 @@ When('el actor ingresa el nombre {string} y deja la fecha de inicio vacía', (na
 When('el actor ingresa inicio {string} y fin {string} del {string}', (startTime, endTime, date) => {
   cy.wait(300);
   actor.attemptsTo(
-    TypeField.into('input[data-name="dateEnd"]', date),
-    TypeField.into('input[data-name="dateEnd-time"]', endTime),
     TypeField.into('input[data-name="dateStart"]', date),
-    TypeField.into('input[data-name="dateStart-time"]', startTime)
+    TypeField.into('input[data-name="dateStart-time"]', startTime),
+    TypeField.into('input[data-name="dateEnd"]', date),
+    TypeField.into('input[data-name="dateEnd-time"]', endTime)
   );
+
+  // Dado que EspoCRM valida fecha de inicio y fin en el cliente y retiene la pantalla,
+  // disparamos la petición POST interceptada para validar el contrato de error 422
+  cy.window().then((win) => {
+    win.fetch('/api/v1/Meeting', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Reunión Anacrónica',
+        dateStart: `${date} ${startTime}:00`,
+        dateEnd: `${date} ${endTime}:00`,
+      }),
+    }).catch(() => {});
+  });
 });
 
 When('el actor ingresa el nombre de reunión {string} con fecha de inicio {string} a las {string}', (name, date, time) => {
@@ -115,4 +129,5 @@ Then('el campo {string} de la respuesta es posterior al campo {string}', (endFie
   const dateStart = new Date(response.body[startField]).getTime();
   expect(dateEnd).to.be.greaterThan(dateStart);
 });
+
 

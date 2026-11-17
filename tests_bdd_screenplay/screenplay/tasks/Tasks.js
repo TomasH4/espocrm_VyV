@@ -107,17 +107,17 @@ export class CreateMeetingForm {
     if (this.data.name) {
       Fill.in('input[data-name="name"]', this.data.name).performAs(actor);
     }
-    if (this.data.dateEnd) {
-      TypeField.into('input[data-name="dateEnd"]', this.data.dateEnd).performAs(actor);
-    }
-    if (this.data.dateEndTime || this.data.endTime) {
-      TypeField.into('input[data-name="dateEnd-time"]', this.data.dateEndTime || this.data.endTime).performAs(actor);
-    }
     if (this.data.dateStart) {
       TypeField.into('input[data-name="dateStart"]', this.data.dateStart).performAs(actor);
     }
     if (this.data.dateStartTime || this.data.startTime) {
       TypeField.into('input[data-name="dateStart-time"]', this.data.dateStartTime || this.data.startTime).performAs(actor);
+    }
+    if (this.data.dateEnd) {
+      TypeField.into('input[data-name="dateEnd"]', this.data.dateEnd).performAs(actor);
+    }
+    if (this.data.dateEndTime || this.data.endTime) {
+      TypeField.into('input[data-name="dateEnd-time"]', this.data.dateEndTime || this.data.endTime).performAs(actor);
     }
     if (this.data.duration) {
       SelectOption.forField('duration', this.data.duration).performAs(actor);

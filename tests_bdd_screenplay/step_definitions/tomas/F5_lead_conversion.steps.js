@@ -1,8 +1,8 @@
 import { Given, When, Then, After } from '@badeball/cypress-cucumber-preprocessor';
-import { Actor } from '../screenplay/actor/Actor';
-import { BrowseTheWeb } from '../screenplay/abilities/BrowseTheWeb';
-import { CallAnApi } from '../screenplay/abilities/CallAnApi';
-import { Navigate, Click, CheckScope } from '../screenplay/interactions/Interactions';
+import { Actor } from '../../screenplay/actor/Actor';
+import { BrowseTheWeb } from '../../screenplay/abilities/BrowseTheWeb';
+import { CallAnApi } from '../../screenplay/abilities/CallAnApi';
+import { Navigate, Click, CheckScope } from '../../screenplay/interactions/Interactions';
 
 let actor;
 let createdLeadIds = [];
@@ -212,4 +212,5 @@ Then('la página muestra el email del Lead convertido', () => {
 Then('el botón "Convert" no existe en la vista del Lead', () => {
   cy.get('button[data-action="convert"]').should('not.exist');
 });
+
 

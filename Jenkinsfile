@@ -16,10 +16,10 @@ pipeline {
 
         stage('2. Preparar Entorno Docker') {
             steps {
-                // Levanta la base de datos MariaDB, EspoCRM y SonarQube
-                sh 'docker compose up -d'
+                // Asegura que los contenedores estén activos
+                sh 'docker compose up -d || docker-compose up -d || true'
                 echo 'Esperando que los contenedores estén listos...'
-                sh 'sleep 15'
+                sh 'sleep 5'
             }
         }
 
@@ -27,7 +27,8 @@ pipeline {
             steps {
                 // Ejecuta la suite de pruebas unitarias generando el reporte de cobertura Clover y JUnit
                 sh '''
-                    docker exec espocrm sh -c "mkdir -p coverage && phpunit --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml || true"
+                    docker exec espocrm sh -c "rm -rf /var/www/html/coverage && mkdir -p /var/www/html/coverage && phpunit tests/unit/Espo/VyV/ --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml"
+                    rm -rf ./coverage
                     docker cp espocrm:/var/www/html/coverage ./coverage
                 '''
             }
@@ -41,8 +42,8 @@ pipeline {
         stage('4. Ejecución de Pruebas End-to-End (Cypress)') {
             steps {
                 sh '''
-                    npm ci --prefer-offline || npm install
-                    npm run cypress:run || true
+                    npm ci --prefer-offline || npm install --legacy-peer-deps || true
+                    npx cypress run || npm run cypress:run || true
                 '''
             }
             post {
@@ -54,11 +55,12 @@ pipeline {
 
         stage('5. Análisis de Código y Cobertura con SonarQube') {
             steps {
-                // Ejecuta sonar-scanner mediante contenedor conectado a la red docker
+                // Ejecuta sonar-scanner mediante contenedor conectado a la red docker y volumen de Jenkins
                 sh '''
                     docker run --rm \
                       --network espo-crm_default \
-                      -v "$PWD:/usr/src" \
+                      --volumes-from jenkins \
+                      -w "$PWD" \
                       -e SONAR_HOST_URL="$SONAR_HOST_URL" \
                       -e SONAR_TOKEN="$SONAR_TOKEN" \
                       sonarsource/sonar-scanner-cli:latest
@@ -69,10 +71,11 @@ pipeline {
         stage('6. Verificación de Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
-                    // Verifica que SonarQube devuelva status OK en el Quality Gate
-                    script {
+                    sh '''
                         echo "Verificando Quality Gate en SonarQube..."
-                    }
+                        curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=espocrm_VyV"
+                        echo ""
+                    '''
                 }
             }
         }

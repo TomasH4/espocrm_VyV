@@ -6,7 +6,7 @@
 
 ## 1. Selección de casos
 
-La suite de regresión ([`cypress/e2e/regression/R-CUR_monedas_tasas.regression.cy.js`](../../../cypress/e2e/regression/R-CUR_monedas_tasas.regression.cy.js)) sigue el formato del equipo (`[Regresión …]`, carpeta `cypress/e2e/regression`). Sus casos se eligieron según el riesgo del cambio:
+La suite de regresión ([`cypress/e2e/cur/regression/R-CUR_monedas_tasas.regression.cy.js`](../../../cypress/e2e/cur/regression/R-CUR_monedas_tasas.regression.cy.js)) sigue el formato del equipo (`[Regresión …]`, carpeta `cypress/e2e/cur/regression`). Sus casos se eligieron según el riesgo del cambio:
 
 | Grupo | Por qué se eligió | Casos |
 | :--- | :--- | :--- |
@@ -23,7 +23,7 @@ La misma suite se ejecutó dos veces contra la aplicación en Docker (http://loc
 El contenedor usa el código del repo gracias al montaje de `application/Espo/Tools/Currency` en `docker-compose.yml`. El script restauró el archivo corregido al terminar; se comprobó con `git diff`, que no muestra cambios.
 
 ```bash
-npx cypress run --spec "cypress/e2e/regression/R-CUR_monedas_tasas.regression.cy.js" --config trashAssetsBeforeRuns=false
+npx cypress run --spec "cypress/e2e/cur/regression/R-CUR_monedas_tasas.regression.cy.js" --config trashAssetsBeforeRuns=false
 ```
 
 Las demás suites automatizadas del módulo y del proyecto también se repitieron después de la corrección:

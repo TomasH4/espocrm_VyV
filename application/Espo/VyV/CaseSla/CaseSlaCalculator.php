@@ -38,6 +38,8 @@ final class CaseSlaCalculator
         'Low'    => 1.50,
     ];
 
+    private const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
+
     public function __construct(
         private readonly AccountSlaRepository $repository
     ) {}
@@ -59,37 +61,15 @@ final class CaseSlaCalculator
         $businessHoursOnly   = !isset($data['businessHoursOnly']) || (bool) $data['businessHoursOnly'];
         $nowRaw              = isset($data['currentTime']) ? trim((string) $data['currentTime']) : null;
 
-        // Nodo 2: Decision 1 - Verificacion de identificador de caso obligatorio
-        if ($caseId === '') {
-            // Nodo 3: Retorno error 400 por caseId vacio
-            return CaseSlaResult::failure(400, 'El campo caseId es obligatorio para calcular SLA');
+        // Nodo 2 a 7: Verificacion y validacion de parametros obligatorios
+        $validation = $this->validateRequest($caseId, $priority, $createdAtRaw);
+        if ($validation instanceof CaseSlaResult) {
+            return $validation;
         }
+        $createdAt = $validation;
 
-        // Nodo 4: Decision 2 - Verificacion de prioridad en catalogo permitido
-        if (!in_array($priority, self::ALLOWED_PRIORITIES, true)) {
-            // Nodo 5: Retorno error 400 por prioridad no valida
-            return CaseSlaResult::failure(400, 'Prioridad de caso no valida. Debe ser Urgent, High, Normal o Low');
-        }
-
-        // Nodo 6: Decision 3 - Parsing y validacion de fecha de creacion
-        try {
-            $createdAt = $createdAtRaw !== ''
-                ? new DateTimeImmutable($createdAtRaw, new DateTimeZone('UTC'))
-                : new DateTimeImmutable('now', new DateTimeZone('UTC'));
-        } catch (Exception) {
-            // Nodo 7: Retorno error 400 por fecha invalida
-            return CaseSlaResult::failure(400, 'El formato de fecha createdAt no es valido');
-        }
-
-        // Nodo 8: Resolucion del SLA Tier a traves del repositorio
-        $slaTier = 'Standard';
-        if ($accountId !== '') {
-            $foundTier = $this->repository->findSlaTierByAccountId($accountId);
-            // Nodo 9: Decision 4 - Verificacion de tier obtenido en catalogo
-            if ($foundTier !== null && isset(self::TIER_BASE_HOURS[$foundTier])) {
-                $slaTier = $foundTier;
-            }
-        }
+        // Nodo 8 a 9: Resolucion del SLA Tier a traves del repositorio
+        $slaTier = $this->resolveSlaTier($accountId);
 
         // Nodo 10: Calculo de horas efectivas multiplicadas por severidad
         $baseConfig    = self::TIER_BASE_HOURS[$slaTier];
@@ -97,47 +77,29 @@ final class CaseSlaCalculator
         $respHours     = (float) round($baseConfig['response'] * $multiplier, 2);
         $resolHours    = (float) round($baseConfig['resolution'] * $multiplier, 2);
 
-        // Nodo 11: Decision 5 - Modalidad de calculo: Horas habiles vs Calendario
+        // Nodo 11 a 13: Modalidad de calculo: Horas habiles vs Calendario
         if ($businessHoursOnly) {
-            // Nodo 12: Calculo sumando horas habiles (Lunes a Viernes 8:00 - 17:00 UTC)
             $firstResponseDue = $this->addBusinessHours($createdAt, $respHours);
             $resolutionDue    = $this->addBusinessHours($createdAt, $resolHours);
         } else {
-            // Nodo 13: Calculo calendario directo
             $firstResponseDue = $createdAt->modify('+' . (int) round($respHours * 3600) . ' seconds');
             $resolutionDue    = $createdAt->modify('+' . (int) round($resolHours * 3600) . ' seconds');
         }
 
-        // Nodo 14: Evaluacion del estado de riesgo del SLA
-        $now = $nowRaw !== null ? new DateTimeImmutable($nowRaw, new DateTimeZone('UTC')) : $createdAt;
-        $totalSeconds = $resolutionDue->getTimestamp() - $createdAt->getTimestamp();
-        $remainingSec = $resolutionDue->getTimestamp() - $now->getTimestamp();
+        // Nodo 14 a 18: Evaluacion del estado de riesgo del SLA
+        $slaStatus = $this->evaluateRiskStatus($createdAt, $resolutionDue, $nowRaw);
 
-        // Nodo 15: Decision 6 - Verificacion de breach (vencido)
-        if ($remainingSec <= 0) {
-            // Nodo 16: Estado Breached
-            $slaStatus = 'Breached';
-        } elseif ($totalSeconds > 0 && ($remainingSec / $totalSeconds) <= 0.20) {
-            // Nodo 17: Decision 7 - Margen critico menor al 20% -> Estado AtRisk
-            $slaStatus = 'AtRisk';
-        } else {
-            // Nodo 18: Margen seguro -> Estado OnTrack
-            $slaStatus = 'OnTrack';
-        }
-
-        // Nodo 19: Persistencia de limites calculados en base de datos
+        // Nodo 19 a 20: Persistencia de limites calculados en base de datos
         $persisted = $this->repository->saveSlaLimits(
             $caseId,
             $respHours,
             $resolHours,
-            $firstResponseDue->format('Y-m-d H:i:s'),
-            $resolutionDue->format('Y-m-d H:i:s'),
+            $firstResponseDue->format(self::DATE_TIME_FORMAT),
+            $resolutionDue->format(self::DATE_TIME_FORMAT),
             $slaStatus
         );
 
-        // Nodo 20: Decision 8 - Verificacion de exito en persistencia
         if (!$persisted) {
-            // Nodo 21: Retorno error 500 por fallo de persistencia
             return CaseSlaResult::failure(500, 'Fallo en la persistencia de los limites calculados de SLA');
         }
 
@@ -147,10 +109,53 @@ final class CaseSlaCalculator
             $slaTier,
             $respHours,
             $resolHours,
-            $firstResponseDue->format('Y-m-d H:i:s'),
-            $resolutionDue->format('Y-m-d H:i:s'),
+            $firstResponseDue->format(self::DATE_TIME_FORMAT),
+            $resolutionDue->format(self::DATE_TIME_FORMAT),
             $slaStatus
         );
+    }
+
+    private function validateRequest(string $caseId, string $priority, string $createdAtRaw): DateTimeImmutable|CaseSlaResult
+    {
+        if ($caseId === '' || !in_array($priority, self::ALLOWED_PRIORITIES, true)) {
+            $msg = $caseId === ''
+                ? 'El campo caseId es obligatorio para calcular SLA'
+                : 'Prioridad de caso no valida. Debe ser Urgent, High, Normal o Low';
+            return CaseSlaResult::failure(400, $msg);
+        }
+        try {
+            return $createdAtRaw !== ''
+                ? new DateTimeImmutable($createdAtRaw, new DateTimeZone('UTC'))
+                : new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        } catch (Exception) {
+            return CaseSlaResult::failure(400, 'El formato de fecha createdAt no es valido');
+        }
+    }
+
+    private function resolveSlaTier(string $accountId): string
+    {
+        if ($accountId !== '') {
+            $foundTier = $this->repository->findSlaTierByAccountId($accountId);
+            if ($foundTier !== null && isset(self::TIER_BASE_HOURS[$foundTier])) {
+                return $foundTier;
+            }
+        }
+        return 'Standard';
+    }
+
+    private function evaluateRiskStatus(DateTimeImmutable $createdAt, DateTimeImmutable $resolutionDue, ?string $nowRaw): string
+    {
+        $now = $nowRaw !== null ? new DateTimeImmutable($nowRaw, new DateTimeZone('UTC')) : $createdAt;
+        $totalSeconds = $resolutionDue->getTimestamp() - $createdAt->getTimestamp();
+        $remainingSec = $resolutionDue->getTimestamp() - $now->getTimestamp();
+
+        if ($remainingSec <= 0) {
+            return 'Breached';
+        }
+        if ($totalSeconds > 0 && ($remainingSec / $totalSeconds) <= 0.20) {
+            return 'AtRisk';
+        }
+        return 'OnTrack';
     }
 
     /**

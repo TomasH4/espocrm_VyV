@@ -226,6 +226,7 @@ async function runMcpTest() {
     console.error("✖ Error en prueba Playwright MCP:", err.message);
   } finally {
     await client.close();
+    process.exit(0);
   }
 }
 

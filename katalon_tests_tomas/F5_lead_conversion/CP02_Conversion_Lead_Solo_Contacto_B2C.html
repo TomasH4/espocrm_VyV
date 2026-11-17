@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:8080" />
+<title>CP02_Conversion_Lead_Solo_Contacto_B2C</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">CP02_Conversion_Lead_Solo_Contacto_B2C</td></tr>
+</thead>
+<tbody>
+<tr>
+	<td>open</td>
+	<td>http://localhost:8080/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>localStorage.clear(); sessionStorage.clear();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>300</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=field-userName</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=field-userName</td>
+	<td>Tomas</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.getElementById('field-userName'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=field-password</td>
+	<td>tomas12345</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.getElementById('field-password'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=btn-login</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=#navbar, .navbar</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>600</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=a[href="#Lead"], li[data-name="Lead"] a</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=a[href="#Lead"], li[data-name="Lead"] a</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=a[data-action="create"], [data-action="create"], a[href="#Lead/create"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=a[data-action="create"], [data-action="create"], a[href="#Lead/create"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>400</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=input[data-name="lastName"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=input[data-name="firstName"]</td>
+	<td>Maria</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.querySelector('input[data-name="firstName"]'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=input[data-name="lastName"]</td>
+	<td>LopezB2C</td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var el = document.querySelector('input[data-name="lastName"]'); if(el){ el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button[data-action="save"], [data-action="save"], button.btn-primary</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button[data-action="save"], [data-action="save"], button.btn-primary</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>var btn = document.querySelector('button[data-action="save"], [data-action="save"], button.btn-primary'); if (btn) btn.click();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button[data-action="convert"], [data-action="convert"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button[data-action="convert"], [data-action="convert"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=input.check-scope[data-scope="Contact"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>300</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>(function(){ var c=document.querySelector('input.check-scope[data-scope="Contact"]'); if(c){ c.checked=true; c.dispatchEvent(new Event('change',{bubbles:true})); } var a=document.querySelector('input.check-scope[data-scope="Account"]'); if(a){ a.checked=false; a.dispatchEvent(new Event('change',{bubbles:true})); } })();</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>400</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=.modal button[data-action="convert"], .modal-footer button[data-action="convert"], button.btn-primary[data-action="convert"]</td>
+	<td>15000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=.modal button[data-action="convert"], .modal-footer button[data-action="convert"], button.btn-primary[data-action="convert"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>css=.header-title, .page-header, h3</td>
+	<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

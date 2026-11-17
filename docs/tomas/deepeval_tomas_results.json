@@ -1,0 +1,51 @@
+{
+  "framework": "DeepEval 4.3.4",
+  "evaluator": "Tom\u00e1s Henao",
+  "scope": "F1_lead_creation, F2_opportunity_probability, F3_contact_search, F4_meeting_scheduling, F5_lead_conversion",
+  "timestamp": "2026-11-16 09:25:37",
+  "summary": {
+    "total_cases": 3,
+    "passed_cases": 3,
+    "avg_geval": 1.0,
+    "avg_relevancy": 0.8833333333333333,
+    "avg_faithfulness": 1.0
+  },
+  "cases": [
+    {
+      "test_name": "TC1_Lead_Qualification_And_B2B_Conversion_Strategy",
+      "feature": "F1_lead_creation & F5_lead_conversion",
+      "input": "Evaluar Lead Carlos Gomez con empresa Inversiones SAS y email corporativo carlos@inversiones.com",
+      "output": "El Lead Carlos Gomez de la empresa Inversiones SAS con email carlos@inversiones.com ha sido calificado como B2B Corporativo con score de 95/100. Estrategia de conversi\u00f3n recomendada: crear \u00e1mbitos Contact, Account.",
+      "metrics": {
+        "g_eval": 1.0,
+        "relevancy": 0.95,
+        "faithfulness": 1.0
+      },
+      "passed": true
+    },
+    {
+      "test_name": "TC2_Opportunity_Probability_And_Weighted_Value_Prediction",
+      "feature": "F2_opportunity_probability",
+      "input": "Calcular probabilidad y valor ponderado para Oportunidad Expansion de Planta en etapa Proposal con monto 50000",
+      "output": "La Oportunidad 'Expansion de Planta' en etapa 'Proposal' tiene una probabilidad de \u00e9xito asignada del 50%. Para un monto total de $50,000.00, el valor ponderado esperado en pipeline es de $25,000.00.",
+      "metrics": {
+        "g_eval": 1.0,
+        "relevancy": 0.88,
+        "faithfulness": 1.0
+      },
+      "passed": true
+    },
+    {
+      "test_name": "TC3_Meeting_Temporal_Duration_And_Validation",
+      "feature": "F4_meeting_scheduling",
+      "input": "Programar reunion Comite Directivo con inicio 01.12.2026 10:00 y fin 01.12.2026 11:30",
+      "output": "Reuni\u00f3n 'Comite Directivo' programada desde 01.12.2026 10:00 hasta 01.12.2026 11:30. Duraci\u00f3n calculada: 90 minutos. Consistencia temporal validada con \u00e9xito.",
+      "metrics": {
+        "g_eval": 1.0,
+        "relevancy": 0.82,
+        "faithfulness": 1.0
+      },
+      "passed": true
+    }
+  ]
+}

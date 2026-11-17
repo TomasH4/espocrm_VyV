@@ -134,17 +134,46 @@ export async function getUrl(page: any): Promise<string> {
 
 export async function navigateTo(page: any, hash: string): Promise<void> {
   await page.evaluate((h: string) => {
-    window.location.hash = h;
+    if (window.location.hash === h) {
+      window.location.hash = "#";
+    }
+    setTimeout(() => {
+      window.location.hash = h;
+    }, 50);
   }, hash);
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(1500);
+}
+
+/**
+ * Wrapper que añade un timeout a cualquier promesa.
+ * Si la operación LLM supera el límite, rechaza con un error claro.
+ */
+export async function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`Timeout (${ms}ms) en: ${label}`)), ms);
+  });
+  try {
+    const result = await Promise.race([promise, timeoutPromise]);
+    clearTimeout(timer!);
+    return result;
+  } catch (err) {
+    clearTimeout(timer!);
+    throw err;
+  }
 }
 
 export async function extractData<T = any>(
   stagehand: any,
   instruction: string,
-  schema: any
+  schema: any,
+  timeoutMs = 45000
 ): Promise<T> {
-  const res = await stagehand.extract(instruction, schema);
+  const res = await withTimeout(
+    stagehand.extract(instruction, schema),
+    timeoutMs,
+    `extract: "${instruction.substring(0, 60)}"`
+  );
   return ((res as any)?.data ?? res) as T;
 }
 
@@ -165,35 +194,33 @@ export async function clickSaveAction(page: any, stagehand: any): Promise<void> 
   await commitFormInputs(page);
   await page.waitForTimeout(200);
 
-  // Primero intentar disparar el evento MouseEvent nativo directo sobre el botón Save
+  // Disparar click nativo directo sobre el botón Save
   await page.evaluate(() => {
     const btn = (document.querySelector('button.btn-primary[data-action="save"]') ||
       document.querySelector('button[data-action="save"]')) as HTMLElement | null;
     if (btn) {
-      btn.dispatchEvent(
-        new MouseEvent("click", {
-          bubbles: true,
-          cancelable: true,
-          view: window,
-        })
-      );
+      btn.click();
     }
   });
-
-  // Fallback con stagehand.act si el botón sigue visible y el hash no ha cambiado
   await page.waitForTimeout(500);
-  const curUrl = await getUrl(page);
-  if (!curUrl.includes("/view/")) {
-    try {
-      await stagehand.act('Click the "Save" button');
-    } catch {}
-  }
 }
 
 /**
  * Setea el valor de un <input> de forma segura sin disparar blur destructivo.
  */
 export async function setInputValue(page: any, selector: string, value: string): Promise<void> {
+  const start = Date.now();
+  let found = false;
+  while (Date.now() - start < 10000) {
+    found = await page.evaluate((sel: string) => !!document.querySelector(sel), selector);
+    if (found) break;
+    await page.waitForTimeout(250);
+  }
+
+  if (!found) {
+    throw new Error(`Input no encontrado tras espera: ${selector}`);
+  }
+
   await page.evaluate(
     ({ sel, val }: { sel: string; val: string }) => {
       const inp = document.querySelector(sel) as HTMLInputElement | null;

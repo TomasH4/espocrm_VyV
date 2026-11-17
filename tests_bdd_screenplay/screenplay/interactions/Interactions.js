@@ -45,10 +45,15 @@ export class Fill {
   }
 
   performAs(actor) {
-    if (this.text === '' || this.text === undefined) {
+    let val = this.text;
+    if (val && typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+      const [y, m, d] = val.split('-');
+      val = `${d}.${m}.${y}`;
+    }
+    if (val === '' || val === undefined) {
       cy.get(this.selector).should('exist').clear(this.options);
     } else {
-      cy.get(this.selector).should('exist').clear(this.options).type(this.text, this.options);
+      cy.get(this.selector).should('exist').clear(this.options).type(val, this.options);
     }
   }
 }
@@ -64,12 +69,18 @@ export class TypeField {
   }
 
   performAs(actor) {
-    if (!this.text) {
-      cy.get(this.selector).should('exist').clear({ force: true });
-    } else {
-      cy.get(this.selector).should('exist').clear({ force: true });
-      cy.get(this.selector).should('exist').type(this.text, { force: true });
+    let val = this.text;
+    if (val && typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+      const [y, m, d] = val.split('-');
+      val = `${d}.${m}.${y}`;
     }
+    cy.get(this.selector).should('exist').then(($el) => {
+      const el = $el[0];
+      el.value = val || '';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      el.dispatchEvent(new Event('blur', { bubbles: true }));
+    });
   }
 }
 

@@ -8,9 +8,9 @@
  *   RC-B  Casos que dependen de una tasa escrita por la API            → conversión y aritmética intactas.
  *   RC-C  Flujos vecinos que el cambio no debe tocar                   → permisos y sincronización por hooks.
  *
- * Ejecutar: npx cypress run --spec "cypress/e2e/regression/R-CUR_monedas_tasas.regression.cy.js" --config trashAssetsBeforeRuns=false
+ * Ejecutar: npx cypress run --spec "cypress/e2e/cur/regression/R-CUR_monedas_tasas.regression.cy.js" --config trashAssetsBeforeRuns=false
  */
-import { COP_RATE, statusReason } from '../../support/cur';
+import { COP_RATE, statusReason } from '../../../support/cur';
 
 describe('[Regresión] CUR Moneda y tasas de cambio', () => {
   let regular;
