@@ -2,7 +2,7 @@
 Respuestas de la evaluación heurística (plantilla Granollers v2021, 15 principios / 60 preguntas) para las pantallas
 del módulo Moneda y tasas de cambio (CUR) de EspoCRM 10.1.1.
 
-Evaluador: Alejandro Bustamante, con asistencia de IA (Claude). Cada respuesta cita su evidencia: pruebas ya
+Evaluador: Alejandro Bustamante. Cada respuesta cita su evidencia: pruebas ya
 ejecutadas en el proyecto (docs/CUR/...) o datos recogidos de la interfaz el 16-11-2026 (docs/CUR/usabilidad/datos).
 El orden coincide con el de las preguntas en la plantilla (hoja por hoja, de arriba abajo).
 """
@@ -18,7 +18,7 @@ WR = "Imposible de comprobar / Impossible to check"
 EVALUADOR = {
     "aplicacion": "EspoCRM 10.1.1 — módulo Moneda y tasas de cambio (CUR): Formula Sandbox (conversión), formulario de "
                   "Campaign (presupuesto con moneda), Currencies › COP › Rates (tasas) y Administration › Currency.",
-    "nombre": "Alejandro Bustamante, con asistencia de IA (Claude)",
+    "nombre": "Alejandro Bustamante",
     "perfil": "Estudiante de Validación y Verificación de Software; responsable de las pruebas del módulo CUR",
     "estudios": "(completar)",
     "fecha": "16/11/2026",

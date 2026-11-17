@@ -3,7 +3,7 @@
 **Criterio de la rúbrica:** 12 (Usabilidad y UX), parte de evaluación heurística. **Fecha:** 16 de noviembre de 2026.
 **Plantilla:** *Evaluación Heurística — Nueva propuesta v2021* (Granollers). Integra los 10 principios de Nielsen con los de Tognazzini en **15 principios y 60 preguntas**.
 **Archivo:** [`Evaluacion-Heuristica-CUR.xlsx`](Evaluacion-Heuristica-CUR.xlsx).
-**Evaluador:** Alejandro Bustamante, con asistencia de IA (Claude). Es **una** evaluación de experto; para más rigor se recomiendan de 3 a 5 evaluadores independientes.
+**Evaluador:** Alejandro Bustamante. Es **una** evaluación de experto; para más rigor se recomiendan de 3 a 5 evaluadores independientes.
 
 **Alcance:** las pantallas del módulo Moneda y tasas de cambio en EspoCRM 10.1.1:
 - Formula Sandbox (conversión, CUR-F1 y F2);
