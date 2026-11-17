@@ -1,0 +1,17 @@
+{
+  "url": "/#Admin/formulaSandbox",
+  "titulo": "Administration\n\nFormula Sandbox",
+  "breadcrumb": [
+    "Administration"
+  ],
+  "ayudaCampos": 2,
+  "enlacesAyuda": [],
+  "botonesConAtajo": [
+    "Ctrl+Enter"
+  ],
+  "camposObligatorios": 0,
+  "placeholders": [
+    "Select"
+  ],
+  "iconosSinTexto": 4
+}

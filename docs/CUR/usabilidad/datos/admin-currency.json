@@ -1,0 +1,15 @@
+{
+  "url": "/#Admin/currency",
+  "titulo": "AdministrationCurrency\n    \n    Currency Rates",
+  "breadcrumb": [
+    "Administration"
+  ],
+  "ayudaCampos": 4,
+  "enlacesAyuda": [],
+  "botonesConAtajo": [
+    "Ctrl+Enter"
+  ],
+  "camposObligatorios": 3,
+  "placeholders": [],
+  "iconosSinTexto": 0
+}

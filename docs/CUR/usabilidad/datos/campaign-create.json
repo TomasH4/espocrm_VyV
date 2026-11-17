@@ -1,0 +1,25 @@
+{
+  "url": "/#Campaign/create",
+  "titulo": "Campaignscreate",
+  "breadcrumb": [
+    "Campaigns"
+  ],
+  "ayudaCampos": 4,
+  "enlacesAyuda": [],
+  "botonesConAtajo": [
+    "Ctrl+Enter",
+    "Ctrl+S",
+    "Ctrl+Alt+Enter"
+  ],
+  "camposObligatorios": 1,
+  "placeholders": [
+    "Select",
+    "Select",
+    "Select",
+    "Select",
+    "Select",
+    "Select",
+    "Select"
+  ],
+  "iconosSinTexto": 14
+}
