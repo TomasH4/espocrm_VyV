@@ -130,4 +130,29 @@ describe('[Regresión] CUR Moneda y tasas de cambio', () => {
       cy.curApi('GET', 'CurrencyRate').its('body.COP').should('eq', 0.0002);
     });
   });
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // RC-D — Refactorización final: errores de la fórmula de conversión (DEF-CUR-01 y 02)
+  // ─────────────────────────────────────────────────────────────────────────
+  context('RC-D Errores de la fórmula de conversión (refactorización final)', () => {
+    const errores = [
+      { id: 'R-CUR.D1', caso: 'CN-CUR-F1-11', args: ['100', 'USD', 'EUR'], mensaje: "Currency 'EUR' is not configured" },
+      { id: 'R-CUR.D2', caso: 'CN-CUR-F1-13', args: ['100', 'usd', 'cop'], mensaje: "Currency 'usd' is not configured" },
+      { id: 'R-CUR.D3', caso: 'CN-CUR-F1-17', args: ["'abc'", 'USD', 'COP'], mensaje: "The amount 'abc' is not a number" },
+    ];
+
+    errores.forEach(({ id, caso, args, mensaje }) => {
+      it(`[Regresión Corrección] ${id} — ${caso}: error de fórmula controlado, no 500`, () => {
+        cy.curConvert(...args).then((r) => {
+          expect(r.status, statusReason(r)).to.eq(200);
+          expect(r.body.isSuccess).to.eq(false);
+          expect(r.body.message).to.contain(mensaje);
+        });
+      });
+    });
+
+    it('[Regresión Contrato] R-CUR.D4 — CN-CUR-F1-04: sin moneda destino se sigue usando la de por defecto', () => {
+      cy.curConvert('400000', 'COP').its('body.output').should('contain', '100');
+    });
+  });
 });

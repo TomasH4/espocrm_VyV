@@ -1,0 +1,39 @@
+PHPUnit 11.5.58 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+.....F.....                                                       11 / 11 (100%)
+
+Time: 00:00.232, Memory: 33.52 MB
+
+Rate Sync (tests\unit\Espo\VyV\Currency\RateSync)
+ ✔ After save sincroniza la moneda
+ ✔ After save con moneda no habilitada es conflict
+ ✔ After delete sincroniza la moneda
+ ✔ After delete con moneda no habilitada es conflict
+ ✔ Update code escribe la tasa vigente
+ ✘ Sin tasa vigente conserva la ultima tasa conocida
+   │
+   │ Expectation failed for method name is "set" when invoked 1 time
+   │ Failed asserting that two arrays are equal.
+   │ --- Expected
+   │ +++ Actual
+   │ @@ @@
+   │  Array (
+   │ -    0 => 0.0003
+   │ +    0 => 1.0
+   │      1 => 1.0
+   │  )
+   │
+   │ /var/www/html/application/Espo/Tools/Currency/SyncManager.php:158
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/RateSyncTest.php:191
+   │
+ ✔ Moneda sin tasa previa queda en uno
+ ✔ Update code sin cache no limpia la cache
+ ✔ Update code propaga not enabled
+ ✔ Sync activa la moneda existente y crea la nueva
+ ✔ Refresh cache escribe las tasas vigentes
+
+FAILURES!
+Tests: 11, Assertions: 62, Failures: 1.

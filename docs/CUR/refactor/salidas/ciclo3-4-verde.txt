@@ -1,0 +1,21 @@
+No syntax errors detected in application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php
+PHPUnit 11.5.58 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+........                                                            8 / 8 (100%)
+
+Time: 00:00.039, Memory: 29.52 MB
+
+Convert Type (tests\unit\Espo\VyV\Currency\ConvertType)
+ ✔ Conversion valida delega en el conversor
+ ✔ Sin destino usa la moneda por defecto
+ ✔ Un solo argumento es too few arguments
+ ✔ Moneda no configurada es error de formula with data set "destino EUR (CN-CUR-F1-11)"
+ ✔ Moneda no configurada es error de formula with data set "origen XYZ (CN-CUR-F1-12)"
+ ✔ Moneda no configurada es error de formula with data set "minúsculas (CN-CUR-F1-13)"
+ ✔ Monto no numerico es error de formula
+ ✔ Monto en texto numerico se acepta
+
+OK (8 tests, 22 assertions)

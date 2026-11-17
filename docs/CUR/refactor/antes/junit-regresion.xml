@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="69.052" tests="20" failures="10">
+  <testsuite name="Root Suite" timestamp="2026-11-17T03:28:53" tests="0" file="cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="[Regresión] CUR Moneda y tasas de cambio" timestamp="2026-11-17T03:28:53" tests="0" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="RC-A Validación de tasas (código modificado)" timestamp="2026-11-17T03:28:58" tests="10" time="35.113" failures="6">
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A1 — CN-CUR-F4-07: {&quot;COP&quot;:0} → 400 y la tasa no cambia" time="0.000" classname="[Regresión Corrección] R-CUR.A1 — CN-CUR-F4-07: {&quot;COP&quot;:0} → 400 y la tasa no cambia">
+      <failure message="true: expected 200 to equal 400" type="AssertionError"><![CDATA[AssertionError: true: expected 200 to equal 400
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:107:64)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -200
+      +400
+      ]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A2 — CN-CUR-F4-08: {&quot;COP&quot;:&quot;abc&quot;} → 400 y la tasa no cambia" time="0.000" classname="[Regresión Corrección] R-CUR.A2 — CN-CUR-F4-08: {&quot;COP&quot;:&quot;abc&quot;} → 400 y la tasa no cambia">
+      <failure message="&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;    &lt;head&gt;        &lt;meta charset=&quot;utf-8&quot;&gt;        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;        &lt;title&gt;Slim Application Error&lt;/title&gt;        &lt;style&gt;            body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif}            h1{margin:0;font-size:48px;font-weight:normal;line-height:48px}            strong{display:inline-block;width:65px}        &lt;/style&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;h1&gt;Slim Application Error&lt;/h1&gt;        &lt;div&gt;&lt;p&gt;A website error has occurred. Sorry for the temporary inconvenience.&lt;/p&gt;&lt;/div&gt;        &lt;a href=&quot;#&quot; onclick=&quot;window.history.go(-1)&quot;&gt;Go Back&lt;/a&gt;    &lt;/body&gt;&lt;/html&gt;: expected 500 to equal 400" type="AssertionError"><![CDATA[AssertionError: <!doctype html><html lang="en">    <head>        <meta charset="utf-8">        <meta name="viewport" content="width=device-width, initial-scale=1">        <title>Slim Application Error</title>        <style>            body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif}            h1{margin:0;font-size:48px;font-weight:normal;line-height:48px}            strong{display:inline-block;width:65px}        </style>    </head>    <body>        <h1>Slim Application Error</h1>        <div><p>A website error has occurred. Sorry for the temporary inconvenience.</p></div>        <a href="#" onclick="window.history.go(-1)">Go Back</a>    </body></html>: expected 500 to equal 400
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:107:64)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -500
+      +400
+      ]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A3 — TDD ciclo 2: {&quot;COP&quot;:true} → 400 y la tasa no cambia" time="0.000" classname="[Regresión Corrección] R-CUR.A3 — TDD ciclo 2: {&quot;COP&quot;:true} → 400 y la tasa no cambia">
+      <failure message="true: expected 200 to equal 400" type="AssertionError"><![CDATA[AssertionError: true: expected 200 to equal 400
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:107:64)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -200
+      +400
+      ]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A4 — Valor límite: {&quot;COP&quot;:0.00009} → 400 y la tasa no cambia" time="0.000" classname="[Regresión Corrección] R-CUR.A4 — Valor límite: {&quot;COP&quot;:0.00009} → 400 y la tasa no cambia">
+      <failure message="true: expected 200 to equal 400" type="AssertionError"><![CDATA[AssertionError: true: expected 200 to equal 400
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:107:64)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -200
+      +400
+      ]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A5 — CN-CUR-F4-11: [1,2] → 400 y la tasa no cambia" time="0.000" classname="[Regresión Corrección] R-CUR.A5 — CN-CUR-F4-11: [1,2] → 400 y la tasa no cambia">
+      <failure message="true: expected 200 to equal 400" type="AssertionError"><![CDATA[AssertionError: true: expected 200 to equal 400
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:107:64)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -200
+      +400
+      ]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A6 — CN-CUR-F4-06: {&quot;COP&quot;:-0.5} → 400 y la tasa no cambia" time="0.000" classname="[Regresión Corrección] R-CUR.A6 — CN-CUR-F4-06: {&quot;COP&quot;:-0.5} → 400 y la tasa no cambia">
+      <failure message="expected &apos;Bad value.&apos; to include &apos;less than 0.0001&apos;" type="AssertionError"><![CDATA[AssertionError: expected 'Bad value.' to include 'less than 0.0001'
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:108:47)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Contrato] R-CUR.A7 — CN-CUR-F4-04: una tasa válida se guarda y se consulta" time="3.654" classname="[Regresión Contrato] R-CUR.A7 — CN-CUR-F4-04: una tasa válida se guarda y se consulta">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Contrato] R-CUR.A8 — Valor límite 0.0001 se acepta" time="2.476" classname="[Regresión Contrato] R-CUR.A8 — Valor límite 0.0001 se acepta">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Contrato] R-CUR.A9 — CN-CUR-F4-09/10: EUR y la base USD se omiten sin error" time="2.959" classname="[Regresión Contrato] R-CUR.A9 — CN-CUR-F4-09/10: EUR y la base USD se omiten sin error">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Contrato] R-CUR.A10 — Un texto numérico se sigue aceptando" time="2.601" classname="[Regresión Contrato] R-CUR.A10 — Un texto numérico se sigue aceptando">
+    </testcase>
+  </testsuite>
+  <testsuite name="RC-B Conversión con tasas escritas por la API" timestamp="2026-11-17T03:29:33" tests="3" time="7.378" failures="1">
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-B Conversión con tasas escritas por la API [Regresión Integración] R-CUR.B1 — CN-CUR-F1-01: con COP = 0.00025, 100 USD = 400000 COP" time="1.530" classname="[Regresión Integración] R-CUR.B1 — CN-CUR-F1-01: con COP = 0.00025, 100 USD = 400000 COP">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-B Conversión con tasas escritas por la API [Regresión Integración] R-CUR.B2 — CN-CUR-F2-05: tras PUT COP = 0.0003, 1 USD = 3333.33333333333333 COP" time="2.173" classname="[Regresión Integración] R-CUR.B2 — CN-CUR-F2-05: tras PUT COP = 0.0003, 1 USD = 3333.33333333333333 COP">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-B Conversión con tasas escritas por la API [Regresión Integración] R-CUR.B3 — Un PUT rechazado no deja una tasa que rompa la conversión" time="0.000" classname="[Regresión Integración] R-CUR.B3 — Un PUT rechazado no deja una tasa que rompa la conversión">
+      <failure message="expected 500 to equal 200" type="AssertionError"><![CDATA[AssertionError: expected 500 to equal 200
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:141:38)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -500
+      +200
+      ]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="RC-C Flujos vecinos" timestamp="2026-11-17T03:29:40" tests="3" time="9.392" failures="0">
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-C Flujos vecinos [Regresión Seguridad] R-CUR.C1 — CN-CUR-F4-02/12: el usuario normal sigue recibiendo 403" time="3.520" classname="[Regresión Seguridad] R-CUR.C1 — CN-CUR-F4-02/12: el usuario normal sigue recibiendo 403">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-C Flujos vecinos [Regresión Seguridad] R-CUR.C2 — CN-CUR-F4-03/13: sin autenticar sigue siendo 401" time="1.880" classname="[Regresión Seguridad] R-CUR.C2 — CN-CUR-F4-03/13: sin autenticar sigue siendo 401">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-C Flujos vecinos [Regresión Integración] R-CUR.C3 — CN-CUR-F5-03: editar la tasa vigente por el registro sigue sincronizando" time="3.846" classname="[Regresión Integración] R-CUR.C3 — CN-CUR-F5-03: editar la tasa vigente por el registro sigue sincronizando">
+    </testcase>
+  </testsuite>
+  <testsuite name="RC-D Errores de la fórmula de conversión (refactorización final)" timestamp="2026-11-17T03:29:50" tests="4" time="11.883" failures="3">
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-D Errores de la fórmula de conversión (refactorización final) [Regresión Corrección] R-CUR.D1 — CN-CUR-F1-11: error de fórmula controlado, no 500" time="0.000" classname="[Regresión Corrección] R-CUR.D1 — CN-CUR-F1-11: error de fórmula controlado, no 500">
+      <failure message="&quot;&quot;: expected 500 to equal 200" type="AssertionError"><![CDATA[AssertionError: "": expected 500 to equal 200
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:177:50)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -500
+      +200
+      ]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-D Errores de la fórmula de conversión (refactorización final) [Regresión Corrección] R-CUR.D2 — CN-CUR-F1-13: error de fórmula controlado, no 500" time="0.000" classname="[Regresión Corrección] R-CUR.D2 — CN-CUR-F1-13: error de fórmula controlado, no 500">
+      <failure message="&quot;&quot;: expected 500 to equal 200" type="AssertionError"><![CDATA[AssertionError: "": expected 500 to equal 200
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:177:50)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -500
+      +200
+      ]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-D Errores de la fórmula de conversión (refactorización final) [Regresión Corrección] R-CUR.D3 — CN-CUR-F1-17: error de fórmula controlado, no 500" time="0.000" classname="[Regresión Corrección] R-CUR.D3 — CN-CUR-F1-17: error de fórmula controlado, no 500">
+      <failure message="&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;    &lt;head&gt;        &lt;meta charset=&quot;utf-8&quot;&gt;        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;        &lt;title&gt;Slim Application Error&lt;/title&gt;        &lt;style&gt;            body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif}            h1{margin:0;font-size:48px;font-weight:normal;line-height:48px}            strong{display:inline-block;width:65px}        &lt;/style&gt;    &lt;/head&gt;    &lt;body&gt;        &lt;h1&gt;Slim Application Error&lt;/h1&gt;        &lt;div&gt;&lt;p&gt;A website error has occurred. Sorry for the temporary inconvenience.&lt;/p&gt;&lt;/div&gt;        &lt;a href=&quot;#&quot; onclick=&quot;window.history.go(-1)&quot;&gt;Go Back&lt;/a&gt;    &lt;/body&gt;&lt;/html&gt;: expected 500 to equal 200" type="AssertionError"><![CDATA[AssertionError: <!doctype html><html lang="en">    <head>        <meta charset="utf-8">        <meta name="viewport" content="width=device-width, initial-scale=1">        <title>Slim Application Error</title>        <style>            body{margin:0;padding:30px;font:12px/1.5 Helvetica,Arial,Verdana,sans-serif}            h1{margin:0;font-size:48px;font-weight:normal;line-height:48px}            strong{display:inline-block;width:65px}        </style>    </head>    <body>        <h1>Slim Application Error</h1>        <div><p>A website error has occurred. Sorry for the temporary inconvenience.</p></div>        <a href="#" onclick="window.history.go(-1)">Go Back</a>    </body></html>: expected 500 to equal 200
+    at Context.eval (http://localhost:8080/__cypress/tests?p=cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js:177:50)
+    at getRet (http://localhost:8080/__cypress/runner/cypress_runner.js:121395:20)
+    at tryCatcher (http://localhost:8080/__cypress/runner/cypress_runner.js:1780:23)
+    at Promise.attempt.Promise.try (http://localhost:8080/__cypress/runner/cypress_runner.js:4288:29)
+    at Context.thenFn (http://localhost:8080/__cypress/runner/cypress_runner.js:121406:66)
+    at Context.then (http://localhost:8080/__cypress/runner/cypress_runner.js:121657:21)
+
+      + expected - actual
+
+      -500
+      +200
+      ]]></failure>
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-D Errores de la fórmula de conversión (refactorización final) [Regresión Contrato] R-CUR.D4 — CN-CUR-F1-04: sin moneda destino se sigue usando la de por defecto" time="2.144" classname="[Regresión Contrato] R-CUR.D4 — CN-CUR-F1-04: sin moneda destino se sigue usando la de por defecto">
+    </testcase>
+  </testsuite>
+</testsuites>

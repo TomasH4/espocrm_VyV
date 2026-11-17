@@ -151,7 +151,8 @@ class SyncManager
     {
         $rates = $this->configDataProvider->getCurrencyRates()->toAssoc();
 
-        $rate = $this->rateEntryProvider->getRate($code) ?? '1.0';
+        // Sin tasa vigente se conserva la última tasa conocida; 1.0 solo si la moneda nunca tuvo tasa (DEF-CUR-05).
+        $rate = $this->rateEntryProvider->getRate($code) ?? $rates[$code] ?? '1.0';
 
         $rates[$code] = (float) $rate;
 

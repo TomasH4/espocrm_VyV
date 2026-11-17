@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="54.124" tests="20" failures="0">
+  <testsuite name="Root Suite" timestamp="2026-11-17T03:30:54" tests="0" file="cypress\e2e\cur\regression\R-CUR_monedas_tasas.regression.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="[Regresión] CUR Moneda y tasas de cambio" timestamp="2026-11-17T03:30:54" tests="0" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="RC-A Validación de tasas (código modificado)" timestamp="2026-11-17T03:30:59" tests="10" time="26.469" failures="0">
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A1 — CN-CUR-F4-07: {&quot;COP&quot;:0} → 400 y la tasa no cambia" time="7.511" classname="[Regresión Corrección] R-CUR.A1 — CN-CUR-F4-07: {&quot;COP&quot;:0} → 400 y la tasa no cambia">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A2 — CN-CUR-F4-08: {&quot;COP&quot;:&quot;abc&quot;} → 400 y la tasa no cambia" time="2.514" classname="[Regresión Corrección] R-CUR.A2 — CN-CUR-F4-08: {&quot;COP&quot;:&quot;abc&quot;} → 400 y la tasa no cambia">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A3 — TDD ciclo 2: {&quot;COP&quot;:true} → 400 y la tasa no cambia" time="2.629" classname="[Regresión Corrección] R-CUR.A3 — TDD ciclo 2: {&quot;COP&quot;:true} → 400 y la tasa no cambia">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A4 — Valor límite: {&quot;COP&quot;:0.00009} → 400 y la tasa no cambia" time="2.408" classname="[Regresión Corrección] R-CUR.A4 — Valor límite: {&quot;COP&quot;:0.00009} → 400 y la tasa no cambia">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A5 — CN-CUR-F4-11: [1,2] → 400 y la tasa no cambia" time="2.792" classname="[Regresión Corrección] R-CUR.A5 — CN-CUR-F4-11: [1,2] → 400 y la tasa no cambia">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Corrección] R-CUR.A6 — CN-CUR-F4-06: {&quot;COP&quot;:-0.5} → 400 y la tasa no cambia" time="3.101" classname="[Regresión Corrección] R-CUR.A6 — CN-CUR-F4-06: {&quot;COP&quot;:-0.5} → 400 y la tasa no cambia">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Contrato] R-CUR.A7 — CN-CUR-F4-04: una tasa válida se guarda y se consulta" time="2.195" classname="[Regresión Contrato] R-CUR.A7 — CN-CUR-F4-04: una tasa válida se guarda y se consulta">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Contrato] R-CUR.A8 — Valor límite 0.0001 se acepta" time="2.225" classname="[Regresión Contrato] R-CUR.A8 — Valor límite 0.0001 se acepta">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Contrato] R-CUR.A9 — CN-CUR-F4-09/10: EUR y la base USD se omiten sin error" time="2.667" classname="[Regresión Contrato] R-CUR.A9 — CN-CUR-F4-09/10: EUR y la base USD se omiten sin error">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-A Validación de tasas (código modificado) [Regresión Contrato] R-CUR.A10 — Un texto numérico se sigue aceptando" time="2.469" classname="[Regresión Contrato] R-CUR.A10 — Un texto numérico se sigue aceptando">
+    </testcase>
+  </testsuite>
+  <testsuite name="RC-B Conversión con tasas escritas por la API" timestamp="2026-11-17T03:31:25" tests="3" time="6.026" failures="0">
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-B Conversión con tasas escritas por la API [Regresión Integración] R-CUR.B1 — CN-CUR-F1-01: con COP = 0.00025, 100 USD = 400000 COP" time="1.373" classname="[Regresión Integración] R-CUR.B1 — CN-CUR-F1-01: con COP = 0.00025, 100 USD = 400000 COP">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-B Conversión con tasas escritas por la API [Regresión Integración] R-CUR.B2 — CN-CUR-F2-05: tras PUT COP = 0.0003, 1 USD = 3333.33333333333333 COP" time="2.262" classname="[Regresión Integración] R-CUR.B2 — CN-CUR-F2-05: tras PUT COP = 0.0003, 1 USD = 3333.33333333333333 COP">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-B Conversión con tasas escritas por la API [Regresión Integración] R-CUR.B3 — Un PUT rechazado no deja una tasa que rompa la conversión" time="2.313" classname="[Regresión Integración] R-CUR.B3 — Un PUT rechazado no deja una tasa que rompa la conversión">
+    </testcase>
+  </testsuite>
+  <testsuite name="RC-C Flujos vecinos" timestamp="2026-11-17T03:31:31" tests="3" time="9.161" failures="0">
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-C Flujos vecinos [Regresión Seguridad] R-CUR.C1 — CN-CUR-F4-02/12: el usuario normal sigue recibiendo 403" time="3.001" classname="[Regresión Seguridad] R-CUR.C1 — CN-CUR-F4-02/12: el usuario normal sigue recibiendo 403">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-C Flujos vecinos [Regresión Seguridad] R-CUR.C2 — CN-CUR-F4-03/13: sin autenticar sigue siendo 401" time="1.969" classname="[Regresión Seguridad] R-CUR.C2 — CN-CUR-F4-03/13: sin autenticar sigue siendo 401">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-C Flujos vecinos [Regresión Integración] R-CUR.C3 — CN-CUR-F5-03: editar la tasa vigente por el registro sigue sincronizando" time="3.999" classname="[Regresión Integración] R-CUR.C3 — CN-CUR-F5-03: editar la tasa vigente por el registro sigue sincronizando">
+    </testcase>
+  </testsuite>
+  <testsuite name="RC-D Errores de la fórmula de conversión (refactorización final)" timestamp="2026-11-17T03:31:40" tests="4" time="7.771" failures="0">
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-D Errores de la fórmula de conversión (refactorización final) [Regresión Corrección] R-CUR.D1 — CN-CUR-F1-11: error de fórmula controlado, no 500" time="1.679" classname="[Regresión Corrección] R-CUR.D1 — CN-CUR-F1-11: error de fórmula controlado, no 500">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-D Errores de la fórmula de conversión (refactorización final) [Regresión Corrección] R-CUR.D2 — CN-CUR-F1-13: error de fórmula controlado, no 500" time="1.676" classname="[Regresión Corrección] R-CUR.D2 — CN-CUR-F1-13: error de fórmula controlado, no 500">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-D Errores de la fórmula de conversión (refactorización final) [Regresión Corrección] R-CUR.D3 — CN-CUR-F1-17: error de fórmula controlado, no 500" time="1.533" classname="[Regresión Corrección] R-CUR.D3 — CN-CUR-F1-17: error de fórmula controlado, no 500">
+    </testcase>
+    <testcase name="[Regresión] CUR Moneda y tasas de cambio RC-D Errores de la fórmula de conversión (refactorización final) [Regresión Contrato] R-CUR.D4 — CN-CUR-F1-04: sin moneda destino se sigue usando la de por defecto" time="1.302" classname="[Regresión Contrato] R-CUR.D4 — CN-CUR-F1-04: sin moneda destino se sigue usando la de por defecto">
+    </testcase>
+  </testsuite>
+</testsuites>

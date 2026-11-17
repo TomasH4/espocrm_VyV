@@ -121,12 +121,14 @@ describe('CUR Seguridad OWASP Top 10', () => {
 
   // ─────────────────────────────────────────────────────────────── A05 Security Misconfiguration
   context('A05:2021 Configuración de seguridad', () => {
-    it('SEC-CUR-14 [Hallazgo] Un error interno de la fórmula responde 500, sin cuerpo ni detalles internos (DEF-CUR-01)', () => {
+    it('SEC-CUR-14 Un dato inválido en la fórmula responde un error controlado, sin detalles internos (DEF-CUR-01 corregido)', () => {
+      // Antes de la refactorización respondía 500 (evidencias/respuesta-500-formula.txt). Ahora: 200, isSuccess = false.
       cy.curConvert('100', 'USD', 'EUR').then((r) => {
         const cuerpo = typeof r.body === 'string' ? r.body : JSON.stringify(r.body);
 
-        expect(r.status).to.eq(500);
-        cy.writeFile('docs/CUR/seguridad/evidencias/respuesta-500-formula.txt', `HTTP ${r.status}\n${JSON.stringify(r.headers, null, 2)}\n\n${cuerpo}`);
+        expect(r.status).to.eq(200);
+        expect(r.body.isSuccess).to.eq(false);
+        cy.writeFile('docs/CUR/seguridad/evidencias/respuesta-formula-error-controlado.txt', `HTTP ${r.status}\n\n${cuerpo}`);
         // No debe filtrar rutas del servidor, trazas ni consultas SQL.
         expect(cuerpo).to.not.match(/\/var\/www|Stack trace|#0 |SQLSTATE/);
       });

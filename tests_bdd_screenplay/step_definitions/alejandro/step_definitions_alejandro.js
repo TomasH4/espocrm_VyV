@@ -84,8 +84,13 @@ Then('el Formula Sandbox muestra {string}', (esperado) => {
   alejandro.asks(SalidaDelSandbox.mostrada()).should('contain.text', esperado);
 });
 
-Then('la conversión termina en un error interno del servidor', () => {
-  alejandro.asks(CodigoDeRespuesta.recibido()).should('eq', 500);
+// DEF-CUR-01 y 02 corregidos (docs/CUR/refactor): antes un 500; ahora un error de fórmula controlado con la causa.
+Then('la conversión se rechaza con el mensaje {string}', (mensaje) => {
+  alejandro.asks(CodigoDeRespuesta.recibido()).should('eq', 200);
+  alejandro.asks(UltimaRespuesta.recibida()).then((r) => {
+    expect(r.body.isSuccess).to.eq(false);
+    expect(r.body.message).to.contain(mensaje);
+  });
 });
 
 // ─────────────────────────────────────────────────────────────── CUR-F3

@@ -33,6 +33,7 @@ services:
       - ./phpunit.xml:/var/www/html/phpunit.xml
       # TDD del módulo Moneda y tasas (CUR): el contenedor usa el código corregido del repo.
       - ./application/Espo/Tools/Currency:/var/www/html/application/Espo/Tools/Currency
+      - ./application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup:/var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup
     ports:
       - "8080:80"
     restart: always
@@ -45,6 +46,7 @@ services:
       - ./custom:/var/www/html/custom
       - ./client/custom:/var/www/html/client/custom
       - ./application/Espo/Tools/Currency:/var/www/html/application/Espo/Tools/Currency
+      - ./application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup:/var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup
     restart: always
     entrypoint: docker-daemon.sh
 

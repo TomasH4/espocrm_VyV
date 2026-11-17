@@ -18,6 +18,7 @@
       <file>/var/www/html/application/Espo/Tools/Currency/SyncManager.php</file>
       <file>/var/www/html/application/Espo/Classes/RecordHooks/CurrencyRecordRate/AfterSave.php</file>
       <file>/var/www/html/application/Espo/Classes/RecordHooks/CurrencyRecordRate/AfterDelete.php</file>
+      <file>/var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php</file>
     </include>
   </source>
 </phpunit>

@@ -34,6 +34,7 @@ use Espo\Core\Currency\Converter;
 use Espo\Core\Field\Currency;
 use Espo\Core\Formula\EvaluatedArgumentList;
 use Espo\Core\Formula\Exceptions\BadArgumentType;
+use Espo\Core\Formula\Exceptions\Error;
 use Espo\Core\Formula\Exceptions\TooFewArguments;
 use Espo\Core\Formula\Func;
 
@@ -70,12 +71,39 @@ class ConvertType implements Func
             throw BadArgumentType::create(3, 'string');
         }
 
-        assert(is_numeric($amount));
+        $this->checkAmount($amount);
+        $this->checkCurrency($fromCode);
+        $this->checkCurrency($toCode);
 
         $value = Currency::create($amount, $fromCode);
 
         $convertedValue = $this->converter->convert($value, $toCode);
 
         return $convertedValue->getAmountAsString();
+    }
+
+    /**
+     * A non-numeric amount is a formula error with a readable message (it used to be an AssertionError → HTTP 500).
+     *
+     * @throws Error
+     */
+    private function checkAmount(string|int|float $amount): void
+    {
+        if (!is_numeric($amount)) {
+            throw new Error("The amount '$amount' is not a number.");
+        }
+    }
+
+    /**
+     * An unknown currency is a formula error (it used to be a RuntimeException from the converter → HTTP 500).
+     * Codes are case-sensitive, as in the currency list.
+     *
+     * @throws Error
+     */
+    private function checkCurrency(string $code): void
+    {
+        if (!$this->configDataProvider->hasCurrency($code)) {
+            throw new Error("Currency '$code' is not configured.");
+        }
     }
 }

@@ -1,0 +1,36 @@
+PHPUnit 11.5.58 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27 with Xdebug 3.5.3
+Configuration: /var/www/html/tests/unit/Espo/VyV/Currency/phpunit-cur.xml
+
+SSSSSSS.......................................................... 65 / 78 ( 83%)
+.............                                                     78 / 78 (100%)
+
+Time: 00:01.466, Memory: 37.52 MB
+
+OK, but some tests were skipped!
+Tests: 78, Assertions: 230, Skipped: 7.
+
+
+Code Coverage Report:
+  2026-11-17 03:26:28
+
+ Summary:
+  Classes: 85.71% (6/7)
+  Methods: 82.05% (32/39)
+  Lines:   95.07% (193/203)
+
+Espo\Classes\FieldValidators\CurrencyType
+  Methods: 100.00% ( 5/ 5)   Lines: 100.00% ( 44/ 44)
+Espo\Classes\RecordHooks\CurrencyRecordRate\AfterDelete
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  7/  7)
+Espo\Classes\RecordHooks\CurrencyRecordRate\AfterSave
+  Methods: 100.00% ( 2/ 2)   Lines: 100.00% (  7/  7)
+Espo\Core\Currency\CalculatorUtil
+  Methods:   0.00% ( 0/ 7)   Lines:  64.29% ( 18/ 28)
+Espo\Core\Formula\Functions\ExtGroup\CurrencyGroup\ConvertType
+  Methods: 100.00% ( 4/ 4)   Lines: 100.00% ( 24/ 24)
+Espo\Tools\Currency\RateService
+  Methods: 100.00% ( 8/ 8)   Lines: 100.00% ( 38/ 38)
+Espo\Tools\Currency\SyncManager
+  Methods: 100.00% (11/11)   Lines: 100.00% ( 55/ 55)

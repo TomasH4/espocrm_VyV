@@ -1,0 +1,24 @@
+No syntax errors detected in application/Espo/Tools/Currency/SyncManager.php
+PHPUnit 11.5.58 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+...........                                                       11 / 11 (100%)
+
+Time: 00:00.166, Memory: 33.52 MB
+
+Rate Sync (tests\unit\Espo\VyV\Currency\RateSync)
+ ✔ After save sincroniza la moneda
+ ✔ After save con moneda no habilitada es conflict
+ ✔ After delete sincroniza la moneda
+ ✔ After delete con moneda no habilitada es conflict
+ ✔ Update code escribe la tasa vigente
+ ✔ Sin tasa vigente conserva la ultima tasa conocida
+ ✔ Moneda sin tasa previa queda en uno
+ ✔ Update code sin cache no limpia la cache
+ ✔ Update code propaga not enabled
+ ✔ Sync activa la moneda existente y crea la nueva
+ ✔ Refresh cache escribe las tasas vigentes
+
+OK (11 tests, 63 assertions)

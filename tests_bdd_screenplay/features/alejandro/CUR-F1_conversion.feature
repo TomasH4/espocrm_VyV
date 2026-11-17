@@ -27,12 +27,12 @@ Característica: CUR-F1 Conversión de montos entre monedas
       | CN-CUR-F1-03 | 100    | USD    | USD     | 100                   |
 
   @error @DEF-CUR-01 @DEF-CUR-02
-  Esquema del escenario: Conversión con datos inválidos, defecto abierto (<caso>)
+  Esquema del escenario: Conversión con datos inválidos explica la causa (<caso>)
     Cuando Alejandro convierte el monto "<monto>" de "<origen>" a "<destino>"
-    Entonces la conversión termina en un error interno del servidor
+    Entonces la conversión se rechaza con el mensaje "<mensaje>"
 
     Ejemplos:
-      | caso         | monto | origen | destino |
-      | CN-CUR-F1-11 | 100   | USD    | EUR     |
-      | CN-CUR-F1-13 | 100   | usd    | cop     |
-      | CN-CUR-F1-17 | 'abc' | USD    | COP     |
+      | caso         | monto | origen | destino | mensaje                          |
+      | CN-CUR-F1-11 | 100   | USD    | EUR     | Currency 'EUR' is not configured |
+      | CN-CUR-F1-13 | 100   | usd    | cop     | Currency 'usd' is not configured |
+      | CN-CUR-F1-17 | 'abc' | USD    | COP     | The amount 'abc' is not a number |

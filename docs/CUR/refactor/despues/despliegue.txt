@@ -1,0 +1,9 @@
+ Container espocrm Recreate 
+ Container espocrm-daemon Recreate 
+ Container espocrm Recreated 
+ Container espocrm-daemon Recreated 
+ Container espocrm Starting 
+ Container espocrm-daemon Starting 
+ Container espocrm Started 
+ Container espocrm-daemon Started 
+app HTTP 200 tras el despliegue

@@ -175,16 +175,31 @@ class RateSyncTest extends TestCase
     }
 
     /**
-     * CB-CUR-F5-03 — updateCode C2 (1-2-3-5-6-7-8): sin tasa vigente se escribe 1.0 sin avisar.
-     * Documenta DEF-CUR-05 (CN-CUR-F5-07); cuando se corrija (ciclo TDD) esta prueba debe cambiar.
+     * TDD ciclo 5 — DEF-CUR-05 (CB-CUR-F5-03, CN-CUR-F5-07): si la moneda se queda sin tasa vigente, la configuración
+     * conserva la última tasa conocida (0.0003) en lugar de escribir 1.0, que convertía 1 COP en 1 USD.
      */
-    public function testDefCur05SinTasaVigenteEscribeUno(): void
+    public function testSinTasaVigenteConservaLaUltimaTasaConocida(): void
+    {
+        // Arrange
+        $sut = $this->syncManager();
+        $this->entryProvider->method('getRate')->with('COP')->willReturn(null);
+
+        // Assert (esperado)
+        $this->expectRatesWritten(['USD' => 1.0, 'COP' => 0.0003]);
+
+        // Act
+        $sut->updateCode('COP');
+    }
+
+    /** TDD ciclo 5 — una moneda que nunca tuvo tasa no tiene valor conocido: queda en 1.0 (paridad con la base). */
+    public function testMonedaSinTasaPreviaQuedaEnUno(): void
     {
         $sut = $this->syncManager();
-        $this->entryProvider->method('getRate')->willReturn(null);
-        $this->expectRatesWritten(['USD' => 1.0, 'COP' => 1.0]);
+        $this->entryProvider->method('getRate')->with('EUR')->willReturn(null);
 
-        $sut->updateCode('COP');
+        $this->expectRatesWritten(['USD' => 1.0, 'COP' => 0.0003, 'EUR' => 1.0]);
+
+        $sut->updateCode('EUR');
     }
 
     /** clearCache, rama sin caché del sistema: no se limpia nada. */

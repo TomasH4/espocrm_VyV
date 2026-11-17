@@ -1,0 +1,29 @@
+diff --git a/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php b/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php
+index cb83385460..be7d1ddc2e 100644
+--- a/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php
++++ b/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php
+@@ -34,6 +34,7 @@ use Espo\Core\Currency\Converter;
+ use Espo\Core\Field\Currency;
+ use Espo\Core\Formula\EvaluatedArgumentList;
+ use Espo\Core\Formula\Exceptions\BadArgumentType;
++use Espo\Core\Formula\Exceptions\Error;
+ use Espo\Core\Formula\Exceptions\TooFewArguments;
+ use Espo\Core\Formula\Func;
+ 
+@@ -70,7 +71,15 @@ class ConvertType implements Func
+             throw BadArgumentType::create(3, 'string');
+         }
+ 
+-        assert(is_numeric($amount));
++        if (!is_numeric($amount)) {
++            throw new Error("The amount '$amount' is not a number.");
++        }
++
++        foreach ([$fromCode, $toCode] as $code) {
++            if (!$this->configDataProvider->hasCurrency($code)) {
++                throw new Error("Currency '$code' is not configured.");
++            }
++        }
+ 
+         $value = Currency::create($amount, $fromCode);
+ 

@@ -27,7 +27,7 @@ describe('CUR-F1 Conversión de monedas', () => {
       cy.get('.field[data-name="output"]').should('contain.text', '400000.00000000000000');
     });
 
-    it('CN-CUR-F1-13 (error, DEF-CUR-01 abierto): códigos en minúsculas terminan en error interno', () => {
+    it('CN-CUR-F1-13 (error, DEF-CUR-01 corregido): códigos en minúsculas muestran un error de fórmula legible', () => {
       // Arrange
       cy.visit('/#Admin/formulaSandbox');
       cy.curTypeFormula("output\\print(ext\\currency\\convert(100, 'usd', 'cop'));");
@@ -36,8 +36,9 @@ describe('CUR-F1 Conversión de monedas', () => {
       // Act
       cy.get('button[data-name="run"]').click();
 
-      // Assert: comportamiento actual documentado (500 en lugar de un error de fórmula legible)
-      cy.wait('@run').its('response.statusCode').should('eq', 500);
+      // Assert: antes era un 500 «Internal server error»; ahora la pantalla explica la causa.
+      cy.wait('@run').its('response.statusCode').should('eq', 200);
+      cy.get('.field[data-name="errorMessage"]').should('contain.text', "Currency 'usd' is not configured");
     });
   });
 
@@ -71,17 +72,19 @@ describe('CUR-F1 Conversión de monedas', () => {
       });
     });
 
-    const defectos = [
-      { caso: 'CN-CUR-F1-11', monto: '100', de: 'USD', a: 'EUR', defecto: 'DEF-CUR-01', motivo: 'moneda no configurada' },
-      { caso: 'CN-CUR-F1-13', monto: '100', de: 'usd', a: 'cop', defecto: 'DEF-CUR-01', motivo: 'códigos en minúsculas' },
-      { caso: 'CN-CUR-F1-17', monto: "'abc'", de: 'USD', a: 'COP', defecto: 'DEF-CUR-02', motivo: 'monto no numérico' },
+    const errores = [
+      { caso: 'CN-CUR-F1-11', monto: '100', de: 'USD', a: 'EUR', defecto: 'DEF-CUR-01', mensaje: "Currency 'EUR' is not configured" },
+      { caso: 'CN-CUR-F1-13', monto: '100', de: 'usd', a: 'cop', defecto: 'DEF-CUR-01', mensaje: "Currency 'usd' is not configured" },
+      { caso: 'CN-CUR-F1-17', monto: "'abc'", de: 'USD', a: 'COP', defecto: 'DEF-CUR-02', mensaje: "The amount 'abc' is not a number" },
     ];
 
-    defectos.forEach(({ caso, monto, de, a, defecto, motivo }) => {
-      it(`${caso} (error, ${defecto} abierto): ${motivo} responde 500`, () => {
-        // Comportamiento actual documentado; al corregir el defecto debe esperarse un error de fórmula (200, isSuccess false) o 400.
+    errores.forEach(({ caso, monto, de, a, defecto, mensaje }) => {
+      it(`${caso} (error, ${defecto} corregido): error de fórmula controlado «${mensaje}»`, () => {
+        // Antes: HTTP 500. Ahora: 200 con isSuccess = false y la causa en el mensaje.
         cy.curConvert(monto, de, a).then((response) => {
-          expect(response.status, statusReason(response)).to.eq(500);
+          expect(response.status, statusReason(response)).to.eq(200);
+          expect(response.body.isSuccess).to.eq(false);
+          expect(response.body.message).to.contain(mensaje);
         });
       });
     });

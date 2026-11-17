@@ -1,0 +1,50 @@
+PHPUnit 11.5.58 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.27
+Configuration: /var/www/html/phpunit.xml
+
+...FFFF.                                                            8 / 8 (100%)
+
+Time: 00:00.098, Memory: 31.52 MB
+
+Convert Type (tests\unit\Espo\VyV\Currency\ConvertType)
+ ✔ Conversion valida delega en el conversor
+ ✔ Sin destino usa la moneda por defecto
+ ✔ Un solo argumento es too few arguments
+ ✘ Moneda no configurada es error de formula with data set "destino EUR (CN-CUR-F1-11)"
+   │
+   │ Espo\Core\Currency\Converter::convert(Espo\Core\Field\Currency Object (...), 'EUR'): Espo\Core\Field\Currency was not expected to be called.
+   │
+   │ /var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php:77
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/ConvertTypeTest.php:48
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/ConvertTypeTest.php:106
+   │
+ ✘ Moneda no configurada es error de formula with data set "origen XYZ (CN-CUR-F1-12)"
+   │
+   │ Espo\Core\Currency\Converter::convert(Espo\Core\Field\Currency Object (...), 'COP'): Espo\Core\Field\Currency was not expected to be called.
+   │
+   │ /var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php:77
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/ConvertTypeTest.php:48
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/ConvertTypeTest.php:106
+   │
+ ✘ Moneda no configurada es error de formula with data set "minúsculas (CN-CUR-F1-13)"
+   │
+   │ Espo\Core\Currency\Converter::convert(Espo\Core\Field\Currency Object (...), 'cop'): Espo\Core\Field\Currency was not expected to be called.
+   │
+   │ /var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php:77
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/ConvertTypeTest.php:48
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/ConvertTypeTest.php:106
+   │
+ ✘ Monto no numerico es error de formula
+   │
+   │ Failed asserting that exception of type "AssertionError" matches expected exception "Espo\Core\Formula\Exceptions\Error". Message was: "assert(is_numeric($amount))" at
+   │ /var/www/html/application/Espo/Core/Formula/Functions/ExtGroup/CurrencyGroup/ConvertType.php:73
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/ConvertTypeTest.php:48
+   │ /var/www/html/tests/unit/Espo/VyV/Currency/ConvertTypeTest.php:119
+   │ .
+
+   │
+ ✔ Monto en texto numerico se acepta
+
+FAILURES!
+Tests: 8, Assertions: 14, Failures: 4.
