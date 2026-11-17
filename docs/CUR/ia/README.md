@@ -12,7 +12,7 @@
 | :--- | :--- | :--- |
 | **Playwright MCP** `@playwright/mcp@0.0.84` | Recorrido de CUR que hace un agente sobre el árbol de accesibilidad | ✔ **5 de 5** |
 | **DeepEval** 4.3.4 | Asistente de conversión de monedas (Gemini con las tasas del CRM), 7 casos y 4 métricas | **5 de 7** casos aprobados. Exactitud 1.00 en los 7 |
-| **Stagehand** 4.4.0 | 4 escenarios E2E en lenguaje natural sobre CUR-F1, F3, F4 y F5 | **1 de 4** como mejor resultado (ST-CUR-04). Los fallos se deben al modelo y a su cuota, no a CUR (§3) |
+| **Stagehand** 4.4.0 | 4 escenarios E2E en lenguaje natural sobre CUR-F1, F3, F4 y F5 | ✔ **4 de 4** con `gemini-3.1-flash-lite` (corrida 6, §3) |
 
 Ninguna herramienta simula resultados: sin clave o sin credenciales la ejecución termina con error. En las tres, **el oráculo es EspoCRM** (su API o su fórmula de conversión); la IA nunca decide si algo pasó.
 
@@ -82,17 +82,26 @@ Playwright MCP (Model Context Protocol) expone el navegador como herramientas pa
 | ST-CUR-03 | CUR-F5 | Abre «crear tasa», escribe −1, guarda y lee el aviso | El aviso cita 0.0001 y la API no tiene tasas nuevas |
 | ST-CUR-04 | CUR-F4 y F5 | Lee la tasa vigente en el detalle de COP | Igual a `GET /CurrencyRate` |
 
-**Resultados.** El mejor resultado fue **ST-CUR-04 ✔**: la IA leyó «0.000250» en pantalla, que coincide con la API. Los otros tres escenarios no pasaron, por estas causas:
+**Resultado final: 4 de 4** con `gemini-3.1-flash-lite` (corrida 6, [`corrida-6.txt`](stagehand-corridas/corrida-6.txt) y [`stagehand-resultados.json`](stagehand-resultados.json)):
 
-| Causa | Evidencia | Estado |
+| Escenario | Qué hizo la IA | Resultado |
 | :--- | :--- | :--- |
-| El login de `helpers/auth.ts` del equipo tiene una condición de carrera. Revisa la pantalla de acceso a 1 s de cargar, y unas veces no inicia sesión mientras que otras hace clic dentro de `page.evaluate`, lo que rompe el navegador («Uncaught») | `corrida-1` a `3` | **Resuelto** en el runner de CUR con su propio arranque y `asegurarSesion()`. No se modificó el archivo del equipo |
-| En Stagehand 4.4 `act`, `observe` y `extract` devuelven `{ data, metadata }`. Al principio el código leía `r.success`, que no existe, y daba por buenas acciones fallidas | Tipos en `dist/index.d.mts` | **Resuelto** |
-| `gemini-3.8-flash`, el modelo del `.env`, respondió «alta demanda» en todos los intentos. En el reintento, con todas las correcciones, alcanzó a localizar «Run» (`observe`) antes de saturarse, y después agotó el **límite diario de la capa gratuita: 20 solicitudes por día** («retry in 9h») | `corrida-3.txt`, `corrida-4.txt` | Externo. Para completarlo hace falta esperar a que se renueve la cuota diaria o usar una cuota de pago |
-| `gemini-3.1-flash-lite` localiza los campos y los llena (lo verifica el DOM), pero no abre el selector Selectize de moneda ni hace que «Run» produzca salida | `corrida-2.txt` | Precisión del modelo |
-| Límite de 15 solicitudes por minuto y cuota de la capa gratuita | Mensajes 429 | Externo |
+| ST-CUR-01 | Localizó y pulsó «Run»; leyó `400000.00000000000000` | ✔ |
+| ST-CUR-02 | Llenó Name, tecleó 2500000 en Budget, eligió COP y guardó; leyó «2,500,000.00 COP». La API confirma `2500000 COP` | ✔ |
+| ST-CUR-03 | Abrió «crear tasa», tecleó −1 y guardó; leyó «Rate shouldn't be less than 0.0001». La API confirma que no se creó ninguna tasa | ✔ |
+| ST-CUR-04 | Leyó la tasa vigente «0.000250», igual a la API | ✔ |
 
-**Valoración honesta.** Las pruebas detectan bien cuándo la IA dice «ok» y no hizo la acción, porque cada paso se verifica en el DOM y en la API. Eso es justamente lo que debe hacer una prueba guiada por IA. Para que los cuatro escenarios pasen hace falta un modelo con más capacidad o una cuota de pago.
+**Cómo se llegó al 4 de 4.** Las seis corridas quedaron como evidencia en [`stagehand-corridas/`](stagehand-corridas/):
+
+| Corrida | Resultado | Causa y corrección |
+| :--- | :--- | :--- |
+| 1–2 | 1 de 4 | El login de `helpers/auth.ts` del equipo tiene una condición de carrera: revisa la pantalla de acceso a 1 s de cargar y unas veces no inicia sesión, y otras hace clic dentro de `page.evaluate`, lo que rompe el navegador. **Corregido** con un arranque propio y `asegurarSesion()`, sin modificar el archivo del equipo. Además, en Stagehand 4.4 `act`, `observe` y `extract` devuelven `{ data, metadata }`: el código leía `r.success`, que no existe, y daba por buenas acciones fallidas. **Corregido** |
+| 3–4 | 0 de 4 | `gemini-3.8-flash` respondió «alta demanda» y agotó el **límite diario de la capa gratuita (20 solicitudes por día)**. Externo |
+| 5 | 2 de 4 | Con `flash-lite`, una pestaña nueva por escenario y la verificación en el DOM pasan ST-CUR-01 y 04. Fallan ST-CUR-02 y 03 porque `fill` asigna el valor por script y la máscara **AutoNumeric** de EspoCRM lo ignora: el formulario respondía «Rate is required» aunque el campo se viera lleno |
+| 6 | **4 de 4** | La IA sigue **localizando** cada campo con `observe`, pero se escribe tecla por tecla sobre esa referencia (`observarYTeclear()`) |
+
+**Hallazgo.** Que una IA «llene» un campo no equivale a que una persona lo teclee. En campos con máscara (AutoNumeric, Selectize), la acción `fill` del agente deja el campo con apariencia de lleno, pero la aplicación no registra el valor. Playwright MCP mostró lo mismo (MCP-CUR-05). Por eso cada paso de la IA se verifica contra el DOM y la API: sin esa verificación, las corridas 1, 2 y 5 habrían reportado éxitos falsos.
+
 
 ```bash
 cd tests_stagehand

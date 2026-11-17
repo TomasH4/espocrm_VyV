@@ -1,0 +1,39 @@
+Stagehand CUR — modelo google/gemini-3.1-flash-lite — http://localhost:8080
+[Auth] Sesión activa como Tomas
+
+  ▶ Ejecutando: ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+    [observe] Click the Run button of the Formula Sandbox → Run button within the Formula Sandbox (click)
+    [extract] Output = 400000.00000000000000
+    ✔ PASS (16735ms)
+
+  ▶ Ejecutando: ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+    [observe] Fill the Name field with "CUR-Stagehand 1794886950470" → The textbox for the Name field. (fill)
+    [observe] Fill the Budget amount input with "2500000" → Budget amount input field (fill)
+    [observe] Click the currency dropdown located right next to the Budget amount input → The currency dropdown containing 'USD', located next to the Budget input. (click)
+    [act] Type "COP" + Enter en el selector → ok
+    ✖ FAIL (28700ms): después de la acción de la IA no se cumplió: la moneda elegida es COP
+
+  ▶ Ejecutando: ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+    [observe] Click the button that creates a new rate in the Rates panel → Button to create a new rate in the Rates panel (click)
+    [observe] Fill the Rate input of the dialog with "-1" → Rate input field within the Create Exchange Rate dialog (fill)
+    [observe] Click the Save button inside the dialog → The Save button inside the Create Exchange Rate dialog (click)
+    [extract] Mensaje = Rate is required
+    ✖ FAIL (20138ms): Aserción fallida: el mensaje debería citar el mínimo 0.0001 y la IA leyó «Rate is required»
+
+  ▶ Ejecutando: ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API
+    [extract] Tasa en pantalla = 0.000250
+    ✔ PASS (8771ms)
+
+========================================================
+  Resumen Suite Stagehand: CUR Moneda y tasas (Stagehand)
+========================================================
+  ✔ PASS [16735ms] ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+  ✖ FAIL [28700ms] ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+       Error: después de la acción de la IA no se cumplió: la moneda elegida es COP
+  ✖ FAIL [20138ms] ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+       Error: Aserción fallida: el mensaje debería citar el mínimo 0.0001 y la IA leyó «Rate is required»
+  ✔ PASS [8771ms] ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API
+
+Total: 4 | Pasaron: 2 | Fallaron: 2
+========================================================
+

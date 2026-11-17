@@ -129,6 +129,22 @@ async function observarYActuar(stagehand: any, instruccion: string): Promise<voi
   if (!res || res.success !== true) throw new Error(`la IA no pudo: ${instruccion} (${res?.message || "sin mensaje"})`);
 }
 
+/**
+ * La IA localiza el campo (observe) y se escribe tecla por tecla sobre esa referencia. Los campos numéricos de
+ * EspoCRM usan la máscara AutoNumeric, que ignora un valor asignado por script (lo que hace «fill»): con fill el
+ * formulario respondía «Rate is required» aunque el campo se viera lleno.
+ */
+async function observarYTeclear(stagehand: any, page: any, instruccion: string, texto: string, enter = false): Promise<void> {
+  const obs = await stagehand.observe(instruccion);
+  const accion = (Array.isArray(obs) ? obs : obs?.data || [])[0];
+  if (!accion) throw new Error(`la IA no localizó: ${instruccion}`);
+  console.log(`    [observe] ${instruccion} → ${accion.description || accion.selector} (teclear «${texto}»)`);
+  const campo = page.locator(accion.selector);
+  await campo.click();
+  await page.type(texto);
+  if (enter) await page.keyPress("Enter");
+}
+
 // ─────────────────────────────────────────────────────────────── Esquemas Zod
 
 export const SandboxOutputSchema = z.object({
@@ -184,14 +200,12 @@ export async function crearCampaniaEnCop(stagehand: any, page: any): Promise<voi
     await observarYActuar(stagehand, `Fill the Name field with "${nombre}"`);
     await esperarDom(page, "el nombre quedó escrito", () => ((document.querySelector('.field[data-name="name"] input') as HTMLInputElement)?.value || "").startsWith("CUR-Stagehand"));
 
-    await observarYActuar(stagehand, 'Fill the Budget amount input with "2500000"');
+    await observarYTeclear(stagehand, page, "Find the Budget amount input (the number field, not the currency selector)", "2500000");
     await esperarDom(page, "el monto quedó escrito", () => ((document.querySelector('.field[data-name="budget"] input[data-name="budget"]') as HTMLInputElement)?.value || "").replace(/\D/g, "").startsWith("2500000"));
 
     // El selector de moneda es un control Selectize: sus opciones no aparecen en lo que la IA ve hasta abrirse.
     // La IA lo abre y escribe «COP» + Enter, como lo haría una persona con el teclado.
-    await observarYActuar(stagehand, "Click the currency dropdown located right next to the Budget amount input");
-    const tecleo = await stagehand.act('Type "COP" into the focused currency dropdown and press Enter');
-    console.log(`    [act] Type "COP" + Enter en el selector → ${(tecleo?.data ?? tecleo)?.success ? "ok" : "NO"}`);
+    await observarYTeclear(stagehand, page, "Find the currency dropdown located right next to the Budget amount input", "COP", true);
     await esperarDom(page, "la moneda elegida es COP", () => (document.querySelector('select[data-name="budgetCurrency"]') as HTMLSelectElement)?.value === "COP");
 
     await observarYActuar(stagehand, "Click the Save button of the campaign form");
@@ -220,7 +234,7 @@ export async function rechazarTasaNegativa(stagehand: any, page: any, copId: str
   await observarYActuar(stagehand, "Click the button that creates a new rate in the Rates panel");
   await esperarDom(page, "se abrió el diálogo de nueva tasa", () => !!document.querySelector('.modal .field[data-name="rate"] input'));
 
-  await observarYActuar(stagehand, 'Fill the Rate input of the dialog with "-1"');
+  await observarYTeclear(stagehand, page, "Find the Rate input inside the Create Exchange Rate dialog", "-1");
   await observarYActuar(stagehand, "Click the Save button inside the dialog");
   await esperarDom(page, "aparece un aviso de validación", () => !!document.querySelector(".popover"));
 

@@ -1,0 +1,38 @@
+Stagehand CUR — modelo google/gemini-3.1-flash-lite — http://localhost:8080
+[Auth] Sesión activa como Tomas
+
+  ▶ Ejecutando: ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+    [observe] Click the Run button of the Formula Sandbox → Run button in the Formula Sandbox (click)
+    [extract] Output = 400000.00000000000000
+    ✔ PASS (10857ms)
+
+  ▶ Ejecutando: ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+    [observe] Fill the Name field with "CUR-Stagehand 1794887103308" → The text box field for Name (fill)
+    [observe] Find the Budget amount input (the number field, not the currency selector) → The numerical budget input field (teclear «2500000»)
+    [observe] Find the currency dropdown located right next to the Budget amount input → The currency dropdown control located next to the Budget input. (teclear «COP»)
+    [observe] Click the Save button of the campaign form → Save button for the campaign form (click)
+    [extract] Budget = {"budgetAmount":"2,500,000.00","budgetCurrency":"COP"}
+    ✔ PASS (15754ms)
+
+  ▶ Ejecutando: ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+    [observe] Click the button that creates a new rate in the Rates panel → Button to create a new rate within the Rates panel (click)
+    [observe] Find the Rate input inside the Create Exchange Rate dialog → Rate input field inside the Create Exchange Rate dialog (teclear «-1»)
+    [observe] Click the Save button inside the dialog → The Save button inside the Create Exchange Rate dialog (click)
+    [extract] Mensaje = Rate shouldn't be less than 0.0001
+    ✔ PASS (15323ms)
+
+  ▶ Ejecutando: ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API
+    [extract] Tasa en pantalla = 0.000250
+    ✔ PASS (7739ms)
+
+========================================================
+  Resumen Suite Stagehand: CUR Moneda y tasas (Stagehand)
+========================================================
+  ✔ PASS [10857ms] ST-CUR-01 CUR-F1 Convertir 100 USD a COP en el Formula Sandbox
+  ✔ PASS [15754ms] ST-CUR-02 CUR-F3 Crear campaña con presupuesto en COP
+  ✔ PASS [15323ms] ST-CUR-03 CUR-F5 Rechazar tasa negativa en el formulario
+  ✔ PASS [7739ms] ST-CUR-04 CUR-F4/F5 Tasa en pantalla igual a la de la API
+
+Total: 4 | Pasaron: 4 | Fallaron: 0
+========================================================
+
