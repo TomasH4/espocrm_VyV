@@ -3,7 +3,7 @@ Write-Host "========================================================" -Foregroun
 Write-Host " 1. Ejecutando pruebas unitarias y generando cobertura..." -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 
-docker exec espocrm bash -c "cd /var/www/html && phpunit tests/unit/Espo/VyV/Andres/ tests/unit/Espo/VyV/Tomas/ --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml"
+docker exec espocrm bash -c "cd /var/www/html && mkdir -p coverage && phpunit tests/unit/Espo/VyV/Andres/ tests/unit/Espo/VyV/Tomas/ tests/unit/Espo/VyV/Currency/ --coverage-clover coverage/phpunit-coverage.xml --log-junit coverage/phpunit-junit.xml"
 
 Write-Host "`n========================================================" -ForegroundColor Cyan
 Write-Host " 2. Extrayendo reportes de cobertura..." -ForegroundColor Cyan
@@ -22,8 +22,11 @@ Write-Host "`n========================================================" -Foregro
 Write-Host " 3. Ejecutando SonarScanner en Docker..." -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 
+# La red depende de la carpeta del proyecto (p. ej. espocrm_vyv_default): se toma del contenedor espocrm.
+$red = (docker inspect espocrm -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}').Trim()
+
 docker run --rm `
-  --network espo-crm_default `
+  --network $red `
   -v "${PSScriptRoot}:/usr/src" `
   -e SONAR_HOST_URL="http://sonarqube:9000" `
   -e SONAR_TOKEN="$token" `
