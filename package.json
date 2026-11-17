@@ -14,6 +14,7 @@
     "test:andres:bdd": "cypress run --spec \"tests_bdd_screenplay/features/andres/*.feature\"",
     "test:andres:regression": "cypress run --spec \"cypress/e2e/andres/regression/regression_andres.cy.js\"",
     "test:andres:a11y": "cypress run --spec \"cypress/e2e/andres/a11y/accessibility_wcag.cy.js\"",
+    "test:andres:security": "cypress run --spec \"cypress/e2e/andres/security/owasp_security.cy.js\"",
     "test:tomas:unit": "powershell -ExecutionPolicy Bypass -File .\\run_tests.ps1",
     "test:tomas:regression": "run_regression.bat",
     "test:tomas:e2e": "cypress run --spec \"cypress/e2e/tomas/F*.cy.js\"",
